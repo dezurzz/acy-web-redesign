@@ -1,0 +1,242 @@
+/*
+ * BKI Academy design tokens.
+ * Source of truth: design.md §11 (tokens) and §12 (Tailwind/shadcn mapping).
+ * Add a token here before using a new value; avoid arbitrary values in components.
+ */
+@import 'tailwindcss';
+
+/* ---------- Brand tokens (design.md §11) ---------- */
+@theme {
+  /* Clear Tailwind defaults so only design.md values exist (design.md §12). */
+  --color-*: initial;
+  --breakpoint-*: initial;
+  --radius-*: initial;
+  --shadow-*: initial;
+  --text-*: initial;
+
+  /* Breakpoints: compact <768, medium 768–1023, wide ≥1024 (design.md §6) */
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+
+  /* Colour */
+  --color-navy-950: #0b1726;
+  --color-navy-800: #1c2e3c;
+  --color-blue-700: #272cbb;
+  --color-blue-600: #174bff;
+  --color-blue-800: #143ac7;
+  --color-cyan-400: #0bcde9;
+  --color-blue-50: #eef3ff;
+  --color-white: #ffffff;
+  --color-paper: #f6f8fb;
+  --color-slate-600: #536274;
+  --color-line-subtle: #d8dfe8;
+  --color-line-control: #7a8899;
+  --color-success: #176b45;
+  --color-warning: #8a4b00;
+  --color-danger: #b42318;
+  --color-success-surface: #eaf7ef;
+  --color-warning-surface: #fff4de;
+  --color-danger-surface: #fff0ed;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  /* Typography (design.md §5) */
+  --font-sans: var(--font-inter), Arial, Helvetica, sans-serif;
+
+  --text-display: clamp(2.5rem, 1.2rem + 4vw, 5.5rem);
+  --text-display--line-height: 1.02;
+  --text-display--letter-spacing: -0.04em;
+  --text-display--font-weight: 500;
+
+  --text-h1: clamp(2.125rem, 1.25rem + 3vw, 4rem);
+  --text-h1--line-height: 1.08;
+  --text-h1--letter-spacing: -0.03em;
+  --text-h1--font-weight: 600;
+
+  --text-h2: clamp(1.75rem, 1.25rem + 1.5vw, 2.75rem);
+  --text-h2--line-height: 1.12;
+  --text-h2--letter-spacing: -0.025em;
+  --text-h2--font-weight: 600;
+
+  --text-h3: clamp(1.375rem, 1.2rem + 0.5vw, 1.75rem);
+  --text-h3--line-height: 1.25;
+  --text-h3--letter-spacing: -0.015em;
+  --text-h3--font-weight: 600;
+
+  --text-intro: clamp(1.125rem, 1rem + 0.4vw, 1.25rem);
+  --text-intro--line-height: 1.5;
+
+  --text-body: 1rem;
+  --text-body--line-height: 1.6;
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.6;
+
+  --text-ui: 1rem;
+  --text-ui--line-height: 1.4;
+
+  --text-meta: 0.875rem;
+  --text-meta--line-height: 1.45;
+
+  --text-eyebrow: 0.75rem;
+  --text-eyebrow--line-height: 1.4;
+  --text-eyebrow--letter-spacing: 0.08em;
+  --text-eyebrow--font-weight: 600;
+
+  /* Shape (design.md §7, §12: everything 4 px except large images) */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.25rem;
+  --radius-lg: 0.25rem;
+  --radius-control: 0.25rem;
+  --radius-card: 0.25rem;
+  --radius-image: 0.5rem;
+
+  --shadow-overlay: 0 8px 24px rgb(11 23 38 / 0.12);
+
+  /* Layout */
+  --container-page: 80rem;
+
+  /* Motion */
+  --default-transition-duration: 160ms;
+
+  /* Gradients (design.md §4); used with bg-(image:--gradient-brand) etc. */
+  --gradient-brand: linear-gradient(125deg, #0b1726 0%, #272cbb 44%, #174bff 72%, #0bcde9 100%);
+  --gradient-photo: linear-gradient(
+    180deg,
+    rgb(11 23 38 / 0.96) 0%,
+    rgb(39 44 187 / 0.78) 28%,
+    rgb(23 75 255 / 0.3) 48%,
+    rgb(23 75 255 / 0) 68%
+  );
+  --gradient-soft: linear-gradient(135deg, #f6f8fb 0%, #eef3ff 100%);
+}
+
+/* ---------- shadcn/ui semantic variables (design.md §12) ---------- */
+:root {
+  --background: var(--color-white);
+  --foreground: var(--color-navy-800);
+  --card: var(--color-white);
+  --card-foreground: var(--color-navy-800);
+  --popover: var(--color-white);
+  --popover-foreground: var(--color-navy-800);
+  --primary: var(--color-blue-600);
+  --primary-foreground: var(--color-white);
+  --secondary: var(--color-white);
+  --secondary-foreground: var(--color-navy-800);
+  --muted: var(--color-paper);
+  --muted-foreground: var(--color-slate-600);
+  --accent: var(--color-blue-50);
+  --accent-foreground: var(--color-navy-800);
+  --destructive: var(--color-danger);
+  --border: var(--color-line-subtle);
+  --input: var(--color-line-control);
+  --ring: var(--color-blue-600);
+  --radius: var(--radius-control);
+
+  --motion-fast: 160ms;
+  --motion-menu: 220ms;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+/* ---------- Base ---------- */
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--color-border);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    color: var(--color-foreground);
+    background: var(--color-background);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Focus rings per surface (design.md §7) */
+  :focus-visible {
+    outline: 3px solid var(--color-blue-600);
+    outline-offset: 3px;
+  }
+
+  [data-surface='dark'] :focus-visible {
+    outline-color: var(--color-cyan-400);
+  }
+
+  [data-surface='brand'] :focus-visible,
+  [data-surface='photo'] :focus-visible {
+    outline: 3px solid var(--color-white);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 3px var(--color-navy-950);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    ::before,
+    ::after {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+}
+
+/* ---------- Utilities ---------- */
+@utility container-page {
+  width: 100%;
+  max-width: var(--container-page);
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+
+  @media (width < 22.5rem) {
+    padding-inline: 1rem;
+  }
+
+  @variant md {
+    padding-inline: 2rem;
+  }
+
+  @variant lg {
+    padding-inline: 3rem;
+  }
+}
+
+@utility numeric {
+  font-variant-numeric: tabular-nums;
+}
+
+@utility eyebrow {
+  font-size: var(--text-eyebrow);
+  line-height: var(--text-eyebrow--line-height);
+  letter-spacing: var(--text-eyebrow--letter-spacing);
+  font-weight: var(--text-eyebrow--font-weight);
+  text-transform: uppercase;
+}
