@@ -75,6 +75,16 @@ tests/e2e/            Playwright tests
 - **Sessions:** `registrationStatus` drives registration (only `open` accepts requests). Do not name a field `status`; it collides with Payload's `_status` draft enum in PostgreSQL.
 - **Schema changes on staging/production:** create a migration with `pnpm payload migrate:create`, review it, take a backup, then run `pnpm payload migrate` as a release step (PRD §8.4). Never rely on push mode outside development.
 
+## Branches
+
+| Branch | Purpose | Gets changes from |
+|---|---|---|
+| `ui` | Day-to-day design and build work | Your commits |
+| `staging` | Testing before release; will deploy to the staging site | Pull request from `ui` |
+| `main` | Production-ready code only | Pull request from `staging` |
+
+Changes always move `ui` → `staging` → `main` through pull requests, and CI must be green before merging. Never commit directly to `main`.
+
 ## Environments
 
 | Environment | Status |

@@ -1,9 +1,12 @@
 name: CI
 
+# Branch flow: ui (design and build) -> staging (testing) -> main (production-ready).
+# CI runs on every push to these branches and on every pull request into them.
 on:
   push:
-    branches: [main]
+    branches: [main, staging, ui]
   pull_request:
+    branches: [main, staging]
 
 concurrency:
   group: ci-${{ github.ref }}
