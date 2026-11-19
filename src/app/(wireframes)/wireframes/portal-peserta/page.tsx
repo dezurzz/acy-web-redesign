@@ -30,7 +30,10 @@ const services = [
 // The website itself has no participant login.
 export default function PortalPesertaWireframe() {
   return (
-    <WfPage title="Portal Peserta">
+    <WfPage
+      motion="Intensitas rendah (animations.md §3). Hover kartu, akordeon bantuan, reveal opsional untuk kartu layanan."
+      title="Portal Peserta"
+    >
       <div className="container-page max-w-4xl py-10">
         <p className="text-meta text-slate-600">Beranda / Portal Peserta</p>
         <h1 className="mt-2 text-h1 text-navy-950">Portal Peserta</h1>

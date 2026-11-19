@@ -16,7 +16,10 @@ export default function JadwalWireframe() {
   ] as const
 
   return (
-    <WfPage title="Jadwal">
+    <WfPage
+      motion="Intensitas minimal: hanya umpan balik pilihan dan perubahan status/memuat. Baris, tanggal, biaya dan status tidak pernah bergerak."
+      title="Jadwal"
+    >
       <div className="container-page py-10">
         <p className="text-meta text-slate-600">Beranda / Jadwal</p>
         <h1 className="mt-2 text-h1 text-navy-950">Jadwal pelatihan</h1>

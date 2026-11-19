@@ -1,6 +1,6 @@
 # BKI Academy — Design System
 
-Version: 1.1 · 16 November 2026 · Proposed design specification
+Version: 1.2 · 17 November 2026 · Proposed design specification
 
 Companion: `PRD.md`. **This document is the authoritative source for styling, colour, typography, layout, and component presentation.** `PRD.md` defines product behaviour, data, and operations; where the two overlap on presentation, this document wins. Values below are proposed design tokens, not a claim that they are official BKI brand standards. Confirm official assets before launch.
 
@@ -126,7 +126,7 @@ Buttons and fields: 4 px radius. Standard cards: 4 px. Large photographic frames
 
 Icons: one consistent outline family, normally 20 px with consistent stroke; 16 px only beside metadata. Label unfamiliar icons. Decorative icons are hidden from assistive technology. Do not use emoji as interface icons.
 
-Motion: 120–180 ms for hover/focus colour changes; 180–240 ms for menus. Avoid layout shifts and scroll-jacking. Respect reduced-motion preferences and retain all state feedback without movement.
+Motion: defined in `animations.md` (source of truth); §7.1 maps it onto the BKI templates. Information first, motion second.
 
 Focus rings by surface (required, not optional):
 
@@ -135,6 +135,25 @@ Focus rings by surface (required, not optional):
 | White, paper, blue-50 | 3 px `blue-600` outline, 3 px offset |
 | Solid navy (`data-surface='dark'`) | 3 px `cyan-400` outline, 3 px offset |
 | Brand gradient or photographic overlay (`data-surface='brand'` / `'photo'`) | Two-colour halo: 3 px navy-950 ring at the element edge plus 3 px white outline outside it, so the ring stays visible over every gradient stop, including cyan |
+
+### 7.1. Motion
+
+**`animations.md` is the source of truth for all motion**: purpose, intensity per page, tokens, component behaviour, reduced motion and the “Kurangi animasi” control, implementation, and QA checks (M-01 to M-12). This section only maps those rules onto the BKI templates from the Phase 1 wireframes. If anything here disagrees with `animations.md`, `animations.md` wins and this table gets corrected.
+
+Information comes first: a visitor who never notices the motion must get the same information just as fast.
+
+**Motion map per template** (each Phase 1 wireframe carries a matching “Gerak” note)
+
+| Template | Intensity (animations.md §3) | Motion | Never |
+|---|---|---|---|
+| Header and footer (all pages) | Functional | Dropdown and mobile menu: fade + 8 px over 220 ms, close 140 ms (§5.3–5.4). Header keeps a constant size and never auto-hides (§5.8). Footer holds the “Kurangi animasi” control (§6) | Blurring the page behind menus |
+| Beranda | Moderate, selective | Button arrow 3 px; editorial image 1.02 on hover (§5.1–5.2); one-time reveals for the Kategori, Mengapa BKI Academy and In-house groups only (§5.9) | Animating the hero heading, intro, CTAs or the first session rows |
+| Pelatihan | Low | Card border/title emphasis 160 ms; filter selection immediate; “Memuat pelatihan…” while loading; optional 160 ms fade-in of new results; filter drawer 220 / 140 ms (§5.4–5.5) | Scroll reveals; items flying to new positions |
+| Jadwal | Minimal | Selection feedback and loading/status changes only | Moving rows; any motion on dates, fees or status labels |
+| Detail pelatihan | Low | Session option border/background 160 ms; FAQ 220 ms with chevron (§5.6); “Pilih Jadwal” scrolls to the session panel (instant under reduced motion); mobile CTA bar keeps a constant size and hides while the footer or an error summary is visible (§5.8) | Scroll reveals on course content |
+| Pendaftaran (WhatsApp) | Functional only | Button press and step indicator only | Any “sent” or success animation: the site cannot know whether the WhatsApp message was sent (§5.7) |
+| In-house | Low | One-time reveals for Pilihan pelatihan, process steps and Contoh kegiatan; form follows §5.7 (error summary immediate, success only after a confirmed save) | Motion inside the form beyond field feedback |
+| Portal Peserta | Low | Card hover, FAQ accordions, optional one-time reveal of the service cards | — |
 
 ## 8. Components and states
 
@@ -273,8 +292,7 @@ Dates: `21–23 Oktober 2026` as formatting example only, not upcoming inventory
   --radius-card: .25rem;
   --radius-image: .5rem;
   --container-max: 80rem;
-  --motion-fast: 160ms;
-  --motion-menu: 220ms;
+  /* Motion tokens: see animations.md §4 (source of truth). */
   --gradient-brand: linear-gradient(125deg,#0B1726 0%,#272CBB 44%,#174BFF 72%,#0BCDE9 100%);
   --gradient-photo: linear-gradient(180deg,rgba(11,23,38,.96) 0%,rgba(39,44,187,.78) 28%,rgba(23,75,255,.30) 48%,rgba(23,75,255,0) 68%);
   --gradient-soft: linear-gradient(135deg,#F6F8FB 0%,#EEF3FF 100%);
@@ -359,5 +377,6 @@ Read `PRD.md` for product behaviour, data, migration, integration, and launch cr
 
 ## 14. Change log
 
+- 1.2 · 17 November 2026 — Made `animations.md` the source of truth for motion; §7 now points to it and §7.1 maps its rules onto the BKI templates. Motion tokens moved out of §11 (they live in animations.md §4 and `globals.css`). Brand approval tracked as decision B-06.
 - 1.1 · 16 November 2026 — Declared this document the authoritative presentation source. Added all eight session statuses and a status label mapping; skip link, step indicator, session panel, mobile CTA bar, choice controls, load more, and error page components; required focus treatment per surface, including a two-colour halo on gradient/photo surfaces; full typography, status surface, `--gradient-photo`, and overlay shadow tokens; Tailwind/shadcn mapping (§12). Removed the filename note.
 - 1.0 · 15 November 2026 — Initial proposed specification.

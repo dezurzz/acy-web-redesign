@@ -20,7 +20,10 @@ export default async function PendaftaranWireframe({
   const s = closed ? sessions[0] : sessions[1]
 
   return (
-    <WfPage title="Ajukan pendaftaran">
+    <WfPage
+      motion="Hanya fungsional: tekan tombol dan penanda langkah. Tidak ada animasi “terkirim”, karena situs tidak tahu apakah pesan WhatsApp benar-benar dikirim."
+      title="Ajukan pendaftaran"
+    >
       <div className="container-page max-w-3xl py-10">
         <nav aria-label="Contoh state" className="mb-6 flex flex-wrap gap-4 text-meta">
           <span className="text-slate-600">Lihat state:</span>

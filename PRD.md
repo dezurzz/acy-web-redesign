@@ -1,16 +1,16 @@
 # BKI Academy — Website Rebuild PRD
 
-Version: 1.2 · 16 November 2026 · Status: proposed implementation baseline
+Version: 1.3 · 17 November 2026 · Status: proposed implementation baseline
 
-Companion: `design.md`. This document defines product behaviour; the companion defines presentation. **`design.md` is the main source for all styling, colour, typography, layout, and component appearance.** Where this PRD mentions presentation (for example stacked rows, sticky panels, or imagery), it states the behavioural need only; follow `design.md` for how it looks, and treat `design.md` as authoritative if the two appear to conflict. Both are intended for designers, developers, content editors, and an AI coding assistant. They specify a new website implementation, not a theme-only refresh. No production changes are authorised by this document alone.
+Companions: `design.md` (presentation) and `animations.md` (motion). Phase 0 decisions are recorded in the Phase 0 sheet (Decisions tab); IDs such as D-06 refer to it. This document defines product behaviour; the companion defines presentation. **`design.md` is the main source for all styling, colour, typography, layout, and component appearance.** Where this PRD mentions presentation (for example stacked rows, sticky panels, or imagery), it states the behavioural need only; follow `design.md` for how it looks, and treat `design.md` as authoritative if the two appear to conflict. Both are intended for designers, developers, content editors, and an AI coding assistant. They specify a new website implementation, not a theme-only refresh. No production changes are authorised by this document alone.
 
 ## 1. Project brief
 
-Recreate BKI Academy’s public website as a credible, contemporary maritime training platform. Visitors must be able to identify an appropriate programme, inspect upcoming sessions, understand requirements and fees, and submit a registration request or corporate training enquiry. Connect the website visually with BKI Academy’s blue, typography-led social media through Swiss-inspired grids, restrained typography, and authentic photography.
+Recreate BKI Academy’s public website as a credible, contemporary maritime training platform. Visitors must be able to identify an appropriate programme, inspect upcoming sessions, understand requirements and fees, and start a registration request (through WhatsApp at launch, decision D-06) or submit a corporate training enquiry. Connect the website visually with BKI Academy’s blue, typography-led social media through Swiss-inspired grids, restrained typography, and authentic photography.
 
 Primary proposition: professional maritime learning presented with precision and practical clarity. Proposed Indonesian hero copy: “Kompetensi maritim untuk langkah profesional berikutnya.” Supporting copy must describe verified programme coverage without implying universal accreditation or guaranteed career outcomes.
 
-Default audience language: Bahasa Indonesia. Preserve recognised English course names and explain acronyms on course pages. Proposed launch scope is Indonesian; existing English URLs need an explicit retain/translate/redirect decision before migration.
+Default audience language: Bahasa Indonesia. Preserve recognised English course names and explain acronyms on course pages. Launch scope is Indonesian only (D-08). Existing English URLs redirect one-to-one to their Indonesian equivalents; English content is a later release.
 
 ## 2. Evidence and interpretation
 
@@ -32,36 +32,38 @@ Source: https://www.bki.academy/id and the public catalogue/schedule navigated f
 
 | Audience hypothesis | Main job | Successful outcome |
 |---|---|---|
-| Individual maritime professional | Find a relevant class and understand eligibility | Submit a request for a specific session |
+| Individual maritime professional | Find a relevant class and understand eligibility | Start a registration request for a specific session (WhatsApp handoff at launch) |
 | HR/training/procurement representative | Arrange training for a team | Submit a complete corporate brief |
 | Technical manager | Evaluate expertise, content, and suitability | Obtain enough verified information to recommend a course |
-| Returning participant | Reach existing learning/account services | Open the verified participant portal |
+| Returning participant | Reach existing learning/account services | Find the right existing system from the Portal Peserta page |
 
 These hypotheses require validation with BKI staff and representative users. They are not demographic research findings.
 
-Proposed prelaunch usability target: at least 4 of 5 representative testers complete each applicable core task without assistance. Tasks: find a relevant session, locate fees and prerequisites, submit a test request, and locate corporate training. Record completion, errors, and time; revise navigation based on observed issues.
+Proposed prelaunch usability target: at least 4 of 5 representative testers complete each applicable core task without assistance. Tasks: find a relevant session, locate fees and prerequisites, start a test registration request (reach the WhatsApp handoff with the right session), and locate corporate training. Record completion, errors, and time; revise navigation based on observed issues.
 
-Production measures: course-to-session selection, registration start-to-success rate, corporate enquiry completion, zero-result searches, and enquiry quality assessed by staff. Establish a baseline first; do not promise uplift percentages without data. Report WhatsApp clicks as contact intent, not completed registrations.
+Production measures: course-to-session selection, WhatsApp registration handoffs per session (contact intent), registrations confirmed by staff (recorded by admin outside the website), corporate enquiry completion, zero-result searches, and enquiry quality assessed by staff. Establish a baseline first; do not promise uplift percentages without data. Report WhatsApp clicks as contact intent, not completed registrations.
 
 ## 4. Scope and priorities
 
 ### P0 — launch requirements
 
-- Responsive public website, course catalogue, schedule, course detail, corporate training, about, instructors, contact, insights, and necessary policy pages.
+- Responsive public website, course catalogue, schedule, course detail, corporate training, about, contact, Portal Peserta (D-07), MICE as a secondary page (D-09), and necessary policy pages. Instructors and Insights launch hidden (D-11).
 - Instructors and Insights depend on approved bios, photo consent, and articles. If that content is not approved in time, these routes may launch hidden from navigation and the sitemap; they must not delay the catalogue, schedule, course detail, and registration journey.
 - Structured content management for courses and sessions, including validation and draft/publish controls.
-- Working registration-request and corporate-enquiry forms with persistent storage, reference numbers, staff access, and verified notification delivery.
+- Registration request through a WhatsApp handoff (D-06): a session summary page that opens WhatsApp with the course, session dates and session code prefilled. Staff confirm seats, payment and cancellations in WhatsApp. No registration data is stored by the website at launch.
+- Corporate-enquiry form with persistent storage, reference numbers, staff access, and verified notification delivery, unless decision D-12 moves corporate enquiries to WhatsApp/email for launch.
 - Search/filter state in the URL, accessible navigation, migration redirects, error handling, analytics, and production QA.
-- Existing participant portal linked only after its correct destination is confirmed. No new login required for browsing or initial enquiries.
+- Portal Peserta page that routes participants to existing systems (account/materials portal, certificate system, admin WhatsApp). Each destination is linked only after it is confirmed and tested. No new login on this website.
 
 ### P1 — after the core journey is validated
 
+- Website registration-request form with persistence, reference numbers and staff queue (see §6 “Future registration form”), replacing or complementing the WhatsApp handoff.
 - Full English translation, curated course comparisons, richer instructor pages, approved case studies, and downloadable brochures generated from maintained content.
 - Group participant import and integration with CRM/ERP if operationally justified.
 
 ### Outside this release
 
-New LMS, online exams, certificate issuance/verification, payment gateway, user account system, automatic invoicing, AI course advisor, and automated eligibility decisions. Do not imply these features exist in marketing copy. MICE can remain a secondary service if confirmed as an active offering; it must not displace training discovery.
+New LMS, online exams, certificate issuance/verification/tracking (handled by BKI’s separate certificate system, D-04), payment gateway, user account system, automatic invoicing, AI course advisor, and automated eligibility decisions. Do not imply these features exist in marketing copy. MICE is an active but secondary service (D-09): one page, linked from the footer and the In-house page, never in primary navigation; it must not displace training discovery.
 
 ## 5. Proposed information architecture
 
@@ -73,22 +75,24 @@ All routes below are proposed new routes. Inventory existing URLs before impleme
 | `/id/pelatihan` | Course catalogue | Lihat Detail |
 | `/id/pelatihan/[slug]` | Stable course details + available sessions | Pilih Jadwal |
 | `/id/jadwal` | Upcoming sessions | Ajukan Pendaftaran |
-| `/id/pendaftaran?session=[id]` | Session-specific request | Kirim Permintaan Pendaftaran |
+| `/id/pendaftaran?session=[id]` | Session summary and WhatsApp handoff (D-06) | Lanjutkan ke WhatsApp |
 | `/id/in-house` | Corporate training | Ajukan Kebutuhan Pelatihan |
 | `/id/tentang-kami` | Institution and verified credibility | Jelajahi Pelatihan |
-| `/id/pengajar` | Verified instructor expertise | View relevant courses |
-| `/id/insight` and `/id/insight/[slug]` | Articles and activity documentation | View relevant training |
+| `/id/pengajar` | Verified instructor expertise (hidden at launch, D-11) | View relevant courses |
+| `/id/insight` and `/id/insight/[slug]` | Articles and activity documentation (hidden at launch, D-11) | View relevant training |
+| `/id/mice` | MICE services (secondary, D-09) | Contact staff |
+| `/id/portal-peserta` | Routes participants to existing systems (D-07) | Open the right system |
 | `/id/hubungi-kami` | Contact and assistance | Send enquiry/contact staff |
 | `/id/kebijakan-privasi` | Approved privacy information | Read policy |
 | `/id/ketentuan-pendaftaran` | Approved registration terms | Read terms |
 
-Header: Pelatihan, Jadwal, In-house Training, Tentang Kami, Insight; secondary Portal Peserta and Hubungi Kami. Place Pengajar within Tentang Kami navigation. Logo returns home. Avoid a crowded row of affiliation logos in the navigation.
+Header: Pelatihan, Jadwal, In-house Training, Tentang Kami (Insight is added when it goes live); secondary Portal Peserta and Hubungi Kami. No language switcher at launch. Place Pengajar within Tentang Kami navigation. Logo returns home. Avoid a crowded row of affiliation logos in the navigation.
 
 ## 6. Page requirements
 
 ### Homepage
 
-Sequence: header → hero → upcoming sessions → academy categories → verified reasons to choose BKI → corporate training → learning experience/instructors → selected insights/documentation → contact footer.
+Sequence: header → hero → upcoming sessions → academy categories → verified reasons to choose BKI → corporate training → learning experience/instructors → selected insights/documentation → contact footer. The instructors and insights sections are omitted until those pages go live (D-11).
 
 Hero has one H1, concise supporting text, Lihat Jadwal primary CTA, and Pelatihan untuk Perusahaan secondary CTA. Use one authentic training or maritime image. Avoid autoplay carousels and countdowns. Upcoming section displays 3–6 published future sessions, sorted by start date, with a full-schedule link. When there are none, show an honest enquiry route.
 
@@ -106,25 +110,41 @@ Registration states: upcoming/not yet open, open, full, closed, postponed, cance
 
 ### Course detail
 
-Above the fold: full title, acronym, category, concise outcome, duration, supported format, and session-selection action. Below: intended participants, outcomes, syllabus, prerequisites, delivery method, certificate description, verified approval scope if applicable, instructor information, FAQs, related courses, and available sessions.
+Above the fold: full title, acronym, category, concise outcome, duration, supported format, and session-selection action. Below: intended participants, outcomes, syllabus, prerequisites, delivery method, short certificate description (no certificate lookup or approval-scope claims at launch; certificate tracking lives in BKI’s separate system, D-04), instructor information once approved, FAQs, related courses, and available sessions.
 
 Session panel shows dates/timezone, registration deadline, location, delivery format, fee and tax/inclusion wording, status, and next action. On desktop it may remain sticky without covering content. On mobile use a compact sticky CTA that accounts for safe-area insets and does not obscure the footer or errors. No session available → “Tanyakan Jadwal”, not a false registration button.
 
 Brochures supplement HTML content. Essential information must remain readable without downloading a PDF. Use clear “Hubungi kami untuk biaya” if a price is unconfirmed; never display a placeholder zero price.
 
-### Registration request
+### Registration request (WhatsApp handoff at launch)
 
-Baseline is a request for staff confirmation, not a paid booking or guaranteed seat. Communicate that before submission and in the success message.
+Baseline is a request for staff confirmation, not a paid booking or guaranteed seat (D-01). There is no online payment. Staff confirm the seat, payment details, changes and cancellations with the applicant in WhatsApp (D-03, D-06). State this before the handoff.
 
-Steps: selected-session summary → applicant details → review → persisted success. Fields: full name, email, phone/WhatsApp, company (optional for individuals), job role if necessary, funding type (individual/company), optional note, and acknowledgement of approved privacy/registration information. Ask for billing details or participant documents later when needed. Do not request identity scans in the initial form.
+Page `/id/pendaftaran?session=[id]` shows: step indicator (Pilih jadwal → Ringkasan → Kirim di WhatsApp → Konfirmasi admin), selected-session summary (course, dates and timezone, location/format, fee wording, registration deadline, status), the “request, not booking” notice, the details the applicant should send (full name, email, WhatsApp number, company if applicable, funding type), a preview of the prefilled message, the **Lanjutkan ke WhatsApp** action, an email/phone alternative, realistic next steps, and links to Ketentuan Pendaftaran and Kebijakan Privasi.
 
-Server validates session status and all fields. Duplicate clicks or retries must not create duplicate requests. On successful persistence, show a unique reference, session summary, contact destination, and realistic next steps. Email failure must not discard a saved request or falsely claim delivery; queue retry and expose staff status. Failed save retains entered values and provides a retry. Do not clear the form until success is confirmed.
+Rules:
+
+- The server checks the session status when rendering. Only `open` sessions show the WhatsApp action; full, closed, postponed and cancelled sessions show an explanation and alternatives (other sessions, “Tanyakan Jadwal”).
+- The `wa.me` link may contain only the course title, session dates, location/format and the public session code. Never put personal data in the URL (the applicant types it in the chat).
+- The site cannot know whether the message was sent, so it never shows a success state or reference number for registration.
+- The WhatsApp number comes from Site settings, not from code.
+- Do not promise a response time until the operations owner agrees one (D-06).
+
+#### Future registration form (P1)
+
+When BKI wants registrations captured on the website, replace the “Kirim di WhatsApp” step on the same route with: applicant details → review → persisted success. Fields: full name, email, phone/WhatsApp, company (optional for individuals), job role if necessary, funding type (individual/company), optional note, and acknowledgement of approved privacy/registration information. Do not request identity scans. Server validates session status and all fields; duplicate clicks or retries must not create duplicate requests; on persistence show a unique reference, session summary, contact destination and next steps; email failure must not discard a saved request or falsely claim delivery; a failed save keeps entered values and offers retry.
 
 ### Corporate training and contact
 
-Corporate page covers training options, customisation, delivery process, and permission-cleared examples. Form: contact name, work email, company, phone, topic, estimated participant range, preferred timing, preferred location/format, optional needs, policy acknowledgement. No public file upload at launch.
+Corporate page covers training options, customisation, delivery process, permission-cleared examples, and a link to MICE. Form: contact name, work email, company, phone, topic, estimated participant range, preferred timing, preferred location/format, optional needs, policy acknowledgement. No public file upload at launch. Submission follows the persistence rules in §8.3 (validation, idempotency, reference number, failure states). If decision D-12 moves corporate enquiries to WhatsApp/email for launch, replace the form with a structured WhatsApp/email handoff that prefills only the topic.
 
 Contact page shows confirmed business contacts, office address, service hours if supplied, and enquiry form. WhatsApp message may prefill course/session title only; never insert private form fields into a URL. Ensure phone, email, social, and portal destinations are tested.
+
+### Portal Peserta and MICE
+
+Portal Peserta (D-07) is one page with three routes: account and training materials (existing portal), certificates (BKI’s certificate system, D-04), and registration status (admin WhatsApp), plus short help answers. Links to other systems are labelled as leaving the site. The website has no participant login.
+
+MICE (D-09) is one secondary page describing the service with a contact route. It is linked from the footer and the In-house page only.
 
 ### About, instructors, and editorial content
 
@@ -136,12 +156,12 @@ Separate organisational affiliation from course approval. Each credential requir
 |---|---|
 | Category | ID, unique slug, name, short description, display order, representative course IDs, publish state |
 | Course | ID, unique slug, title, acronym/aliases, category ID, summary, outcomes, audience, syllabus, prerequisites, duration, formats, delivery method description, certificate wording, linked credential IDs, linked instructor IDs, FAQs (question/answer list), related course IDs, optional brochure file, optional image with alt text, status, SEO metadata |
-| Session | ID, course ID, batch label, start/end with timezone, format, venue/online label, registration deadline, fee policy, fee if known, currency, tax/inclusion wording, status, waitlist enabled (only when staff can service it); capacity optional; when postponed: public postponement message and, once rescheduled, a link to the replacement session |
+| Session | ID, public session code (used in the WhatsApp message), course ID, batch label, start/end with timezone, format, venue/online label, registration deadline, fee policy, fee if known, currency, tax/inclusion wording, status, waitlist enabled (only when staff can service it); capacity optional; when postponed: public postponement message and, once rescheduled, a link to the replacement session |
 | Instructor | ID, name, approved bio, expertise, image/alt text, linked courses, publish state |
 | Article/activity | ID, slug, type, title, date, author/reviewer, body, images/alt, linked courses, publish state |
 | Credential | Issuer, exact scope, linked courses/institution, evidence reference, validity/review dates, approval to display |
-| Enquiry/request | Private ID/reference, idempotency key (unique database constraint), type, course/session IDs if relevant, submitted details, consent timestamp, accepted privacy/registration policy versions, created time, status, assigned staff, notification state |
-| Site settings | Approved contacts, portal links, legal identity, social links, policies, affiliation logo order |
+| Enquiry | Corporate and contact enquiries at launch (registration requests only when the P1 form ships). Private ID/reference, idempotency key (unique database constraint), type, course/session IDs if relevant, submitted details, consent timestamp, accepted privacy/registration policy versions, created time, status, assigned staff, notification state |
+| Site settings | Approved contacts, registration WhatsApp number, Portal Peserta destinations (account portal, certificate system), portal links, legal identity, social links, policies, affiliation logo order |
 
 Admin roles: editor drafts content; publisher approves public changes; enquiry staff access only necessary submissions; administrator manages roles. Keep a change history for sessions, fees, and publication. Drafts are not publicly indexable. Validate end ≥ start, deadlines, required fee wording, unique slugs, and linked published course before publishing sessions.
 
@@ -180,12 +200,12 @@ Exact patch numbers are intentionally resolved at installation time rather than 
 - Use Server Components by default for public course, schedule, and editorial pages. Limit Client Components to interactive filters, menus, form state, and similar browser-dependent behaviour.
 - Keep public frontend and Payload administration in one Next.js codebase with separate route groups. Public pages must never expose private enquiry collections or administrative credentials.
 - Fetch through a server-only data-access layer. Explicitly enforce publication and access rules, including when using server-side CMS APIs; do not assume local API calls apply the same checks as public endpoints.
-- Use server endpoints/actions for validated submissions. Persist each request and its notification job before reporting success. Use a unique idempotency key and database constraint to prevent duplicate requests.
+- Use server endpoints/actions for validated submissions (corporate and contact enquiries at launch; registration requests when the P1 form ships). Persist each request and its notification job before reporting success. Use a unique idempotency key and database constraint to prevent duplicate requests.
 - Use a durable notification queue/outbox with a scheduled worker and bounded retries. Do not rely on an unawaited email call after returning a response. The mail provider and worker host remain operational deployment choices.
 - Cache public editorial content selectively and invalidate affected views after publishing or session changes. Always revalidate session eligibility during submission. Private request/admin responses must not enter shared public caches.
 - Start with database-backed search over titles, acronyms, and aliases. Add a separate search service only if measured catalogue scale or relevance needs justify it.
 - Use local React state and URL query parameters for launch needs. Introduce additional state/query libraries only for a demonstrated requirement.
-- Keep motion in CSS for the interactions described in design.md; add a JavaScript animation library only when necessary.
+- Follow `animations.md` for all motion: CSS first; add a JavaScript animation library only when necessary.
 
 ### 8.4. Hosting, integration, and delivery
 
@@ -195,7 +215,7 @@ Configure separate development, staging, and production environments. Staff auth
 
 Default source of truth for a standalone rebuild: Payload/PostgreSQL for public course/session data and registration requests. Confirm whether Odoo remains an operational system before migration. If it does, explicitly assign ownership for each entity, sync identifiers, and reconciliation behaviour; do not create competing editable copies. A separate Express/FastAPI backend, new LMS, or payments service is not required for this release.
 
-CI must run linting, TypeScript checks, focused tests, and a production build. End-to-end coverage must include anonymous course access, filter persistence, successful submission, closed-session rejection, duplicate submissions, and staff permissions. Run schema migrations through a reviewed release step with a backup/rollback strategy; never apply destructive automatic schema changes to production.
+CI must run linting, TypeScript checks, focused tests, and a production build. End-to-end coverage must include anonymous course access, filter persistence, the WhatsApp handoff link (open sessions only, no personal data), successful corporate enquiry, duplicate submissions, and staff permissions. Run schema migrations through a reviewed release step with a backup/rollback strategy; never apply destructive automatic schema changes to production.
 
 ### 8.5. Official implementation references
 
@@ -227,7 +247,7 @@ Before cutover, inventory published URLs, files, course IDs, current portal rout
 
 Provide unique titles/descriptions, canonical URLs, sitemap, robots configuration, social previews, and descriptive internal links. Index only intended canonical listings; control duplicate filter URLs. Add structured data only when accurate and applicable. English hreflang requires real translated counterparts.
 
-Analytics events: course_search, filter_apply, course_view, session_select, registration_start, registration_success, corporate_enquiry_success, brochure_download, contact_click. Include non-personal course/session IDs and relevant filter values; exclude free text and contact details. `course_search` sends a result count and a has-results flag, not the search term, so zero-result searches can be measured without sending typed text to analytics. If staff need to review the actual zero-result terms, store them server-side only, strip email- and phone-like patterns before saving, and apply the agreed retention period (see section 11). Count success after persistence, not after a button click. Separate production traffic from QA.
+Analytics events: course_search, filter_apply, course_view, session_select, registration_start (handoff page viewed), whatsapp_registration_click, corporate_enquiry_success, portal_link_click, brochure_download, contact_click. There is no registration_success event while registration runs through WhatsApp. Include non-personal course/session IDs and relevant filter values; exclude free text and contact details. `course_search` sends a result count and a has-results flag, not the search term, so zero-result searches can be measured without sending typed text to analytics. If staff need to review the actual zero-result terms, store them server-side only, strip email- and phone-like patterns before saving, and apply the agreed retention period (see section 11). Count success after persistence, not after a button click. Separate production traffic from QA.
 
 ## 10. Delivery sequence and definition of done
 
@@ -244,8 +264,8 @@ Analytics events: course_search, filter_apply, course_view, session_select, regi
 | AC-01 | All published course pages load anonymously without permission errors |
 | AC-02 | A changed session date/status/fee appears consistently across every relevant view |
 | AC-03 | Search, filters, back navigation, and shared filtered URLs retain expected results |
-| AC-04 | Full/closed/cancelled sessions cannot accept a normal registration request |
-| AC-05 | Valid request persists once, produces a reference, and appears in the staff queue |
+| AC-04 | Full/closed/postponed/cancelled sessions show no WhatsApp registration action |
+| AC-05 | A valid corporate enquiry persists once, produces a reference, and appears in the staff queue (if D-12 keeps the form) |
 | AC-06 | Save failure, duplicate submit, and notification failure follow specified behaviour |
 | AC-07 | Primary journeys work at 320, 390, 768, 1024, and 1440 CSS px without page overflow |
 | AC-08 | Keyboard users can navigate, filter, select, submit, and recover from errors |
@@ -253,8 +273,11 @@ Analytics events: course_search, filter_apply, course_view, session_select, regi
 | AC-10 | Migrated high-value URLs resolve correctly; private/admin content remains protected |
 | AC-11 | Analytics record successful outcomes without capturing personal data |
 | AC-12 | Staff can publish a session and process a test enquiry without developer intervention |
+| AC-13 | The WhatsApp handoff link contains only course, session dates, location/format and session code; no personal data appears in any URL |
 
 ## 11. Decisions to confirm before production
+
+Status 17 November 2026: answers for D-01 to D-09, D-11 and B-01 to B-05 are recorded in the Phase 0 sheet and applied in this version; they still need sign-off by the named BKI owner. New: D-12, whether corporate enquiries use the website form (default) or WhatsApp/email at launch.
 
 Business owner: registration is request-only or instant booking; fees/tax wording; cancellation rules; certificate wording and approval scope; current contacts; enquiry owner; portal destination; language scope; MICE relevance; privacy retention policy, including whether zero-result search terms are stored and for how long; whether Instructors and Insights launch visible or hidden.
 
@@ -274,6 +297,8 @@ Brand/content owner: official logo files and affiliation hierarchy; font licensi
 These are inspiration references, not templates to copy or claims of endorsement. BKI’s course discovery and registration needs determine the final structure.
 
 ## 13. Change log
+
+- 1.3 · 17 November 2026 — Applied Phase 0 decisions: registration through a WhatsApp handoff at launch (D-06), with the website form moved to P1; Portal Peserta page (D-07); MICE as a secondary page (D-09); Indonesian only (D-08); Instructors and Insights hidden at launch (D-11); certificate tracking stays in BKI’s separate system (D-04). Updated routes, header, audience outcomes, content model (session code, site settings), analytics events, AC-04/AC-05, and added AC-13. Added open decision D-12 on corporate enquiries. Motion now follows animations.md.
 
 - 1.2 · 16 November 2026 — Made `design.md` the main source for styling, colour, typography, and layout. Added Category entity; added FAQs, related courses, delivery method, brochure, credential/instructor links to Course; added tax wording, waitlist flag, and postponement fields to Session; added idempotency key and consent/policy-version fields to Enquiry. Allowed Instructors and Insights to launch hidden. Resolved zero-result search measurement versus the no-free-text analytics rule. Pointed styling and component rows to design.md §11–12.
 - 1.1 · 16 November 2026 — Selected the Next.js, Payload, PostgreSQL, Tailwind, and shadcn/ui stack.

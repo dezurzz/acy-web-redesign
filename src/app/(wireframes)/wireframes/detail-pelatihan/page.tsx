@@ -31,7 +31,10 @@ function Lines({ n }: { n: number }) {
 // PRD §6 Course detail; session panel and mobile CTA bar per design.md §8.
 export default function DetailWireframe() {
   return (
-    <WfPage title="Detail pelatihan">
+    <WfPage
+      motion="Intensitas rendah. Opsi sesi berubah 160 ms; FAQ membuka 220 ms dengan chevron. “Pilih Jadwal” menggulir ke panel sesi (langsung jika animasi dikurangi). Bar CTA ponsel ukurannya tetap dan disembunyikan saat footer atau ringkasan error terlihat."
+      title="Detail pelatihan"
+    >
       <div className="container-page pt-8 pb-28 lg:pb-8">
         <p className="text-meta text-slate-600">Beranda / Pelatihan / Safety / {course.title}</p>
 

@@ -35,7 +35,10 @@ function Choice({ legend, options }: { legend: string; options: string[] }) {
 // PRD §6 Corporate training: options, customisation, process, examples, enquiry form.
 export default function InHouseWireframe() {
   return (
-    <WfPage title="In-house training">
+    <WfPage
+      motion="Intensitas rendah (animations.md §3). Reveal sekali untuk Pilihan pelatihan, langkah proses dan Contoh kegiatan. Formulir hanya fungsional: ringkasan error langsung muncul, pesan sukses hanya setelah data benar-benar tersimpan."
+      title="In-house training"
+    >
       <section className="container-page grid gap-8 py-12 lg:grid-cols-2 lg:items-center">
         <div>
           <p className="text-meta text-slate-600">Beranda / In-house Training</p>

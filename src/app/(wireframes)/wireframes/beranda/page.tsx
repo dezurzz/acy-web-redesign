@@ -11,7 +11,10 @@ export default function BerandaWireframe() {
   const upcoming = sessions.filter((s) => s.status !== 'cancelled').slice(0, 4)
 
   return (
-    <WfPage title="Beranda">
+    <WfPage
+      motion="Intensitas sedang dan selektif. Hero, judul, CTA dan baris jadwal pertama tidak dianimasikan. Reveal sekali saja (12 px, 360 ms) untuk grup Kategori, Mengapa BKI Academy dan In-house. Panah tombol bergeser 3 px; gambar membesar 1.02 saat hover."
+      title="Beranda"
+    >
       {/* Hero */}
       <section className="container-page grid gap-8 py-12 lg:grid-cols-2 lg:items-center">
         <div>

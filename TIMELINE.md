@@ -1,14 +1,14 @@
 # BKI Academy — Website Rebuild Timeline
 
-Version: 1.2 · 17 November 2026 · Status: proposed plan, not yet agreed
+Version: 1.3 · 17 November 2026 · Status: proposed plan, not yet agreed
 
-Companions: `PRD.md` (product behaviour, delivery sequence §10, acceptance criteria) and `design.md` (styling, colour, layout). This timeline turns PRD §10 into dated phases. Dates are estimates for planning and must be re-confirmed after Phase 0. Phase 0 progress is tracked in the Phase 0 Google Sheet (owners, decisions, URL inventory, content gaps).
+Companions: `PRD.md` (product behaviour, delivery sequence §10, acceptance criteria), `design.md` (styling, colour, layout) and `animations.md` (motion). This timeline turns PRD §10 into dated phases. Dates are estimates for planning and must be re-confirmed after Phase 0. Phase 0 progress is tracked in the Phase 0 Google Sheet (owners, decisions, URL inventory, content gaps).
 
 ## Planning assumptions
 
 - **Team:** one person covers project lead, UI/UX design, full-stack development (Next.js + Payload), and QA. BKI business, content, brand, data/privacy, enquiry-handling, and launch owners are separate people available for weekly reviews, approvals, and test sessions.
 - **One thing at a time:** design and build cannot run in parallel, so phases follow each other. Design is done mostly in code: low-fidelity wireframes first, then a coded prototype on staging built from design.md tokens. The coded prototype replaces separate high-fidelity design files and the component sheet in design.md §13.
-- **Scope:** P0 launch requirements only (PRD §4). Instructors and Insights launch as a fast-follow after go-live, hidden from navigation and the sitemap until then (allowed by PRD §4). P1 items (English, comparisons, CRM/ERP integration) come after launch.
+- **Scope:** P0 launch requirements only (PRD v1.3 §4). Registration runs through a WhatsApp handoff at launch (D-06); the website registration form is P1. Instructors and Insights launch as a fast-follow after go-live, hidden from navigation and the sitemap until then (allowed by PRD §4). P1 items (English, comparisons, CRM/ERP integration) come after launch.
 - **Source of truth:** Payload/PostgreSQL. If Odoo must stay the source for courses or sessions, add **5–7 weeks** to Build for the integration.
 - **Content entry:** BKI editors enter courses and sessions in Payload from Build Sprint 1 onward. The developer builds import scripts only for bulk seed data.
 - **Independent checks:** because the builder is also the tester, BKI staff run structured test passes during QA and UAT, and automated checks (Playwright, axe accessibility checks, Lighthouse) run in CI.
@@ -25,7 +25,7 @@ Companions: `PRD.md` (product behaviour, delivery sequence §10, acceptance crit
 | Build | 3 sprints | 5 sprints | 4 sprints, 15 Feb – 16 Apr |
 | QA | Part-time QA | Part-time QA | Self-test, automated checks, BKI staff test passes |
 | Contingency | None | None | One week (3 – 7 May) |
-| Target launch | Tue 30 Mar 2027 | Tue 27 Apr 2027 | **Tue 25 May 2027** |
+| Target launch | Tue 30 Mar 2027 | Tue 27 Apr 2027 | **Tue 25 May 2027** (v1.3: unchanged by default; see Schedule options) |
 
 ## Summary
 
@@ -40,7 +40,7 @@ Companions: `PRD.md` (product behaviour, delivery sequence §10, acceptance crit
 | 3. Build (4 sprints) | W14–W22 | 15 Feb – 16 Apr 2027 | All P0 launch pages, forms, admin, and SEO on staging |
 | — Idul Fitri buffer | W17 | 8 – 12 Mar 2027 | No releases |
 | C. Content production (parallel, BKI) | W3–W22 | 30 Nov 2026 – 16 Apr 2027 | All launch content approved and loaded on staging |
-| 4. QA & hardening | W23–W24 | 19 – 30 Apr 2027 | AC-01 to AC-12 passing on staging |
+| 4. QA & hardening | W23–W24 | 19 – 30 Apr 2027 | AC-01 to AC-13 passing on staging |
 | — Contingency | W25 | 3 – 7 May 2027 | Slipped work only; Ascension Day 6 May |
 | 5. UAT & launch preparation | W26 | 10 – 14 May 2027 | Staff UAT, staging sign-off, backup, rollback plan, redirect map |
 | — Holiday freeze | W27 | 17 – 21 May 2027 | No releases (expected Idul Adha and Waisak; confirm dates) |
@@ -63,10 +63,10 @@ gantt
     2b Usability testing         :p2b, 2027-02-01, 12d
     section Build
     Sprint 1 CMS and live data   :s1, 2027-02-15, 12d
-    Sprint 2a Registration request :s2a, 2027-03-01, 5d
+    Sprint 2a WhatsApp handoff, enquiry form :s2a, 2027-03-01, 5d
     Idul Fitri buffer            :crit, 2027-03-08, 5d
-    Sprint 2b Registration request :s2b, 2027-03-15, 5d
-    Sprint 3 Notifications, staff queue, forms :s3, 2027-03-22, 12d
+    Sprint 2b Enquiry form, Hubungi Kami :s2b, 2027-03-15, 5d
+    Sprint 3 Notifications, staff queue, Portal, MICE :s3, 2027-03-22, 12d
     Sprint 4 Pages, analytics, SEO :s4, 2027-04-05, 12d
     section Content (BKI)
     Content production & approval :c, 2026-11-30, 138d
@@ -95,7 +95,7 @@ gantt
 ### Phase 1 — Sitemap & wireframes (W3–W4)
 
 - Sitemap and navigation per PRD §5.
-- Low-fidelity desktop and mobile wireframes for homepage, catalogue, schedule, course detail, registration request flow, and corporate enquiry. Include long Indonesian course titles and multiline dates.
+- Low-fidelity desktop and mobile wireframes for homepage, catalogue, schedule, course detail, registration request flow (WhatsApp handoff), and corporate enquiry, plus Portal Peserta. Include long Indonesian course titles and multiline dates. Done 17 Nov 2026 at `/wireframes`; motion notes per `animations.md`.
 - One review with the brand and content owners.
 
 **Gate:** wireframes reviewed; structure agreed.
@@ -114,7 +114,8 @@ gantt
 
 - Component library with all states from design.md §8, shown on a styleguide route on staging. This replaces the separate component sheet.
 - The six core templates built at full visual quality on staging, fed by seed data from the Phase 0 course audit.
-- Registration request flow with visibly labelled simulated submission (PRD §8.6); real persistence comes in Build.
+- WhatsApp registration handoff page (pointing to a test number) and the corporate enquiry form with visibly labelled simulated submission (PRD §8.6); real persistence comes in Build.
+- Motion from `animations.md` on the styleguide route, with the “Kurangi animasi” control.
 - Brand and content owners review screenshots at 390 px and 1440 px.
 
 **Gate:** prototype ready for testing; brand owner approves colour, type, and logo direction.
@@ -122,7 +123,7 @@ gantt
 ### Phase 2b — Usability testing & approval (W12–W13)
 
 - Test the staging prototype with 5 representative users (individual professionals, HR/training staff, technical manager).
-- Tasks: find a relevant session, find fees and prerequisites, submit a test request, find corporate training (PRD §3).
+- Tasks: find a relevant session, find fees and prerequisites, start a test registration (reach the WhatsApp handoff for the right session), find corporate training (PRD §3). Ask whether any motion distracted them.
 - Record completion, errors, and time; fix navigation and templates in the second week.
 
 **Gate:** at least 4 of 5 testers complete each core task unaided; templates approved.
@@ -132,9 +133,11 @@ gantt
 | Sprint | Dates | Scope |
 |---|---|---|
 | 1 | 15 – 26 Feb | Payload roles, draft/publish, change history; catalogue, schedule, and course detail on live CMS data; filters and search in the URL. Editors start entering content. |
-| 2 | 1 – 5 Mar and 15 – 19 Mar | Registration request: server validation, idempotent submission, persistence, reference number, closed-session rejection, failure states |
-| 3 | 22 Mar – 2 Apr | Notification outbox and worker; staff enquiry queue; corporate enquiry form; Hubungi Kami. Good Friday 26 Mar. |
+| 2 | 1 – 5 Mar and 15 – 19 Mar | WhatsApp registration handoff (session check, prefilled link with no personal data, closed-session states, Site settings for the number). Corporate enquiry form: server validation, idempotent submission, persistence, reference number, failure states. Hubungi Kami. |
+| 3 | 22 Mar – 2 Apr | Notification outbox and worker; staff enquiry queue; Portal Peserta and MICE pages. Good Friday 26 Mar. |
 | 4 | 5 – 16 Apr | Tentang Kami, policy and error pages; analytics events; SEO metadata, sitemap, redirects. Instructors and Insights collections only (pages hidden). |
+
+v1.3: registration persistence moved out of Sprint 2 (WhatsApp at launch). The persistence, idempotency and outbox work is still needed for the corporate enquiry form, so it moves into Sprints 2–3 rather than disappearing. Net effect is roughly one week of slack inside Sprints 2–3, kept as buffer. See Schedule options for what changes if D-12 moves corporate enquiries to WhatsApp/email too.
 
 Ramadan overlaps Sprints 1–2; plan for shorter working days. Playwright tests for each critical journey are written in the sprint that builds it.
 
@@ -150,13 +153,13 @@ Ramadan overlaps Sprints 1–2; plan for shorter working days. Playwright tests 
 
 ### Phase 4 — QA & hardening (W23–W24)
 
-- End-to-end tests: anonymous course access, filter persistence, successful submission, closed-session rejection, duplicate submissions, staff permissions.
+- End-to-end tests: anonymous course access, filter persistence, WhatsApp handoff (open sessions only, no personal data in the link, AC-13), successful corporate enquiry, duplicate submissions, staff permissions, reduced motion (animations.md M-01 to M-12).
 - Accessibility checks: automated axe checks plus a manual keyboard, focus, labels, errors, reduced motion, and 320 px reflow pass.
 - Responsive checks at 320, 390, 768, 1024, 1440 px.
 - Performance lab tests on mobile; redirect and link checks; security review and form rate limits.
 - Two BKI staff run a written test script on staging and log issues. No new features.
 
-**Gate:** AC-01 to AC-12 passing on staging, or each exception accepted by its owner.
+**Gate:** AC-01 to AC-13 passing on staging, or each exception accepted by its owner.
 
 ### Contingency (W25)
 
@@ -164,7 +167,7 @@ Reserved for work that slipped from Build or QA. If nothing slipped, start UAT p
 
 ### Phase 5 — UAT & launch preparation (W26)
 
-- Staff publish a session and process a test enquiry without developer help (AC-12).
+- Staff publish a session, process a test enquiry, and handle a test WhatsApp registration end to end without developer help (AC-12).
 - Production environment, final redirect map, backup, rollback plan, monitoring, and error reporting in place.
 - Go/no-go meeting with all owners.
 
@@ -180,6 +183,23 @@ Reserved for work that slipped from Build or QA. If nothing slipped, start UAT p
 - Weeks 1–2: daily checks of errors, submissions, and notification delivery; fast fixes only.
 - Weeks 3–6: build and release the Instructors and Insights pages once their content is approved (target 2 Jul 2027).
 - Weeks 3–8: collect the analytics baseline (PRD §3), review enquiries with staff, and plan P1 items.
+
+## Schedule options after Phase 0 decisions (v1.3)
+
+D-06 (registration through WhatsApp) shrinks Build, but how much depends on a new decision, **D-12: do corporate enquiries use the website form or WhatsApp/email at launch?** The decision on the launch date stays with the launch owner (L-01).
+
+| | D-12 keeps the website form (default) | D-12 moves corporate enquiries to WhatsApp/email |
+|---|---|---|
+| Build work removed | Registration form only. Persistence, idempotency, outbox, email provider (T-04) and staff queue are still needed for corporate enquiries | Registration form, persistence, outbox and worker, email provider, staff queue |
+| Time saved | About 1 week, absorbed inside Sprints 2–3 | About 2 weeks: Sprints 2 and 3 merge; Build ends 2 Apr |
+| What BKI gives up | Nothing | Structured corporate briefs with reference numbers, the staff queue, and measured enquiry completions. Enquiries arrive as free-form chats/emails |
+
+| Option | Launch | How it works | Risk |
+|---|---|---|---|
+| **A. Keep the date (recommended)** | Tue 25 May 2027 | Dates as in the Summary. Saved time stays as buffer: about 1 week (form kept) or 2 extra weeks of contingency (form removed) | Lowest. The extra buffer protects a one-person project against illness and late content |
+| B. Launch earlier | Tue 11 May 2027 | Only with D-12 = WhatsApp/email. Build 15 Feb – 2 Apr; QA 5 – 16 Apr; contingency 19 – 30 Apr; UAT 3 – 7 May (Ascension Day 6 May) | Hypercare week 2 falls in the 17 – 21 May holiday freeze (expected Idul Adha and Waisak), when support capacity is lowest. Content must be approved about two weeks earlier |
+
+Recommendation: Option A with D-12 kept as the website form. The schedule's biggest risks are one person and late content, not Build size, so the saved time is worth more as buffer than as an earlier date.
 
 ## Working alone
 
@@ -214,6 +234,8 @@ The catalogue, schedule, course detail, and registration request are never cut.
 | Builder misses own bugs | Defects reach launch | Automated checks in CI; BKI staff test passes in QA and UAT |
 
 ## Change log
+
+- 1.3 · 17 November 2026 — Applied Phase 0 decisions (PRD v1.3): registration through a WhatsApp handoff, Portal Peserta and MICE pages, motion per animations.md. Rewrote Build Sprints 2–3; updated prototype, usability, QA and UAT tasks; QA gate now AC-01 to AC-13. Added Schedule options (keep 25 May or launch 11 May) and open decision D-12. Target launch unchanged unless L-01 chooses Option B.
 
 - 1.2 · 17 November 2026 — Re-planned for one person covering project lead, design, development, and QA. Design and build now run in sequence; design moves to wireframes plus a coded prototype; usability testing moves to February; four build sprints; contingency week and holiday freeze added. Target launch moved to Tue 25 May 2027.
 - 1.1 · 16 November 2026 — Re-planned for one full-stack developer. Target launch Tue 27 Apr 2027.

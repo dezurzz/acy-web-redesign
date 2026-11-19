@@ -38,7 +38,10 @@ function Filters() {
 // PRD §6 Catalogue: stable courses, not dated batches.
 export default function KatalogWireframe() {
   return (
-    <WfPage title="Katalog pelatihan">
+    <WfPage
+      motion="Intensitas rendah, tanpa reveal. Pilihan filter langsung terlihat; saat memuat tampil “Memuat pelatihan…”; hasil baru boleh fade-in 160 ms. Laci filter buka 220 ms, tutup 140 ms. Kartu: perubahan border/judul 160 ms."
+      title="Katalog pelatihan"
+    >
       <div className="container-page py-10">
         <p className="text-meta text-slate-600">Beranda / Pelatihan</p>
         <h1 className="mt-2 text-h1 text-navy-950">Pelatihan</h1>

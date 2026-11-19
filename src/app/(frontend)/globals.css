@@ -132,8 +132,21 @@
   --ring: var(--color-blue-600);
   --radius: var(--radius-control);
 
+  /* Motion tokens: animations.md §4 is the source of truth. Keep names and values in sync. */
+  --motion-press: 100ms;
   --motion-fast: 160ms;
-  --motion-menu: 220ms;
+  --motion-standard: 220ms;
+  --motion-image: 280ms;
+  --motion-reveal: 360ms;
+  --motion-exit: 140ms;
+  --motion-stagger: 40ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --move-icon: 3px;
+  --move-panel: 8px;
+  --move-reveal: 12px;
+  --scale-image: 1.02;
 }
 
 @theme inline {

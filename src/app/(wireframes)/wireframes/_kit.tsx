@@ -191,7 +191,7 @@ function WfHeader() {
           <ImageBox className="h-12 w-44 p-1" label="Logo BKI Academy" />
         </Link>
         <nav aria-label="Navigasi utama" className="hidden lg:block">
-          <ul className="flex gap-6">
+          <ul className="flex gap-5 whitespace-nowrap">
             {navLinks.map(([label, href]) => (
               <li key={label}>
                 <Link className="text-ui text-navy-800" href={href}>
@@ -201,7 +201,7 @@ function WfHeader() {
             ))}
           </ul>
         </nav>
-        <div className="hidden items-center gap-4 lg:flex">
+        <div className="hidden items-center gap-4 whitespace-nowrap lg:flex">
           <Btn href="/wireframes/portal-peserta" variant="link">
             Portal Peserta
           </Btn>
@@ -290,6 +290,10 @@ function WfFooter() {
             <li>Ketentuan Pendaftaran</li>
           </ul>
           <ImageBox className="mt-4 h-12" label="Logo afiliasi resmi (B-01)" />
+          <label className="mt-4 flex min-h-11 items-center gap-3 text-meta">
+            <span aria-hidden className="h-6 w-6 rounded-sm border border-line-control" />
+            Kurangi animasi
+          </label>
         </div>
       </div>
       <div className="container-page pb-8">
@@ -301,11 +305,23 @@ function WfFooter() {
   )
 }
 
-export function WfPage({ title, children }: { title: string; children: React.ReactNode }) {
+export function WfPage({
+  title,
+  motion,
+  children,
+}: {
+  title: string
+  /** This template's row of the motion map (design.md §7.1, rules in animations.md). */
+  motion: string
+  children: React.ReactNode
+}) {
   return (
     <>
       <WireframeBar title={title} />
       <WfHeader />
+      <div className="container-page">
+        <Note refs="Gerak, animations.md, design.md §7.1">{motion}</Note>
+      </div>
       <main id="konten-utama">{children}</main>
       <WfFooter />
     </>
