@@ -1,35 +1,34 @@
 import Link from 'next/link'
 
-const primaryLinks = [
-  { href: '/id/pelatihan', label: 'Pelatihan' },
-  { href: '/id/jadwal', label: 'Jadwal' },
-  { href: '/id/in-house', label: 'In-house Training' },
-  { href: '/id/tentang-kami', label: 'Tentang Kami' },
-  { href: '/id/insight', label: 'Insight' },
-]
+import { HeaderNav } from '@/components/site/HeaderNav'
+import { MobileMenu } from '@/components/site/MobileMenu'
+import { contactLink, portalLink } from '@/components/site/navigation'
+import { SiteLogo } from '@/components/site/SiteLogo'
+import { Button } from '@/components/ui/button'
 
-// Navigation per PRD §5. Mobile menu and active states arrive with the component library (Phase 2).
+/*
+ * Site header (design.md §8, PRD §5).
+ * Sticky with a constant 72 px height (--header-height); it never shrinks or auto-hides (animations.md §5.8).
+ * Wide screens: logo, primary links, Portal Peserta, Hubungi Kami. Compact: logo and the Menu button.
+ */
 export function SiteHeader() {
   return (
-    <header className="border-b border-line-subtle bg-white">
-      <div className="container-page flex min-h-18 items-center justify-between gap-6">
-        <Link className="text-ui font-semibold text-navy-950" href="/id">
-          BKI Academy
-        </Link>
-        <nav aria-label="Navigasi utama" className="hidden lg:block">
-          <ul className="flex gap-6">
-            {primaryLinks.map((link) => (
-              <li key={link.href}>
-                <Link className="text-ui text-navy-800 hover:text-blue-600" href={link.href}>
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-        <Link className="text-ui font-semibold text-blue-600 underline underline-offset-4" href="/id/hubungi-kami">
-          Hubungi Kami
-        </Link>
+    <header className="sticky top-0 z-40 border-b border-line-subtle bg-white">
+      <div className="container-page flex h-(--header-height) items-center justify-between gap-6">
+        <SiteLogo />
+        <HeaderNav />
+        <div className="hidden items-center gap-4 lg:flex">
+          <Link
+            className="inline-flex min-h-11 items-center text-ui font-medium whitespace-nowrap text-navy-800 underline underline-offset-4 transition-colors duration-(--motion-fast) hover:text-blue-600"
+            href={portalLink.href}
+          >
+            {portalLink.label}
+          </Link>
+          <Button asChild variant="secondary">
+            <Link href={contactLink.href}>{contactLink.label}</Link>
+          </Button>
+        </div>
+        <MobileMenu />
       </div>
     </header>
   )

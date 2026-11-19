@@ -127,6 +127,9 @@
   --accent: var(--color-blue-50);
   --accent-foreground: var(--color-navy-800);
   --destructive: var(--color-danger);
+
+  /* Sticky header height; the session panel's sticky offset is this + 24 px (design.md §8). */
+  --header-height: 4.5rem;
   --border: var(--color-line-subtle);
   --input: var(--color-line-control);
   --ring: var(--color-blue-600);
@@ -180,6 +183,8 @@
 
   html {
     -webkit-text-size-adjust: 100%;
+    /* Anchor jumps and focused fields stay clear of the sticky header. */
+    scroll-padding-top: calc(var(--header-height) + 1.5rem);
   }
 
   body {
@@ -218,6 +223,73 @@
     ::after {
       animation: none !important;
       transition: none !important;
+    }
+  }
+
+  /* Site control "Kurangi animasi" (animations.md §6): same effect as the OS setting. */
+  html[data-motion='reduced'] {
+    scroll-behavior: auto;
+  }
+
+  html[data-motion='reduced'] *,
+  html[data-motion='reduced'] ::before,
+  html[data-motion='reduced'] ::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ---------- Motion keyframes (animations.md §5.6) ---------- */
+@theme {
+  --animate-accordion-down: accordion-down var(--motion-standard) var(--ease-standard);
+  --animate-accordion-up: accordion-up var(--motion-exit) var(--ease-exit);
+  /* Mobile menu (animations.md §5.4): 220 ms in, 140 ms out, 8 px panel movement. */
+  --animate-menu-in: menu-in var(--motion-standard) var(--ease-enter);
+  --animate-menu-out: menu-out var(--motion-exit) var(--ease-exit) forwards;
+  --animate-overlay-in: fade-in var(--motion-standard) var(--ease-standard);
+  --animate-overlay-out: fade-out var(--motion-exit) var(--ease-exit) forwards;
+
+  @keyframes menu-in {
+    from {
+      opacity: 0;
+      transform: translateY(calc(var(--move-panel) * -1));
+    }
+  }
+
+  @keyframes menu-out {
+    to {
+      opacity: 0;
+      transform: translateY(calc(var(--move-panel) * -1));
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes fade-out {
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
     }
   }
 }
