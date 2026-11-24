@@ -7,7 +7,16 @@ export type Crumb = { href?: string; label: string }
 
 // design.md §8 Breadcrumbs: Beranda → kategori → kursus. The current page is plain text.
 // On compact screens only the parent link is shown, so long course titles never truncate mid-word.
-export function Breadcrumbs({ className, items }: { className?: string; items: Crumb[] }) {
+export function Breadcrumbs({
+  className,
+  inverse = false,
+  items,
+}: {
+  className?: string
+  /** Light text for dark and atmosphere backgrounds. */
+  inverse?: boolean
+  items: Crumb[]
+}) {
   const parentIndex = items.length - 2
 
   return (
@@ -30,18 +39,26 @@ export function Breadcrumbs({ className, items }: { className?: string; items: C
                 <ChevronRight
                   aria-hidden
                   className={cn(
-                    'size-4 shrink-0 text-slate-600',
+                    'size-4 shrink-0',
+                    inverse ? 'text-white/60' : 'text-slate-600',
                     index === parentIndex && 'max-md:hidden',
                   )}
                 />
               ) : null}
               {isCurrent || !item.href ? (
-                <span aria-current={isCurrent ? 'page' : undefined} className="text-slate-600">
+                <span
+                  aria-current={isCurrent ? 'page' : undefined}
+                  className={inverse ? 'text-white/75' : 'text-slate-600'}
+                >
                   {item.label}
                 </span>
               ) : (
                 <Link
-                  className="text-navy-800 underline underline-offset-4 hover:text-blue-600"
+                  className={
+                    inverse
+                      ? 'text-white underline decoration-white/50 underline-offset-4 hover:decoration-white'
+                      : 'text-navy-800 underline underline-offset-4 hover:text-blue-600'
+                  }
                   href={item.href}
                 >
                   {index === parentIndex ? (

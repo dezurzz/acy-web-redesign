@@ -7,7 +7,8 @@ import { CatalogueProvider, ResultsRegion } from '@/components/catalogue/Catalog
 import { FilterDrawer } from '@/components/catalogue/FilterDrawer'
 import { FilterForm } from '@/components/catalogue/FilterForm'
 import { CourseCard } from '@/components/site/CourseCard'
-import { Breadcrumbs } from '@/components/ui/breadcrumbs'
+import { Paren } from '@/components/site/Atmosphere'
+import { PageHero } from '@/components/site/PageHero'
 import { Button } from '@/components/ui/button'
 import { FeedbackPanel } from '@/components/ui/feedback-panel'
 import { TextLink } from '@/components/ui/text-link'
@@ -48,17 +49,23 @@ export default async function CataloguePage({ searchParams }: PageProps) {
 
   return (
     <CatalogueProvider>
-      <div className="container-page pt-8 pb-16 lg:pb-24">
-        <Breadcrumbs items={[{ href: '/id', label: 'Beranda' }, { label: 'Pelatihan' }]} />
-        <header className="mt-6 max-w-3xl">
-          <h1 className="text-h1 text-navy-950">Pelatihan</h1>
-          <p className="mt-4 text-intro text-navy-800">
-            Semua pelatihan BKI Academy. Pilih pelatihan untuk melihat detail dan jadwal yang
-            tersedia.
-          </p>
-        </header>
-
-        <div className="mt-10 grid gap-8 lg:grid-cols-12 lg:gap-6">
+      <PageHero
+        aside={
+          <>
+            <p className="text-meta text-white/80">
+              <Paren>Katalog</Paren>
+            </p>
+            <p className="numeric text-h1 text-white">{data.courses.length}</p>
+            <p className="text-ui text-white/85">pelatihan dalam {data.categories.length} bidang</p>
+          </>
+        }
+        breadcrumbs={[{ href: '/id', label: 'Beranda' }, { label: 'Pelatihan' }]}
+        intro="Semua pelatihan BKI Academy. Pilih pelatihan untuk melihat detail dan jadwal yang tersedia."
+        label="Pelatihan"
+        title="Temukan pelatihan Anda"
+      />
+      <div className="container-page pt-8 pb-24 lg:pt-12 lg:pb-40">
+        <div className="grid gap-8 lg:grid-cols-12 lg:gap-6">
           {/* Wide screens: filters in a sidebar, applied as soon as a box is ticked. */}
           <aside aria-label="Filter pelatihan" className="hidden lg:col-span-3 lg:block">
             <div className="sticky top-[calc(var(--header-height)+1.5rem)]">
@@ -111,7 +118,7 @@ export default async function CataloguePage({ searchParams }: PageProps) {
               <h2 className="sr-only">Daftar pelatihan</h2>
               {items.length > 0 ? (
                 <>
-                  <ul className="mt-6 grid gap-4 md:grid-cols-2 lg:gap-6">
+                  <ul className="mt-6 grid gap-6 md:grid-cols-2 lg:gap-6">
                     {items.map((course, index) => (
                       <li data-result-index={index} key={course.slug}>
                         <CourseCard

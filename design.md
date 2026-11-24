@@ -1,6 +1,6 @@
 # BKI Academy — Design System
 
-Version: 1.2 · 17 November 2026 · Proposed design specification
+Version: 1.3 · 24 November 2026 · Proposed design specification
 
 Companion: `PRD.md`. **This document is the authoritative source for styling, colour, typography, layout, and component presentation.** `PRD.md` defines product behaviour, data, and operations; where the two overlap on presentation, this document wins. Values below are proposed design tokens, not a claim that they are official BKI brand standards. Confirm official assets before launch.
 
@@ -23,6 +23,8 @@ Reference roles: EPFL for institutional clarity; Swissnex for contemporary commu
 7. Make layouts work at mobile widths before adding desktop flourishes.
 
 Avoid glassmorphism, neon glows around cards, decorative dashboard widgets, excessive pill shapes, gratuitous parallax, giant batch numbers, justified body text, and gradients behind dense information. Do not place essential text inside images.
+
+**Visual direction (v1.3):** Swiss editorial typography on an atmospheric sky. Page openings use the atmosphere gradient (§4D) with film grain, large light-weight type, parenthetical labels such as `( Maritime Labour Convention )`, hairline grid lines with a crosshair mark, and key facts pinned to a corner, as in BKI Academy's own course posters. Dense information (schedules, prices, forms, filters) stays on solid white or paper.
 
 ## 3. Colour tokens
 
@@ -80,6 +82,20 @@ Use on a homepage feature or corporate-training banner. Keep white copy within t
 
 Use only for selected photographic campaign areas. Place white headline text near the top within a stable dark backing; the overlay alone is not a contrast guarantee. Keep faces and teaching activity unobscured. Use actual HTML text. On mobile, move copy above the photograph if the protected text zone becomes too small.
 
+### D. Atmosphere (v1.3, page openings)
+
+A vertical sky: deep navy at the top through electric blue to sky, fading into paper or white. Tokens: `--gradient-atmos-deep`, `--gradient-atmos-fade-white`, `--gradient-atmos-fade-paper`, and `--gradient-atmos-side` for full-width bands (deep blue on the text side, mist on the far side). Film grain (`.grain`) sits on top at about 20% opacity and fades out with the gradient.
+
+Rules:
+
+- Build it in two parts. All text and controls sit in the **deep part** (every stop gives white text at least 4.5:1). The **fade** below it carries no text and ends in exactly the next section's background, so there is no seam.
+- Use it as the first element of a page (`Atmosphere`, `PageHero`). The fixed header then floats over it with white text and turns solid white after scrolling (§8 Header).
+- The side variant is used only where text stays on the deep side; on screens under 1024 px use the vertical deep gradient instead. Anything placed on the light side sits on its own dark panel.
+- Static: never animate the gradient (animations.md §5.10).
+- Replaces photographs in page openings until permission-cleared photos exist (B-05); photos may return in content sections.
+- **CTA bands** are photo bands: one big ship photo on the far side (about 72% of the width on desktop, the lower part on phones) that dissolves into the deep blue under the text through a veil gradient (`--gradient-atmos-veil`, `--gradient-atmos-veil-down` on phones), with grain on top. The veil is solid deep blue wherever text sits, so white text stays at 4.5:1 or better; the photo is decoration (empty alt). Text and button stay the focus: no graphics or patterns added on top.
+- **Photography (temporary):** large ship, port and sea photographs without people (`src/lib/stock-photos.ts`, Unsplash License) until BKI's own permission-cleared photos arrive. Keep headlines clear of the subject with `object-position`.
+
 ### C. Quiet information surface
 
 ```css
@@ -92,14 +108,14 @@ Use for a restrained course-introduction panel. Text remains navy. Forms and sch
 
 Proposed primary family: **Inter**, with `Arial, Helvetica, sans-serif` fallback. Use a single family at launch. Verify approved font files/licensing, self-host WOFF2 where appropriate, load only required weights, and use `font-display: swap`. Do not assume Helvetica Neue licensing is available.
 
-Headings: weight 500 or 600, left aligned. Body: weight 400. Labels/buttons: 500–600. Use tabular numerals for dates, fees, and numerical metadata. Uppercase is limited to short eyebrow labels and selected short campaign headings.
+Headings: light and regular weights for large type (display and H1 at 300, H2 at 400, H3 at 500), left aligned, with tight tracking. Inter 300 is loaded for this (v1.3). Body: weight 400. Labels/buttons: 500–600. Use tabular numerals for dates, fees, and numerical metadata. Uppercase is limited to short eyebrow labels and selected short campaign headings.
 
 | Role | Desktop size / line height | Mobile size / line height | Weight / tracking |
 |---|---|---|---|
-| Display, homepage only | 72–88 / 0.98–1.04 | 40–48 / 1.06 | 500 / -0.04em |
-| H1, interior page | 48–64 / 1.08 | 34–40 / 1.12 | 600 / -0.03em |
-| H2 | 36–44 / 1.12 | 28–32 / 1.18 | 600 / -0.025em |
-| H3 | 24–28 / 1.25 | 22–24 / 1.3 | 600 / -0.015em |
+| Display, page openings | 88–104 / 0.98 | 44–48 / 0.98 | 300 / -0.045em |
+| H1, interior page | 48–64 / 1.04 | 34–40 / 1.04 | 300 / -0.035em |
+| H2 | 36–44 / 1.1 | 28–32 / 1.1 | 400 / -0.03em |
+| H3 | 24–28 / 1.25 | 22–24 / 1.3 | 500 / -0.02em |
 | Intro paragraph | 20 / 1.5 | 18 / 1.55 | 400 / normal |
 | Body | 16–18 / 1.6 | 16 / 1.6 | 400 / normal |
 | UI / button | 16 / 1.4 | 16 / 1.4 | 500–600 / normal |
@@ -114,7 +130,7 @@ Maximum content width: 1280 px. Desktop grid: 12 columns with 24 px gutters. Tab
 
 Breakpoints: compact <768 px; medium 768–1023 px; wide ≥1024 px. These are starting rules; components may reflow earlier to avoid collisions. Test at 320, 390, 768, 1024, and 1440 px and at increased text size.
 
-Spacing scale: 4, 8, 12, 16, 24, 32, 48, 64, 80, 96, 128 px. Section padding: 80–96 px desktop, 48–64 px mobile. Card padding: 24 px desktop, 20 px mobile. Form label-to-input: 8 px; field-to-field: 24 px. Prioritise related-content proximity over equal spacing everywhere.
+Spacing scale: 4, 8, 12, 16, 24, 32, 48, 64, 80, 96, 128, 160 px. Section padding (v1.3, generous negative space): 160 px desktop, 128 px tablet, 96 px mobile; 160 px before the footer. Heading to content: 56–80 px. Session rows 28–32 px vertical padding; cards 24–32 px inner padding. Grid gutters stay 24 px. Card padding: 24 px desktop, 20 px mobile. Form label-to-input: 8 px; field-to-field: 24 px. Prioritise related-content proximity over equal spacing everywhere.
 
 Hero desktop composition: text spans 7 columns; photograph spans 5. Course detail: content spans 8; session panel spans 4. Editorial sections may use a narrow 3-column label with a 9-column content area. Mobile reading order: heading → copy → actions → image → supporting facts. Avoid CSS visual reordering that differs from keyboard/DOM order.
 
@@ -159,7 +175,7 @@ Information comes first: a visitor who never notices the motion must get the sam
 
 | Component | Anatomy / behaviour | Required states |
 |---|---|---|
-| Header | BKI logo, primary links, contact action, secondary portal; mobile menu with labelled trigger | Default, active page, menu open, keyboard focus |
+| Header | BKI logo, primary links, contact action, secondary portal; mobile menu with labelled trigger. Fixed, 72 px. Over an atmosphere opening: transparent with white text and the two-colour focus halo; after scrolling: solid white (v1.3) | Default, over opening, scrolled, active page, menu open, keyboard focus |
 | Primary button | Solid electric blue, white label, 48 px min height, 20 px horizontal padding | Hover dark blue, focus ring, pressed, loading, disabled |
 | Secondary button | White/transparent surface, navy label, visible border | Hover light blue, focus, disabled |
 | Text link | Clear label and underline; arrow optional | Hover, focus, visited where appropriate |
@@ -377,6 +393,8 @@ Read `PRD.md` for product behaviour, data, migration, integration, and launch cr
 
 ## 14. Change log
 
+- 1.3 · 24 November 2026 — Later the same day: larger section spacing (§6), nautical-chart pattern for CTA bands and temporary large photography (§4D).
+- 1.3 · 24 November 2026 — New visual direction chosen by the project lead: Swiss editorial type on an atmospheric sky (§2, §4D), following BKI Academy's own course posters. Light display weights (§5), atmosphere gradient with grain and a two-part build that keeps text off the light end, parenthetical labels, hairline crosshair, header floating over the opening and turning solid on scroll. Page openings no longer need photographs. Dense information stays on solid surfaces.
 - 1.2 · 17 November 2026 — Made `animations.md` the source of truth for motion; §7 now points to it and §7.1 maps its rules onto the BKI templates. Motion tokens moved out of §11 (they live in animations.md §4 and `globals.css`). Brand approval tracked as decision B-06.
 - 1.1 · 16 November 2026 — Declared this document the authoritative presentation source. Added all eight session statuses and a status label mapping; skip link, step indicator, session panel, mobile CTA bar, choice controls, load more, and error page components; required focus treatment per surface, including a two-colour halo on gradient/photo surfaces; full typography, status surface, `--gradient-photo`, and overlay shadow tokens; Tailwind/shadcn mapping (§12). Removed the filename note.
 - 1.0 · 15 November 2026 — Initial proposed specification.

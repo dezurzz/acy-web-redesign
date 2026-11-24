@@ -3,9 +3,10 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { EnquiryForm } from '@/components/inhouse/EnquiryForm'
+import { Paren } from '@/components/site/Atmosphere'
+import { PageHero } from '@/components/site/PageHero'
 import { PhotoFrame } from '@/components/site/PhotoFrame'
 import { Reveal } from '@/components/site/Reveal'
-import { Breadcrumbs } from '@/components/ui/breadcrumbs'
 import { Button, ButtonArrow } from '@/components/ui/button'
 import { TextLink } from '@/components/ui/text-link'
 import { whatsappUrl } from '@/lib/registration'
@@ -74,46 +75,45 @@ export default async function InHousePage({ searchParams }: PageProps) {
 
   return (
     <>
-      <section aria-labelledby="inhouse-judul" className="container-page pt-8 pb-16">
-        <Breadcrumbs items={[{ href: '/id', label: 'Beranda' }, { label: 'In-house Training' }]} />
-        <div className="mt-8 grid gap-10 lg:grid-cols-12 lg:items-center lg:gap-6">
-          <div className="lg:col-span-7 lg:pr-8">
-            <p className="eyebrow text-blue-600">Untuk perusahaan</p>
-            <h1 className="mt-3 text-h1 text-navy-950" id="inhouse-judul">
-              Pelatihan in-house untuk tim Anda
-            </h1>
-            <p className="mt-5 max-w-[60ch] text-intro text-navy-800">
-              Materi pelatihan BKI Academy yang disesuaikan dengan armada, prosedur, dan jadwal
-              perusahaan Anda.
+      <PageHero
+        actions={
+          <>
+            <Button asChild variant="secondary">
+              <Link href="#formulir-judul">
+                Ajukan Kebutuhan Pelatihan
+                <ButtonArrow />
+              </Link>
+            </Button>
+            <TextLink href="/id/pelatihan" inverse>
+              Lihat Daftar Pelatihan
+            </TextLink>
+          </>
+        }
+        aside={
+          <>
+            <p className="text-meta text-white/80">
+              <Paren>Pelaksanaan</Paren>
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Button asChild>
-                <Link href="#formulir-judul">
-                  Ajukan Kebutuhan Pelatihan
-                  <ButtonArrow />
-                </Link>
-              </Button>
-              <Button asChild variant="secondary">
-                <Link href="/id/pelatihan">Lihat Daftar Pelatihan</Link>
-              </Button>
-            </div>
-          </div>
-          <PhotoFrame
-            alt="Instruktur BKI Academy melatih tim perusahaan di lokasi kerja"
-            className="aspect-4/3 lg:col-span-5"
-            placeholderLabel="Foto kegiatan in-house menyusul setelah izin foto (B-05)"
-            priority
-          />
-        </div>
-      </section>
+            <ul className="flex flex-col gap-1 text-h3 text-white">
+              <li>Di lokasi Anda</li>
+              <li>Di fasilitas BKI</li>
+              <li>Live online</li>
+            </ul>
+          </>
+        }
+        breadcrumbs={[{ href: '/id', label: 'Beranda' }, { label: 'In-house Training' }]}
+        intro="Materi pelatihan BKI Academy yang disesuaikan dengan armada, prosedur, dan jadwal perusahaan Anda."
+        label="Untuk perusahaan"
+        title="Pelatihan in-house untuk tim Anda"
+      />
 
-      <section aria-labelledby="pilihan" className="border-t border-line-subtle py-16 lg:py-24">
+      <section aria-labelledby="pilihan" className="pb-24 lg:pb-40">
         <div className="container-page">
           <h2 className="text-h2 text-navy-950" id="pilihan">
             Pilihan pelaksanaan
           </h2>
           <Reveal className="mt-10">
-            <ul className="grid gap-4 md:grid-cols-3 lg:gap-6">
+            <ul className="grid gap-6 md:grid-cols-3 lg:gap-6">
               {options.map(({ icon: Icon, text, title }) => (
                 <li
                   className="flex flex-col gap-3 rounded-card border border-line-subtle p-5 md:p-6"
@@ -127,7 +127,7 @@ export default async function InHousePage({ searchParams }: PageProps) {
             </ul>
           </Reveal>
 
-          <div className="mt-16 grid gap-6 lg:grid-cols-12">
+          <div className="mt-24 lg:mt-32 grid gap-6 lg:grid-cols-12">
             <h2 className="text-h3 text-navy-950 lg:col-span-4">Yang bisa disesuaikan</h2>
             <ul className="grid gap-x-6 gap-y-3 md:grid-cols-2 lg:col-span-8">
               {adjustments.map((item) => (
@@ -140,7 +140,7 @@ export default async function InHousePage({ searchParams }: PageProps) {
         </div>
       </section>
 
-      <section aria-labelledby="proses" className="bg-paper py-16 lg:py-24">
+      <section aria-labelledby="proses" className="bg-paper py-24 md:py-32 lg:py-40">
         <div className="container-page">
           <h2 className="text-h2 text-navy-950" id="proses">
             Bagaimana prosesnya
@@ -161,7 +161,7 @@ export default async function InHousePage({ searchParams }: PageProps) {
         </div>
       </section>
 
-      <section aria-labelledby="contoh" className="container-page py-16 lg:py-24">
+      <section aria-labelledby="contoh" className="container-page py-24 md:py-32 lg:py-40">
         <h2 className="text-h2 text-navy-950" id="contoh">
           Contoh kegiatan
         </h2>
@@ -192,7 +192,7 @@ export default async function InHousePage({ searchParams }: PageProps) {
         </div>
       </section>
 
-      <section aria-labelledby="formulir-judul" className="bg-paper py-16 lg:py-24">
+      <section aria-labelledby="formulir-judul" className="bg-paper py-24 md:py-32 lg:py-40">
         <div className="container-page grid gap-10 lg:grid-cols-12 lg:gap-6">
           <div className="lg:col-span-4">
             <h2

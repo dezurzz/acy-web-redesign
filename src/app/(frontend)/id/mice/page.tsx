@@ -1,8 +1,7 @@
 import { MessageCircle } from 'lucide-react'
 import type { Metadata } from 'next'
 
-import { PageIntro } from '@/components/site/PageIntro'
-import { PhotoFrame } from '@/components/site/PhotoFrame'
+import { PageHero } from '@/components/site/PageHero'
 import { Reveal } from '@/components/site/Reveal'
 import { Button } from '@/components/ui/button'
 import { TextLink } from '@/components/ui/text-link'
@@ -42,29 +41,20 @@ export default async function MicePage() {
   )
 
   return (
-    <div className="pt-8 pb-16 lg:pb-24">
-      <div className="container-page grid gap-10 lg:grid-cols-12 lg:items-end lg:gap-6">
-        <div className="lg:col-span-7">
-          <PageIntro
-            eyebrow="Meetings, incentives, conferences, exhibitions"
-            intro="BKI Academy membantu menyelenggarakan seminar, lokakarya, dan pertemuan bertema maritim, dengan materi dan pembicara dari lingkungan BKI."
-            title="Layanan MICE"
-          />
-        </div>
-        <PhotoFrame
-          alt="Seminar maritim yang diselenggarakan BKI Academy"
-          className="aspect-4/3 lg:col-span-5"
-          placeholderLabel="Foto acara menyusul (B-05)"
-          priority
-        />
-      </div>
+    <>
+      <PageHero
+        breadcrumbs={[{ href: '/id', label: 'Beranda' }, { label: 'Layanan MICE' }]}
+        intro="BKI Academy membantu menyelenggarakan seminar, lokakarya, dan pertemuan bertema maritim, dengan materi dan pembicara dari lingkungan BKI."
+        label="Meetings, incentives, conferences, exhibitions"
+        title="Layanan MICE"
+      />
 
       <section aria-labelledby="layanan" className="container-page mt-16">
         <h2 className="text-h2 text-navy-950" id="layanan">
           Yang bisa kami bantu
         </h2>
         <Reveal className="mt-8">
-          <ul className="grid gap-4 md:grid-cols-3 lg:gap-6">
+          <ul className="grid gap-6 md:grid-cols-3 lg:gap-6">
             {services.map((service) => (
               <li className="rounded-card border border-line-subtle p-5 md:p-6" key={service.title}>
                 <h3 className="text-h3 text-navy-950">{service.title}</h3>
@@ -102,6 +92,7 @@ export default async function MicePage() {
           <TextLink href="/id/in-house">In-house Training</TextLink>.
         </p>
       </section>
-    </div>
+      <div aria-hidden className="h-16 lg:h-24" />
+    </>
   )
 }

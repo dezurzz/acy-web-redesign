@@ -9,7 +9,8 @@ import './globals.css'
 // Inter, self-hosted by next/font at build time (design.md §5).
 const inter = Inter({
   subsets: ['latin'],
-  weight: ['400', '500', '600'],
+  // 300 for the light display and H1 type (design.md §5, v1.3).
+  weight: ['300', '400', '500', '600'],
   display: 'swap',
   variable: '--font-inter',
 })
@@ -40,7 +41,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Lewati ke konten utama
         </a>
         <SiteHeader />
-        <main className="flex-1" id="konten-utama">
+        {/* pt reserves room for the fixed header; an atmosphere hero pulls itself back under it. */}
+        <main className="flex-1 pt-(--header-height)" id="konten-utama">
           {children}
         </main>
         <SiteFooter />

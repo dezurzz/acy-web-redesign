@@ -24,7 +24,7 @@ export function MobileMenu() {
     <Dialog.Root>
       <Dialog.Trigger asChild>
         <button
-          className="inline-flex min-h-11 items-center gap-2 rounded-control border border-line-control px-4 text-ui font-semibold text-navy-950 transition-colors duration-(--motion-fast) hover:bg-blue-50 lg:hidden"
+          className="inline-flex min-h-11 items-center gap-2 rounded-control border border-(--hdr-muted) px-4 text-ui font-semibold text-(--hdr-fg) transition-colors duration-(--motion-fast) hover:bg-(--hdr-hover) lg:hidden"
           type="button"
         >
           <Menu aria-hidden className="size-5" />

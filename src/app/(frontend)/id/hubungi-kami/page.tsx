@@ -12,7 +12,8 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import type React from 'react'
 
-import { PageIntro } from '@/components/site/PageIntro'
+import { Paren } from '@/components/site/Atmosphere'
+import { PageHero } from '@/components/site/PageHero'
 import { Button } from '@/components/ui/button'
 import { FeedbackPanel } from '@/components/ui/feedback-panel'
 import { whatsappUrl } from '@/lib/registration'
@@ -61,99 +62,111 @@ export default async function ContactPage() {
   )
 
   return (
-    <div className="container-page pt-8 pb-16 lg:pb-24">
-      <PageIntro
+    <>
+      <PageHero
+        breadcrumbs={[{ href: '/id', label: 'Beranda' }, { label: 'Hubungi Kami' }]}
         intro="Pilih keperluan Anda agar kami bisa membantu lebih cepat, atau hubungi kami langsung."
+        label="Kontak"
         title="Hubungi Kami"
+        aside={
+          <>
+            <p className="text-meta text-white/80">
+              <Paren>Jam layanan</Paren>
+            </p>
+            <p className="text-h3 text-white">{siteSettings.serviceHours}</p>
+            <p className="numeric text-ui text-white/85">WhatsApp {siteSettings.whatsappDisplay}</p>
+          </>
+        }
       />
-
-      <section aria-labelledby="keperluan" className="mt-12">
-        <h2 className="text-h3 text-navy-950" id="keperluan">
-          Apa keperluan Anda?
-        </h2>
-        <ul className="mt-6 grid gap-4 md:grid-cols-3 lg:gap-6">
-          {routes.map(({ action, href, icon: Icon, text, title }) => (
-            <li
-              className="flex flex-col gap-3 rounded-card border border-line-subtle p-5 md:p-6"
-              key={title}
-            >
-              <Icon aria-hidden className="size-6 text-blue-600" />
-              <h3 className="text-ui font-semibold text-navy-950">{title}</h3>
-              <p className="text-body text-navy-800">{text}</p>
-              <Link
-                className="mt-auto inline-flex min-h-11 items-center text-ui font-semibold text-blue-600 underline underline-offset-4 hover:text-blue-800"
-                href={href}
-              >
-                {action}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section
-        aria-labelledby="kontak-langsung"
-        className="mt-16 grid gap-10 lg:grid-cols-12 lg:gap-6"
-      >
-        <div className="lg:col-span-5">
-          <h2 className="text-h2 text-navy-950" id="kontak-langsung">
-            Kontak langsung
+      <div className="container-page pt-8 pb-24 lg:pt-12 lg:pb-40">
+        <section aria-labelledby="keperluan">
+          <h2 className="text-h3 text-navy-950" id="keperluan">
+            Apa keperluan Anda?
           </h2>
-          <p className="mt-4 text-body text-navy-800">
-            Pertanyaan lain tentang pelatihan, biaya, atau jadwal. Sebutkan nama pelatihan atau kode
-            jadwal bila ada.
-          </p>
-          <div className="mt-6">
-            <Button asChild>
-              <a href={whatsappHref} rel="noopener" target="_blank">
-                <MessageCircle aria-hidden />
-                Chat lewat WhatsApp
-                <span className="sr-only"> (membuka WhatsApp di jendela baru)</span>
-              </a>
-            </Button>
-          </div>
-          {siteSettings.isPlaceholder ? (
-            <FeedbackPanel className="mt-8" title="Kontak masih contoh" tone="warning">
-              Nomor, email, dan alamat di halaman ini belum resmi dan belum dapat dihubungi.
-            </FeedbackPanel>
-          ) : null}
-        </div>
+          <ul className="mt-6 grid gap-6 md:grid-cols-3 lg:gap-6">
+            {routes.map(({ action, href, icon: Icon, text, title }) => (
+              <li
+                className="flex flex-col gap-3 rounded-card border border-line-subtle p-5 md:p-6"
+                key={title}
+              >
+                <Icon aria-hidden className="size-6 text-blue-600" />
+                <h3 className="text-ui font-semibold text-navy-950">{title}</h3>
+                <p className="text-body text-navy-800">{text}</p>
+                <Link
+                  className="mt-auto inline-flex min-h-11 items-center text-ui font-semibold text-blue-600 underline underline-offset-4 hover:text-blue-800"
+                  href={href}
+                >
+                  {action}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
 
-        <dl className="grid gap-px overflow-hidden rounded-card border border-line-subtle bg-line-subtle md:grid-cols-2 lg:col-span-7">
-          <Contact icon={MessageCircle} label="WhatsApp">
-            <span className="numeric">{siteSettings.whatsappDisplay}</span>
-          </Contact>
-          <Contact icon={Phone} label="Telepon">
-            <a
-              className="numeric underline underline-offset-4 hover:text-blue-600"
-              href={`tel:${siteSettings.phoneHref}`}
-            >
-              {siteSettings.phone}
-            </a>
-          </Contact>
-          <Contact icon={Mail} label="Email">
-            <a
-              className="break-all underline underline-offset-4 hover:text-blue-600"
-              href={`mailto:${siteSettings.email}`}
-            >
-              {siteSettings.email}
-            </a>
-          </Contact>
-          <Contact icon={Clock} label="Jam layanan">
-            {siteSettings.serviceHours}
-          </Contact>
-          <Contact className="md:col-span-2" icon={MapPin} label="Alamat">
-            <address className="not-italic">
-              {siteSettings.address.map((line) => (
-                <span className="block" key={line}>
-                  {line}
-                </span>
-              ))}
-            </address>
-          </Contact>
-        </dl>
-      </section>
-    </div>
+        <section
+          aria-labelledby="kontak-langsung"
+          className="mt-24 lg:mt-32 grid gap-10 lg:grid-cols-12 lg:gap-6"
+        >
+          <div className="lg:col-span-5">
+            <h2 className="text-h2 text-navy-950" id="kontak-langsung">
+              Kontak langsung
+            </h2>
+            <p className="mt-4 text-body text-navy-800">
+              Pertanyaan lain tentang pelatihan, biaya, atau jadwal. Sebutkan nama pelatihan atau
+              kode jadwal bila ada.
+            </p>
+            <div className="mt-6">
+              <Button asChild>
+                <a href={whatsappHref} rel="noopener" target="_blank">
+                  <MessageCircle aria-hidden />
+                  Chat lewat WhatsApp
+                  <span className="sr-only"> (membuka WhatsApp di jendela baru)</span>
+                </a>
+              </Button>
+            </div>
+            {siteSettings.isPlaceholder ? (
+              <FeedbackPanel className="mt-8" title="Kontak masih contoh" tone="warning">
+                Nomor, email, dan alamat di halaman ini belum resmi dan belum dapat dihubungi.
+              </FeedbackPanel>
+            ) : null}
+          </div>
+
+          <dl className="grid gap-px overflow-hidden rounded-card border border-line-subtle bg-line-subtle md:grid-cols-2 lg:col-span-7">
+            <Contact icon={MessageCircle} label="WhatsApp">
+              <span className="numeric">{siteSettings.whatsappDisplay}</span>
+            </Contact>
+            <Contact icon={Phone} label="Telepon">
+              <a
+                className="numeric underline underline-offset-4 hover:text-blue-600"
+                href={`tel:${siteSettings.phoneHref}`}
+              >
+                {siteSettings.phone}
+              </a>
+            </Contact>
+            <Contact icon={Mail} label="Email">
+              <a
+                className="break-all underline underline-offset-4 hover:text-blue-600"
+                href={`mailto:${siteSettings.email}`}
+              >
+                {siteSettings.email}
+              </a>
+            </Contact>
+            <Contact icon={Clock} label="Jam layanan">
+              {siteSettings.serviceHours}
+            </Contact>
+            <Contact className="md:col-span-2" icon={MapPin} label="Alamat">
+              <address className="not-italic">
+                {siteSettings.address.map((line) => (
+                  <span className="block" key={line}>
+                    {line}
+                  </span>
+                ))}
+              </address>
+            </Contact>
+          </dl>
+        </section>
+      </div>
+    </>
   )
 }
 

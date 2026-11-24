@@ -2,8 +2,7 @@ import { ShieldCheck } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-import { PageIntro } from '@/components/site/PageIntro'
-import { PhotoFrame } from '@/components/site/PhotoFrame'
+import { PageHero } from '@/components/site/PageHero'
 import { Reveal } from '@/components/site/Reveal'
 import { Button, ButtonArrow } from '@/components/ui/button'
 import { TextLink } from '@/components/ui/text-link'
@@ -39,22 +38,13 @@ const ways = [
 export default async function AboutPage() {
   const { categories } = await loadSiteData()
   return (
-    <div className="pt-8 pb-16 lg:pb-24">
-      <div className="container-page grid gap-10 lg:grid-cols-12 lg:items-end lg:gap-6">
-        <div className="lg:col-span-7">
-          <PageIntro
-            eyebrow="Tentang BKI Academy"
-            intro="BKI Academy adalah divisi pelatihan PT Biro Klasifikasi Indonesia (Persero). Kami menyelenggarakan pelatihan maritim untuk profesional di kapal, di galangan, dan di kantor perusahaan pelayaran."
-            title="Tentang Kami"
-          />
-        </div>
-        <PhotoFrame
-          alt="Kegiatan pelatihan BKI Academy"
-          className="aspect-4/3 lg:col-span-5"
-          placeholderLabel="Foto kegiatan BKI Academy menyusul (B-05)"
-          priority
-        />
-      </div>
+    <>
+      <PageHero
+        breadcrumbs={[{ href: '/id', label: 'Beranda' }, { label: 'Tentang Kami' }]}
+        intro="BKI Academy adalah divisi pelatihan PT Biro Klasifikasi Indonesia (Persero). Kami menyelenggarakan pelatihan maritim untuk profesional di kapal, di galangan, dan di kantor perusahaan pelayaran."
+        label="Tentang BKI Academy"
+        title="Tentang Kami"
+      />
 
       <section
         aria-labelledby="bagian-bki"
@@ -76,7 +66,7 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      <section aria-labelledby="bidang" className="mt-16 bg-paper py-16 lg:py-20">
+      <section aria-labelledby="bidang" className="mt-24 lg:mt-32 bg-paper py-16 lg:py-20">
         <div className="container-page">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <h2 className="text-h2 text-navy-950" id="bidang">
@@ -144,6 +134,7 @@ export default async function AboutPage() {
           </Link>
         </Button>
       </section>
-    </div>
+      <div aria-hidden className="h-16 lg:h-24" />
+    </>
   )
 }

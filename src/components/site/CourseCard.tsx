@@ -39,7 +39,7 @@ export function CourseCard({
   return (
     <article
       className={cn(
-        'group/card flex h-full flex-col gap-4 rounded-card border border-line-subtle bg-white p-5 transition-colors duration-(--motion-fast) ease-(--ease-standard) hover:border-blue-600 focus-within:border-blue-600 md:p-6',
+        'group/card flex h-full flex-col gap-5 rounded-card border border-line-subtle bg-white p-6 transition-colors duration-(--motion-fast) ease-(--ease-standard) hover:border-blue-600 focus-within:border-blue-600 md:p-8',
         className,
       )}
     >

@@ -6,7 +6,8 @@ import { CatalogueLoadMore } from '@/components/catalogue/CatalogueLoadMore'
 import { CatalogueProvider, ResultsRegion } from '@/components/catalogue/CatalogueProvider'
 import { ScheduleFilterBar } from '@/components/catalogue/ScheduleFilterBar'
 import { SessionRow } from '@/components/site/SessionRow'
-import { Breadcrumbs } from '@/components/ui/breadcrumbs'
+import { Paren } from '@/components/site/Atmosphere'
+import { PageHero } from '@/components/site/PageHero'
 import { Button } from '@/components/ui/button'
 import { FeedbackPanel } from '@/components/ui/feedback-panel'
 import { TextLink } from '@/components/ui/text-link'
@@ -42,16 +43,23 @@ export default async function SchedulePage({ searchParams }: PageProps) {
 
   return (
     <CatalogueProvider>
-      <div className="container-page pt-8 pb-16 lg:pb-24">
-        <Breadcrumbs items={[{ href: '/id', label: 'Beranda' }, { label: 'Jadwal' }]} />
-        <header className="mt-6 max-w-3xl">
-          <h1 className="text-h1 text-navy-950">Jadwal pelatihan</h1>
-          <p className="mt-4 text-intro text-navy-800">
-            Sesi yang akan datang, diurutkan dari yang paling dekat. Semua waktu dalam WIB.
-          </p>
-        </header>
-
-        <div className="mt-10">
+      <PageHero
+        aside={
+          <>
+            <p className="text-meta text-white/80">
+              <Paren>Waktu</Paren>
+            </p>
+            <p className="text-h3 text-white">Semua jadwal dalam WIB</p>
+            <p className="text-ui text-white/85">Diurutkan dari yang paling dekat</p>
+          </>
+        }
+        breadcrumbs={[{ href: '/id', label: 'Beranda' }, { label: 'Jadwal' }]}
+        intro="Sesi pelatihan yang akan datang. Pilih jadwal, lalu ajukan pendaftaran lewat WhatsApp."
+        label="Jadwal"
+        title="Jadwal pelatihan"
+      />
+      <div className="container-page pt-8 pb-24 lg:pt-12 lg:pb-40">
+        <div>
           <ScheduleFilterBar filters={filters} options={options} />
         </div>
 

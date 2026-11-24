@@ -1,4 +1,3 @@
-import { Clock, Monitor, Tag } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -6,14 +5,15 @@ import type React from 'react'
 
 import { MobileCtaBar } from '@/components/course/MobileCtaBar'
 import { SESSION_PANEL_ID, SessionPanel } from '@/components/course/SessionPanel'
+import { Paren } from '@/components/site/Atmosphere'
 import { CourseCard } from '@/components/site/CourseCard'
+import { PageHero } from '@/components/site/PageHero'
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
-import { Breadcrumbs } from '@/components/ui/breadcrumbs'
 import { Button, ButtonArrow } from '@/components/ui/button'
 import { TextLink } from '@/components/ui/text-link'
 import { toCatalogueItem } from '@/lib/catalogue'
@@ -51,52 +51,63 @@ export default async function CourseDetailPage({ params }: PageProps) {
 
   return (
     <>
+      {/* Poster-style hero, like BKI Academy's course posters: name large, full name in
+          parentheses, next date and place pinned on the right (design.md §4D, v1.3). */}
+      <PageHero
+        actions={
+          <Button asChild className="hidden lg:inline-flex" variant="secondary">
+            <Link href={`#${SESSION_PANEL_ID}`}>
+              {nextSession ? 'Pilih Jadwal' : 'Tanyakan Jadwal'}
+              <ButtonArrow />
+            </Link>
+          </Button>
+        }
+        aside={
+          <>
+            <p className="text-meta text-white/80">
+              <Paren>{nextSession ? 'Jadwal berikutnya' : 'Jadwal'}</Paren>
+            </p>
+            <p className="numeric text-h3 text-white">{nextSession ?? 'Belum tersedia'}</p>
+            {sessions[0] ? (
+              <p className="text-ui text-white/85">
+                {sessions[0].format} · {sessions[0].venue}
+              </p>
+            ) : null}
+            <dl className="mt-2 grid grid-cols-2 gap-4 border-t border-white/25 pt-4 text-meta">
+              <div>
+                <dt className="text-white/70">Durasi</dt>
+                <dd className="mt-1 text-ui text-white">{course.duration || '—'}</dd>
+              </div>
+              <div>
+                <dt className="text-white/70">Format</dt>
+                <dd className="mt-1 text-ui text-white">{course.formats.join(' · ')}</dd>
+              </div>
+            </dl>
+          </>
+        }
+        breadcrumbs={[
+          { href: '/id', label: 'Beranda' },
+          { href: '/id/pelatihan', label: 'Pelatihan' },
+          { href: `/id/pelatihan?topik=${category.slug}`, label: category.name },
+          { label: course.title },
+        ]}
+        intro={
+          <>
+            {course.acronym ? (
+              <p className="text-ui text-white/85">
+                <Paren>{course.acronym}</Paren>
+              </p>
+            ) : null}
+            <p className={course.acronym ? 'mt-4' : undefined}>{course.outcome}</p>
+          </>
+        }
+        label={category.name}
+        title={course.title}
+      />
+
       {/* pb-28 reserves room for the fixed mobile CTA bar. */}
-      <div className="container-page pt-8 pb-28 lg:pb-24">
-        <Breadcrumbs
-          items={[
-            { href: '/id', label: 'Beranda' },
-            { href: '/id/pelatihan', label: 'Pelatihan' },
-            { href: `/id/pelatihan?topik=${category.slug}`, label: category.name },
-            { label: course.title },
-          ]}
-        />
-
-        <header className="mt-6 max-w-4xl">
-          <p className="eyebrow text-blue-600">{category.name}</p>
-          <h1 className="mt-3 text-h1 text-navy-950">{course.title}</h1>
-          {course.acronym ? <p className="mt-3 text-ui text-slate-600">{course.acronym}</p> : null}
-          <p className="mt-5 max-w-[60ch] text-intro text-navy-800">{course.outcome}</p>
-
-          <dl className="mt-8 flex flex-wrap gap-x-10 gap-y-4">
-            <Fact
-              icon={<Clock aria-hidden className="size-5" />}
-              label="Durasi"
-              value={course.duration}
-            />
-            <Fact
-              icon={<Monitor aria-hidden className="size-5" />}
-              label="Format"
-              value={course.formats.join(' · ')}
-            />
-            <Fact
-              icon={<Tag aria-hidden className="size-5" />}
-              label="Jadwal berikutnya"
-              value={nextSession ?? 'Belum tersedia'}
-            />
-          </dl>
-
-          <div className="mt-8 hidden lg:block">
-            <Button asChild>
-              <Link href={`#${SESSION_PANEL_ID}`}>
-                {nextSession ? 'Pilih Jadwal' : 'Tanyakan Jadwal'}
-                <ButtonArrow />
-              </Link>
-            </Button>
-          </div>
-        </header>
-
-        <div className="mt-12 grid gap-12 lg:grid-cols-12 lg:gap-6">
+      <div className="container-page pt-4 pb-28 lg:pb-24">
+        <div className="grid gap-12 lg:grid-cols-12 lg:gap-6">
           <div className="lg:col-span-8 lg:pr-10">
             {/* Sections without CMS content are left out rather than shown empty. */}
             {detail.audience.length > 0 ? (
@@ -161,7 +172,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
         {related.length > 0 ? (
           <section
             aria-labelledby="pelatihan-terkait"
-            className="mt-16 border-t border-navy-800 pt-10"
+            className="mt-24 lg:mt-32 border-t border-navy-800 pt-10"
           >
             <div className="flex flex-wrap items-end justify-between gap-4">
               <h2 className="text-h2 text-navy-950" id="pelatihan-terkait">
@@ -171,7 +182,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
                 Semua pelatihan {category.name}
               </TextLink>
             </div>
-            <ul className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+            <ul className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
               {related.map((item) => (
                 <li key={item.slug}>
                   <CourseCard
@@ -192,18 +203,6 @@ export default async function CourseDetailPage({ params }: PageProps) {
 
       <MobileCtaBar nextSession={nextSession} />
     </>
-  )
-}
-
-function Fact({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
-  return (
-    <div className="flex items-start gap-3">
-      <span className="mt-0.5 text-blue-600">{icon}</span>
-      <div>
-        <dt className="text-meta text-slate-600">{label}</dt>
-        <dd className="numeric text-ui font-semibold text-navy-950">{value}</dd>
-      </div>
-    </div>
   )
 }
 

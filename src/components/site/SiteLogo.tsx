@@ -12,11 +12,11 @@ export function SiteLogo({ className, ...props }: Omit<React.ComponentProps<type
   return (
     <Link
       aria-label="BKI Academy, ke Beranda"
-      className={cn('inline-flex min-h-11 items-center', className)}
+      className={cn('inline-flex min-h-11 items-center', className ?? 'text-navy-950')}
       href="/id"
       {...props}
     >
-      <span className="text-ui font-semibold whitespace-nowrap text-navy-950">BKI Academy</span>
+      <span className="text-ui font-semibold whitespace-nowrap">BKI Academy</span>
     </Link>
   )
 }

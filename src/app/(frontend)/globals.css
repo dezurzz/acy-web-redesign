@@ -25,6 +25,10 @@
   --color-blue-600: #174bff;
   --color-blue-800: #143ac7;
   --color-cyan-400: #0bcde9;
+  /* Atmosphere (design.md §4D): the sky between electric blue and paper. */
+  --color-sky-500: #1e6fe0;
+  --color-sky-300: #5fb2ee;
+  --color-sky-100: #d3e9f7;
   --color-blue-50: #eef3ff;
   --color-white: #ffffff;
   --color-paper: #f6f8fb;
@@ -43,25 +47,25 @@
   /* Typography (design.md §5) */
   --font-sans: var(--font-inter), Arial, Helvetica, sans-serif;
 
-  --text-display: clamp(2.5rem, 1.2rem + 4vw, 5.5rem);
-  --text-display--line-height: 1.02;
-  --text-display--letter-spacing: -0.04em;
-  --text-display--font-weight: 500;
+  --text-display: clamp(2.75rem, 1.1rem + 5.2vw, 6.5rem);
+  --text-display--line-height: 0.98;
+  --text-display--letter-spacing: -0.045em;
+  --text-display--font-weight: 300;
 
   --text-h1: clamp(2.125rem, 1.25rem + 3vw, 4rem);
-  --text-h1--line-height: 1.08;
-  --text-h1--letter-spacing: -0.03em;
-  --text-h1--font-weight: 600;
+  --text-h1--line-height: 1.04;
+  --text-h1--letter-spacing: -0.035em;
+  --text-h1--font-weight: 300;
 
   --text-h2: clamp(1.75rem, 1.25rem + 1.5vw, 2.75rem);
-  --text-h2--line-height: 1.12;
-  --text-h2--letter-spacing: -0.025em;
-  --text-h2--font-weight: 600;
+  --text-h2--line-height: 1.1;
+  --text-h2--letter-spacing: -0.03em;
+  --text-h2--font-weight: 400;
 
   --text-h3: clamp(1.375rem, 1.2rem + 0.5vw, 1.75rem);
   --text-h3--line-height: 1.25;
-  --text-h3--letter-spacing: -0.015em;
-  --text-h3--font-weight: 600;
+  --text-h3--letter-spacing: -0.02em;
+  --text-h3--font-weight: 500;
 
   --text-intro: clamp(1.125rem, 1rem + 0.4vw, 1.25rem);
   --text-intro--line-height: 1.5;
@@ -108,6 +112,51 @@
     rgb(23 75 255 / 0) 68%
   );
   --gradient-soft: linear-gradient(135deg, #f6f8fb 0%, #eef3ff 100%);
+
+  /* D. Atmosphere (design.md §4D). Two parts so text never lands on the light end:
+     "deep" carries all text (navy to sky-500, white text >= 4.5:1 throughout),
+     "fade" is decoration only (sky-500 to the next section's background). */
+  --gradient-atmos-deep:
+    radial-gradient(70% 45% at 12% 0%, rgb(5 12 30 / 0.7), transparent 70%),
+    radial-gradient(50% 40% at 92% 18%, rgb(23 75 255 / 0.5), transparent 70%),
+    linear-gradient(180deg, #0c1a45 0%, #13308f 36%, #1a4fd0 64%, #1e6fe0 88%, #1e6fe0 100%);
+  --gradient-atmos-fade-white: linear-gradient(
+    180deg,
+    #1e6fe0 0%,
+    #3a8ee8 22%,
+    #7cc0f0 46%,
+    #cfe7f6 72%,
+    #ffffff 100%
+  );
+  --gradient-atmos-fade-paper: linear-gradient(
+    180deg,
+    #1e6fe0 0%,
+    #3a8ee8 22%,
+    #7cc0f0 46%,
+    #cfe7f6 72%,
+    #f6f8fb 100%
+  );
+  /* Photo band (In-house CTA): a big photo that dissolves into the deep blue on the text side.
+     "veil" sits over the photo: solid deep blue where the text is, thinning to a light blue tint
+     on the far side so the photo still reads as brand colour. */
+  --gradient-atmos-veil:
+    radial-gradient(45% 80% at 14% 40%, rgb(5 12 30 / 0.5), transparent 70%),
+    linear-gradient(
+      100deg,
+      #0c1a45 0%,
+      #0f2468 42%,
+      rgb(19 48 143 / 0.7) 54%,
+      rgb(26 79 208 / 0.3) 68%,
+      rgb(30 111 224 / 0.12) 100%
+    );
+  /* Phones: same idea top to bottom (text on top, photo shows below the buttons). */
+  --gradient-atmos-veil-down: linear-gradient(
+    180deg,
+    #0c1a45 0%,
+    #10276f 50%,
+    rgb(19 48 143 / 0.6) 66%,
+    rgb(26 79 208 / 0.2) 100%
+  );
 }
 
 /* ---------- shadcn/ui semantic variables (design.md §12) ---------- */
@@ -337,5 +386,53 @@
     transition:
       opacity var(--motion-reveal) var(--ease-enter),
       transform var(--motion-reveal) var(--ease-enter);
+  }
+}
+
+/* ---------- Atmosphere details (design.md §4D) ---------- */
+@layer components {
+  /* Film grain over atmospheric gradients. Static SVG noise; decorative only. */
+  .grain::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.22;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Site header: solid white by default; transparent with white text while it sits over an
+     atmosphere hero at the top of the page (progressive: browsers without :has keep it solid). */
+  .site-header {
+    --hdr-bg: var(--color-white);
+    --hdr-fg: var(--color-navy-950);
+    --hdr-muted: var(--color-navy-800);
+    --hdr-line: var(--color-line-subtle);
+    --hdr-active: var(--color-blue-600);
+    --hdr-hover: var(--color-blue-50);
+    background-color: var(--hdr-bg);
+    border-bottom: 1px solid var(--hdr-line);
+    transition:
+      background-color var(--motion-standard) var(--ease-standard),
+      border-color var(--motion-standard) var(--ease-standard);
+  }
+
+  body:has(#konten-utama > [data-hero]:first-child) .site-header:not([data-scrolled]) {
+    --hdr-bg: transparent;
+    --hdr-fg: var(--color-white);
+    --hdr-muted: rgb(255 255 255 / 0.88);
+    --hdr-line: rgb(255 255 255 / 0.18);
+    --hdr-active: var(--color-white);
+    --hdr-hover: rgb(255 255 255 / 0.12);
+  }
+
+  /* Focus on the transparent header uses the two-colour halo (design.md §7). */
+  body:has(#konten-utama > [data-hero]:first-child)
+    .site-header:not([data-scrolled])
+    :focus-visible {
+    outline: 3px solid var(--color-white);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 3px var(--color-navy-950);
   }
 }

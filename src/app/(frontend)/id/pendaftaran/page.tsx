@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import type React from 'react'
 
-import { Breadcrumbs } from '@/components/ui/breadcrumbs'
+import { PageHero } from '@/components/site/PageHero'
 import { Button, ButtonArrow } from '@/components/ui/button'
 import { FeedbackPanel } from '@/components/ui/feedback-panel'
 import { StatusBadge } from '@/components/ui/status-badge'
@@ -48,24 +48,28 @@ export default async function RegistrationPage({ searchParams }: PageProps) {
   const session = getRegistrationSession(id, sessions)
 
   return (
-    <div className="container-page pt-8 pb-16 lg:pb-24">
-      <Breadcrumbs
-        items={[
+    <>
+      <PageHero
+        breadcrumbs={[
           { href: '/id', label: 'Beranda' },
           { href: '/id/jadwal', label: 'Jadwal' },
           { label: 'Ajukan Pendaftaran' },
         ]}
+        intro="Pendaftaran dilanjutkan lewat WhatsApp. Admin mengonfirmasi kursi Anda."
+        label="Pendaftaran"
+        title="Ajukan pendaftaran"
       />
-      <div className="mt-8 max-w-4xl">
-        <StepIndicator current={1} steps={STEPS} />
-        <h1 className="mt-10 text-h1 text-navy-950">Ajukan pendaftaran</h1>
-        {session ? (
-          <Handoff session={session} sessions={sessions} settings={siteSettings} />
-        ) : (
-          <NoSession hadId={Boolean(id)} />
-        )}
+      <div className="container-page pt-8 pb-24 lg:pt-12 lg:pb-40">
+        <div className="max-w-4xl">
+          <StepIndicator current={1} steps={STEPS} />
+          {session ? (
+            <Handoff session={session} sessions={sessions} settings={siteSettings} />
+          ) : (
+            <NoSession hadId={Boolean(id)} />
+          )}
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 

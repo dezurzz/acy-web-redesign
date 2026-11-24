@@ -51,7 +51,7 @@ export function SessionRow(props: SessionRowProps) {
   return (
     <article
       className={cn(
-        'grid grid-cols-[4.5rem_minmax(0,1fr)] gap-x-4 gap-y-3 border-b border-line-subtle bg-white py-5 md:grid-cols-[5.5rem_minmax(0,1fr)_12rem_13rem] md:items-start md:gap-x-6',
+        'grid grid-cols-[4.5rem_minmax(0,1fr)] gap-x-4 gap-y-3 border-b border-line-subtle bg-white py-7 md:py-8 md:grid-cols-[5.5rem_minmax(0,1fr)_12rem_13rem] md:items-start md:gap-x-6',
         className,
       )}
     >

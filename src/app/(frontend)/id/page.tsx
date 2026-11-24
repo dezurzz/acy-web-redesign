@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 
+import { Atmosphere, Hairline, Paren } from '@/components/site/Atmosphere'
 import { PhotoFrame } from '@/components/site/PhotoFrame'
 import { Reveal } from '@/components/site/Reveal'
 import { SessionRow } from '@/components/site/SessionRow'
@@ -8,6 +10,8 @@ import { Button, ButtonArrow } from '@/components/ui/button'
 import { FeedbackPanel } from '@/components/ui/feedback-panel'
 import { TextLink } from '@/components/ui/text-link'
 import { loadSiteData } from '@/lib/cms'
+import { formatDateRange } from '@/lib/format'
+import { categoryPhotos, stockPhotos } from '@/lib/stock-photos'
 import { upcomingSessions, type SiteCategory, type SiteSession } from '@/lib/site-data'
 
 // Reads live CMS content on every request, so published changes show immediately.
@@ -33,8 +37,9 @@ export default async function HomePage() {
 
   return (
     <>
-      <Hero />
+      <Hero next={sessions.find((session) => session.status === 'open') ?? sessions[0]} />
       <UpcomingSessions sessions={sessions} />
+      <PhotoBand />
       <Categories categories={data.categories} />
       <Reasons />
       <Corporate />
@@ -55,55 +60,92 @@ function SectionHeading({
 }) {
   return (
     <div className="max-w-3xl">
-      <p className="eyebrow text-slate-600">{eyebrow}</p>
-      <h2 className="mt-3 text-h2 text-navy-950" id={id}>
+      <p className="text-ui text-slate-600">
+        <Paren>{eyebrow}</Paren>
+      </p>
+      <h2 className="mt-5 text-h2 text-navy-950 md:text-h1" id={id}>
         {title}
       </h2>
-      {intro ? <p className="mt-4 text-intro text-slate-600">{intro}</p> : null}
+      {intro ? <p className="mt-6 text-intro text-slate-600">{intro}</p> : null}
     </div>
   )
 }
 
-function Hero() {
+/*
+ * Hero in the style of BKI Academy's own course posters (design.md §4D, v1.3): a large light
+ * headline on the atmosphere gradient, a hairline crosshair, and the next session pinned to the
+ * right like "Public Training - Jakarta / 21-23 Oktober 2026". Nothing here animates.
+ */
+function Hero({ next }: { next: SiteSession | undefined }) {
   return (
-    <section aria-labelledby="beranda-judul" className="container-page py-12">
-      <div className="grid gap-10 lg:grid-cols-12 lg:items-center lg:gap-6">
-        <div className="lg:col-span-7 lg:pr-8">
-          <p className="eyebrow text-blue-600">BKI Academy</p>
-          <h1 className="mt-4 text-display text-navy-950" id="beranda-judul">
-            Kompetensi maritim untuk langkah profesional berikutnya.
-          </h1>
-          <p className="mt-6 max-w-[60ch] text-intro text-navy-800">
-            Pelatihan keselamatan, keamanan, survei, dan pengelolaan kapal dari divisi pelatihan PT
-            Biro Klasifikasi Indonesia (Persero), untuk profesional maritim dan tim perusahaan.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Button asChild>
-              <Link href="/id/jadwal">
-                Lihat Jadwal
-                <ButtonArrow />
-              </Link>
-            </Button>
-            <Button asChild variant="secondary">
-              <Link href="/id/in-house">Pelatihan untuk Perusahaan</Link>
-            </Button>
-          </div>
+    <Atmosphere fadeHeight="lg" fadeTo="white" label="Pembuka">
+      <div className="container-page pt-16 pb-20 md:pt-24 lg:pb-28">
+        <div className="flex flex-wrap items-baseline justify-between gap-4 text-ui text-white/85">
+          <Paren>BKI Academy</Paren>
+          <span className="hidden md:inline">
+            <Paren>Divisi pelatihan PT Biro Klasifikasi Indonesia</Paren>
+          </span>
         </div>
-        <PhotoFrame
-          alt="Instruktur BKI Academy memandu peserta pelatihan di kelas"
-          className="aspect-4/3 lg:col-span-5 lg:aspect-4/5"
-          placeholderLabel="Satu foto pelatihan asli BKI Academy menyusul setelah izin foto (B-05)"
-          priority
-        />
+
+        <h1 className="mt-12 max-w-[17ch] text-display text-white md:mt-20" id="beranda-judul">
+          Kompetensi maritim untuk langkah profesional berikutnya.
+        </h1>
+
+        <Hairline className="mt-16 md:mt-24" mark />
+
+        <div className="grid gap-12 pt-12 lg:grid-cols-12 lg:gap-6">
+          <div className="lg:col-span-7">
+            <p className="max-w-[52ch] text-intro text-white/90">
+              Pelatihan keselamatan, keamanan, survei, dan pengelolaan kapal untuk profesional
+              maritim dan tim perusahaan.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
+              <Button asChild variant="secondary">
+                <Link href="/id/jadwal">
+                  Lihat Jadwal
+                  <ButtonArrow />
+                </Link>
+              </Button>
+              <TextLink href="/id/in-house" inverse>
+                Pelatihan untuk Perusahaan
+              </TextLink>
+            </div>
+          </div>
+
+          {next ? (
+            <div className="flex flex-col gap-2 border-t border-white/25 pt-6 lg:col-span-4 lg:col-start-9 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-6">
+              <p className="text-meta text-white/80">
+                <Paren>Jadwal terdekat</Paren>
+              </p>
+              <p className="text-h3 text-white">
+                <Link
+                  className="underline-offset-4 hover:underline"
+                  href={`/id/pelatihan/${next.courseSlug}`}
+                >
+                  {next.courseTitle}
+                </Link>
+              </p>
+              <p className="numeric text-ui text-white/90">
+                {formatDateRange(next.startDate, next.endDate)}
+              </p>
+              <p className="text-meta text-white/80">
+                {next.format} · {next.venue}
+              </p>
+            </div>
+          ) : null}
+        </div>
       </div>
-    </section>
+    </Atmosphere>
   )
 }
 
 function UpcomingSessions({ sessions }: { sessions: SiteSession[] }) {
   return (
-    <section aria-labelledby="beranda-jadwal" className="container-page pt-8 pb-16 lg:pb-24">
-      <div className="flex flex-wrap items-end justify-between gap-4 border-b border-navy-800 pb-6">
+    <section
+      aria-labelledby="beranda-jadwal"
+      className="container-page pt-20 pb-24 md:pt-24 lg:pb-40"
+    >
+      <div className="flex flex-wrap items-end justify-between gap-4 border-b border-navy-800 pb-10">
         <SectionHeading
           eyebrow="Jadwal terdekat"
           id="beranda-jadwal"
@@ -152,9 +194,45 @@ function UpcomingSessions({ sessions }: { sessions: SiteSession[] }) {
   )
 }
 
+/*
+ * Full-width photograph between the schedule and the categories: gives the page scale and a
+ * maritime feel. Headline in white over the photo overlay (design.md §4B), kept near the top on a
+ * dark backing. TEMPORARY stock photo (lib/stock-photos.ts) until BKI photos arrive (B-05).
+ */
+function PhotoBand() {
+  return (
+    <section
+      aria-labelledby="beranda-foto"
+      className="relative isolate overflow-hidden bg-navy-950 text-white"
+      data-surface="photo"
+    >
+      <div className="relative aspect-4/5 w-full md:aspect-video lg:aspect-21/9">
+        <Image
+          alt={stockPhotos.band.alt}
+          // Show the upper part of the photo so the ship sits low, clear of the headline.
+          className="object-cover object-[50%_8%]"
+          fill
+          sizes="100vw"
+          src={stockPhotos.band.src}
+        />
+        <div aria-hidden className="absolute inset-0 bg-(image:--gradient-photo)" />
+        <div aria-hidden className="grain pointer-events-none absolute inset-0" />
+        <div className="container-page relative pt-16 md:pt-24 lg:pt-28">
+          <p className="text-ui text-white/85">
+            <Paren>Dari kelas ke kapal</Paren>
+          </p>
+          <h2 className="mt-4 max-w-[18ch] text-h1 text-white md:text-display" id="beranda-foto">
+            Ilmu yang dipakai di laut, bukan hanya di kelas.
+          </h2>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function Categories({ categories }: { categories: SiteCategory[] }) {
   return (
-    <section aria-labelledby="beranda-kategori" className="bg-paper py-16 lg:py-24">
+    <section aria-labelledby="beranda-kategori" className="bg-paper py-24 md:py-32 lg:py-40">
       <div className="container-page">
         <SectionHeading
           eyebrow="Bidang pelatihan"
@@ -162,24 +240,34 @@ function Categories({ categories }: { categories: SiteCategory[] }) {
           intro="Pilih bidang untuk melihat semua pelatihan dan jadwalnya."
           title="Enam bidang, satu standar"
         />
-        <Reveal className="mt-10">
-          <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+        <Reveal className="mt-14 lg:mt-20">
+          <ul className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
             {categories.map((category) => (
               <li key={category.slug}>
-                <article className="group/cat flex h-full flex-col gap-3 rounded-card border border-line-subtle bg-white p-5 transition-colors duration-(--motion-fast) ease-(--ease-standard) focus-within:border-blue-600 hover:border-blue-600 md:p-6">
-                  <h3 className="text-h3 text-navy-950">
-                    <Link
-                      className="inline-flex items-center gap-2 decoration-2 underline-offset-4 transition-colors duration-(--motion-fast) group-hover/cat:text-blue-600 hover:underline"
-                      href={`/id/pelatihan?topik=${category.slug}`}
-                    >
-                      {category.name}
-                    </Link>
-                  </h3>
-                  <p className="text-body text-navy-800">{category.description}</p>
-                  <p className="mt-auto border-t border-line-subtle pt-3 text-meta text-slate-600">
-                    <span className="font-medium text-navy-800">Contoh: </span>
-                    {category.examples.join(' · ')}
-                  </p>
+                <article className="group/cat flex h-full flex-col gap-3 overflow-hidden rounded-card border border-line-subtle bg-white transition-colors duration-(--motion-fast) ease-(--ease-standard) focus-within:border-blue-600 hover:border-blue-600">
+                  {categoryPhotos[category.slug] ? (
+                    <PhotoFrame
+                      alt={categoryPhotos[category.slug]!.alt}
+                      className="aspect-3/2 rounded-none"
+                      sizes="(min-width: 1024px) 30vw, (min-width: 768px) 45vw, 100vw"
+                      src={categoryPhotos[category.slug]!.src}
+                    />
+                  ) : null}
+                  <div className="flex flex-1 flex-col gap-3 p-5 pt-2 md:p-6 md:pt-3">
+                    <h3 className="text-h3 text-navy-950">
+                      <Link
+                        className="inline-flex items-center gap-2 decoration-2 underline-offset-4 transition-colors duration-(--motion-fast) group-hover/cat:text-blue-600 hover:underline"
+                        href={`/id/pelatihan?topik=${category.slug}`}
+                      >
+                        {category.name}
+                      </Link>
+                    </h3>
+                    <p className="text-body text-navy-800">{category.description}</p>
+                    <p className="mt-auto border-t border-line-subtle pt-3 text-meta text-slate-600">
+                      <span className="font-medium text-navy-800">Contoh: </span>
+                      {category.examples.join(' · ')}
+                    </p>
+                  </div>
                 </article>
               </li>
             ))}
@@ -208,52 +296,79 @@ const reasons = [
 
 function Reasons() {
   return (
-    <section aria-labelledby="beranda-alasan" className="container-page py-16 lg:py-24">
-      <div className="grid gap-10 lg:grid-cols-12 lg:gap-6">
-        <div className="lg:col-span-4">
+    <section aria-labelledby="beranda-alasan" className="container-page py-24 md:py-32 lg:py-40">
+      <div className="grid gap-10 lg:grid-cols-12 lg:items-center lg:gap-6">
+        {/* TEMPORARY stock photo (lib/stock-photos.ts) until BKI photos arrive (B-05). */}
+        <PhotoFrame
+          alt={stockPhotos.why.alt}
+          className="aspect-4/3 lg:col-span-5 lg:aspect-4/5"
+          sizes="(min-width: 1024px) 40vw, 100vw"
+          src={stockPhotos.why.src}
+        />
+        <div className="lg:col-span-6 lg:col-start-7">
           <SectionHeading
             eyebrow="Mengapa BKI Academy"
             id="beranda-alasan"
             title="Belajar dari badan klasifikasi"
           />
+          <Reveal className="mt-12 lg:mt-16">
+            <ol>
+              {reasons.map((reason, index) => (
+                <li
+                  className="grid grid-cols-[4rem_minmax(0,1fr)] gap-x-4 border-t border-navy-950 py-8"
+                  key={reason.title}
+                >
+                  <span aria-hidden className="numeric text-h2 text-blue-600">
+                    0{index + 1}
+                  </span>
+                  <div>
+                    <h3 className="text-ui font-semibold text-navy-950">{reason.title}</h3>
+                    <p className="mt-2 text-body text-navy-800">{reason.text}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </Reveal>
         </div>
-        <Reveal className="lg:col-span-8">
-          <ol className="grid gap-8 md:grid-cols-3 md:gap-6">
-            {reasons.map((reason, index) => (
-              <li className="border-t-2 border-navy-950 pt-5" key={reason.title}>
-                <p aria-hidden className="numeric text-meta font-semibold text-blue-600">
-                  0{index + 1}
-                </p>
-                <h3 className="mt-3 text-ui font-semibold text-navy-950">{reason.title}</h3>
-                <p className="mt-2 text-body text-navy-800">{reason.text}</p>
-              </li>
-            ))}
-          </ol>
-        </Reveal>
       </div>
     </section>
   )
 }
 
 function Corporate() {
+  const photo = stockPhotos.cta
   return (
-    // Solid navy on compact screens so white text never lands on the cyan end of the gradient
-    // (design.md §4A); the brand gradient appears from 1024 px, with copy kept in the navy half.
+    // Photo band (design.md §4D): a big ship photo dissolving into the deep blue. The veil is
+    // solid deep blue under the text (white text >= 4.5:1), so only the far side shows the photo.
     <section
       aria-labelledby="beranda-inhouse"
-      className="bg-navy-950 text-white lg:bg-(image:--gradient-brand)"
+      className="relative isolate overflow-hidden bg-[#0c1a45] text-white"
       data-surface="brand"
     >
-      <div className="container-page py-16 lg:py-24">
-        <Reveal className="grid gap-10 lg:grid-cols-12 lg:gap-6">
+      <Image
+        alt=""
+        className="-z-10 object-cover object-[50%_70%] lg:left-auto! lg:w-[72%]! lg:object-[50%_40%]"
+        fill
+        sizes="(min-width: 1024px) 72vw, 100vw"
+        src={photo.src}
+      />
+      <div
+        aria-hidden
+        className="absolute inset-0 -z-10 bg-(image:--gradient-atmos-veil-down) lg:bg-(image:--gradient-atmos-veil)"
+      />
+      <div aria-hidden className="grain pointer-events-none absolute inset-0 -z-10" />
+      <div className="container-page relative pt-28 pb-72 md:pt-36 md:pb-80 lg:py-44">
+        <Reveal className="grid gap-12 lg:grid-cols-12 lg:gap-6">
           <div className="lg:col-span-6">
-            <p className="eyebrow text-cyan-400">Untuk perusahaan</p>
-            <h2 className="mt-3 text-h2" id="beranda-inhouse">
-              Pelatihan in-house untuk tim Anda
+            <p className="text-ui text-white/85">
+              <Paren>Untuk perusahaan</Paren>
+            </p>
+            <h2 className="mt-5 text-h1 md:text-display" id="beranda-inhouse">
+              In-house untuk tim Anda
             </h2>
-            <p className="mt-4 max-w-[55ch] text-intro text-line-subtle">
-              Materi disesuaikan dengan armada, prosedur, dan jadwal perusahaan Anda. Dilaksanakan
-              di lokasi Anda atau secara online.
+            <p className="mt-6 max-w-[48ch] text-intro text-white/90">
+              Materi disesuaikan dengan armada, prosedur, dan jadwal perusahaan Anda. Di lokasi Anda
+              atau secara online.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
               <Button asChild variant="secondary">
@@ -267,26 +382,6 @@ function Corporate() {
               </TextLink>
             </div>
           </div>
-          <ol className="flex flex-col gap-4 self-end lg:col-span-5 lg:col-start-8">
-            {[
-              'Sampaikan kebutuhan pelatihan',
-              'Kami susun materi dan jadwal',
-              'Pelatihan berjalan di tempat Anda',
-            ].map((step, index) => (
-              <li
-                className="flex items-center gap-4 rounded-card bg-navy-950/70 p-4 text-ui font-medium"
-                key={step}
-              >
-                <span
-                  aria-hidden
-                  className="numeric flex size-8 shrink-0 items-center justify-center rounded-full border border-cyan-400 text-meta text-cyan-400"
-                >
-                  {index + 1}
-                </span>
-                {step}
-              </li>
-            ))}
-          </ol>
         </Reveal>
       </div>
     </section>

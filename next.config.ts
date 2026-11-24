@@ -13,6 +13,8 @@ const nextConfig: NextConfig = {
         pathname: '/api/media/file/**',
       },
     ],
+    // TEMPORARY stock photos (src/lib/stock-photos.ts) until BKI's own photos arrive (B-05).
+    remotePatterns: [{ protocol: 'https', hostname: 'images.unsplash.com', pathname: '/photo-*' }],
   },
   webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {
