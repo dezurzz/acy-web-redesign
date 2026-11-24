@@ -9,7 +9,7 @@ import { Breadcrumbs } from '@/components/ui/breadcrumbs'
 import { Button, ButtonArrow } from '@/components/ui/button'
 import { TextLink } from '@/components/ui/text-link'
 import { whatsappUrl } from '@/lib/registration'
-import { siteSettings } from '@/lib/site-settings'
+import { loadSiteSettings } from '@/lib/cms'
 
 export const metadata: Metadata = {
   title: 'In-house Training',
@@ -65,6 +65,7 @@ const steps = [
  * D-12 keeps the website form at launch; if it changes, the form becomes a WhatsApp/email handoff.
  */
 export default async function InHousePage({ searchParams }: PageProps) {
+  const siteSettings = await loadSiteSettings()
   const simulasi = (await searchParams).simulasi
   const whatsappHref = whatsappUrl(
     siteSettings.whatsappNumber,

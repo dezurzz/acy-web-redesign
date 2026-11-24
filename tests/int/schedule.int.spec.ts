@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest'
 
 import { parseFilters } from '@/lib/catalogue'
+import { sampleSiteData as data } from '@/lib/sample-data'
 import { searchSchedule } from '@/lib/schedule'
 
 const NOW = new Date('2026-11-19T00:00:00+07:00')
 const run = (params: Record<string, string | string[]>, now = NOW) =>
-  searchSchedule(parseFilters(params), now)
+  searchSchedule(parseFilters(params), data, now)
 const ids = (params: Record<string, string | string[]>, now = NOW) =>
   run(params, now).groups.flatMap((g) => g.sessions.map((s) => s.id))
 

@@ -1,6 +1,7 @@
 /*
  * Catalogue search and filters (PRD §6 Catalogue and schedule, AC-03).
- * Pure functions so the rules can be unit-tested and later reused with Payload data.
+ * Pure functions: they take the site's content as input, so the same rules run on CMS data
+ * (lib/cms.ts) and on the sample data in tests.
  *
  * URL parameters (shareable, survive the back button):
  *   q       search text: matches title, expanded acronym and aliases
@@ -12,15 +13,6 @@
  * Different groups combine with AND; several choices in one group combine with OR.
  * Month and location must be satisfied by the same session.
  */
-import { formatDateRange } from '@/lib/format'
-import {
-  sampleCategories,
-  sampleCourses,
-  sampleSessions,
-  type SampleCourse,
-  type SampleSession,
-} from '@/lib/sample-data'
-
 import {
   PAGE_SIZE,
   formatFilterOptions,
@@ -28,11 +20,13 @@ import {
   toQuery,
   type CatalogueFilters,
 } from '@/lib/catalogue-query'
+import { formatDateRange } from '@/lib/format'
+import { futureSessions, type SiteCourse, type SiteData, type SiteSession } from '@/lib/site-data'
 
 export * from '@/lib/catalogue-query'
 
-/** "Zoom" sessions count as Online. */
-export const sessionLocation = (session: SampleSession) =>
+/** Live online sessions count as "Online", whatever the platform name. */
+export const sessionLocation = (session: SiteSession) =>
   session.format === 'Live online' ? 'Online' : session.venue
 
 export const monthKey = (iso: string) =>
@@ -45,32 +39,25 @@ export const monthLabel = (key: string) =>
     new Date(`${key}-01T00:00:00Z`),
   )
 
-/** Sessions a visitor can still act on or plan around. */
-export function futureSessions(now: Date) {
-  return sampleSessions
-    .filter((s) => s.status !== 'cancelled' && s.status !== 'completed')
-    .filter((s) => new Date(s.startDate) >= now)
-    .sort((a, b) => a.startDate.localeCompare(b.startDate))
-}
-
-export function filterOptions(now = new Date()) {
-  const sessions = futureSessions(now)
+export function filterOptions(data: SiteData, now = new Date()) {
+  const sessions = futureSessions(data.sessions, now)
   const months = [...new Set(sessions.map((s) => monthKey(s.startDate)))]
   const locations = [...new Set(sessions.map(sessionLocation))].sort((a, b) =>
     a === 'Online' ? 1 : b === 'Online' ? -1 : a.localeCompare(b),
   )
 
   return {
-    topik: sampleCategories.map((c) => ({ value: c.slug, label: c.name })),
+    topik: data.categories.map((c) => ({ value: c.slug, label: c.name })),
     format: formatFilterOptions,
     bulan: months.map((key) => ({ value: key, label: monthLabel(key) })),
     lokasi: locations.map((label) => ({ value: slugify(label), label })),
   }
 }
 
-const normalise = (text: string) => text.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+/** Lowercase and strip accents, so "Kelaikan" and "kélaikan" match. */
+const normalise = (text: string) => text.toLowerCase().normalize('NFD').replace(/\p{M}/gu, '')
 
-export function matchesSearch(course: SampleCourse, q: string) {
+export function matchesSearch(course: SiteCourse, q: string) {
   if (!q) return true
   const haystack = normalise([course.title, course.acronym, ...(course.aliases ?? [])].join(' '))
   // Every word must appear somewhere, so "auditor ism" finds "Internal Auditor ISM Code".
@@ -79,12 +66,26 @@ export function matchesSearch(course: SampleCourse, q: string) {
     .every((word) => haystack.includes(word))
 }
 
-export type CatalogueItem = SampleCourse & { categoryName: string; nextSession: string | null }
+export type CatalogueItem = SiteCourse & { categoryName: string; nextSession: string | null }
 
-export function searchCatalogue(filters: CatalogueFilters, now = new Date()) {
-  const sessions = futureSessions(now)
+/** A course with its category name and next session, as shown on course cards. */
+export function toCatalogueItem(
+  course: SiteCourse,
+  data: SiteData,
+  now = new Date(),
+): CatalogueItem {
+  const next = futureSessions(data.sessions, now).find((s) => s.courseSlug === course.slug)
+  return {
+    ...course,
+    categoryName: data.categories.find((c) => c.slug === course.categorySlug)?.name ?? '',
+    nextSession: next ? formatDateRange(next.startDate, next.endDate) : null,
+  }
+}
 
-  const matches = sampleCourses.filter((course) => {
+export function searchCatalogue(filters: CatalogueFilters, data: SiteData, now = new Date()) {
+  const sessions = futureSessions(data.sessions, now)
+
+  const matches = data.courses.filter((course) => {
     if (!matchesSearch(course, filters.q)) return false
     if (filters.topik.length && !filters.topik.includes(course.categorySlug)) return false
     if (filters.format.length && !course.formats.some((f) => filters.format.includes(slugify(f))))
@@ -101,21 +102,13 @@ export function searchCatalogue(filters: CatalogueFilters, now = new Date()) {
     return true
   })
 
-  const items: CatalogueItem[] = matches.map((course) => {
-    const next = sessions.find((s) => s.courseSlug === course.slug)
-    return {
-      ...course,
-      categoryName: sampleCategories.find((c) => c.slug === course.categorySlug)?.name ?? '',
-      nextSession: next ? formatDateRange(next.startDate, next.endDate) : null,
-    }
-  })
-
+  const items = matches.map((course) => toCatalogueItem(course, data, now))
   return { total: items.length, items: items.slice(0, filters.tampil) }
 }
 
 /** Active filters as removable chips; each chip links to the URL without that value. */
-export function activeFilterChips(filters: CatalogueFilters, now = new Date()) {
-  const options = filterOptions(now)
+export function activeFilterChips(filters: CatalogueFilters, data: SiteData, now = new Date()) {
+  const options = filterOptions(data, now)
   const label = (group: keyof typeof options, value: string) =>
     options[group].find((o) => o.value === value)?.label ?? value
   const base = { ...filters, tampil: PAGE_SIZE }

@@ -7,7 +7,7 @@ import { Reveal } from '@/components/site/Reveal'
 import { Button } from '@/components/ui/button'
 import { TextLink } from '@/components/ui/text-link'
 import { whatsappUrl } from '@/lib/registration'
-import { siteSettings } from '@/lib/site-settings'
+import { loadSiteSettings } from '@/lib/cms'
 
 export const metadata: Metadata = {
   title: 'Layanan MICE',
@@ -34,7 +34,8 @@ const services = [
  * only, never from the main navigation. Describes the service and offers a contact route.
  * Copy is DRAFT and needs the business owner's confirmation of what MICE covers (AC-09).
  */
-export default function MicePage() {
+export default async function MicePage() {
+  const siteSettings = await loadSiteSettings()
   const whatsappHref = whatsappUrl(
     siteSettings.whatsappNumber,
     'Halo BKI Academy, saya ingin bertanya tentang layanan MICE.',

@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 
 import { LegalPage, Pending, type LegalSection } from '@/components/site/LegalPage'
-import { siteSettings } from '@/lib/site-settings'
+import { loadSiteSettings } from '@/lib/cms'
+import type { SiteSettings } from '@/lib/site-settings'
 
 export const metadata: Metadata = {
   title: 'Kebijakan Privasi',
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
 
 // DRAFT based on what the site actually does (PRD §4, §8.6, D-06, D-10). Needs review by the
 // data/privacy owner and BKI's legal function before launch. This is not legal advice.
-const sections: LegalSection[] = [
+const sections = (siteSettings: SiteSettings): LegalSection[] => [
   {
     id: 'pengelola',
     title: 'Pengelola situs',
@@ -105,12 +106,13 @@ const sections: LegalSection[] = [
   },
 ]
 
-export default function PrivacyPage() {
+export default async function PrivacyPage() {
+  const siteSettings = await loadSiteSettings()
   return (
     <LegalPage
       draft="Teks ini menjelaskan cara kerja situs dan belum ditinjau pemilik data serta bagian hukum BKI. Bagian bertanda kuning menunggu keputusan."
       intro="Data apa yang dikumpulkan situs ini, untuk apa, dan bagaimana menghubungi kami tentang data Anda."
-      sections={sections}
+      sections={sections(siteSettings)}
       title="Kebijakan Privasi"
       updated="24 November 2026"
     />

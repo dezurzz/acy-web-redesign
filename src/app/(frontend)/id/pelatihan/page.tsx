@@ -18,6 +18,10 @@ import {
   searchCatalogue,
   toQuery,
 } from '@/lib/catalogue'
+import { loadSiteData } from '@/lib/cms'
+
+// Reads live CMS content on every request, so published changes show immediately.
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'Pelatihan',
@@ -30,13 +34,14 @@ type PageProps = { searchParams: Promise<Record<string, string | string[] | unde
  * Pelatihan catalogue (PRD §6 Catalogue, wireframe /wireframes/pelatihan).
  * Stable courses, not dated batches. Filters and search live in the URL (AC-03).
  * Motion (design.md §7.1): low. Card border/title 160 ms, filter drawer 220/140 ms, no reveals.
- * Data comes from src/lib/sample-data.ts until Build Sprint 1.
+ * Content comes from the CMS (lib/cms.ts); the filter rules are in lib/catalogue.ts.
  */
 export default async function CataloguePage({ searchParams }: PageProps) {
   const filters = parseFilters(await searchParams)
-  const options = filterOptions()
-  const { items, total } = searchCatalogue(filters)
-  const chips = activeFilterChips(filters)
+  const data = await loadSiteData()
+  const options = filterOptions(data)
+  const { items, total } = searchCatalogue(filters, data)
+  const chips = activeFilterChips(filters, data)
   const filterCount =
     filters.topik.length + filters.format.length + filters.lokasi.length + (filters.bulan ? 1 : 0)
   const filterKey = toQuery({ ...filters, tampil: 0 })

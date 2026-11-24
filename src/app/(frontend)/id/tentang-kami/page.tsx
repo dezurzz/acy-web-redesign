@@ -7,7 +7,10 @@ import { PhotoFrame } from '@/components/site/PhotoFrame'
 import { Reveal } from '@/components/site/Reveal'
 import { Button, ButtonArrow } from '@/components/ui/button'
 import { TextLink } from '@/components/ui/text-link'
-import { sampleCategories } from '@/lib/sample-data'
+import { loadSiteData } from '@/lib/cms'
+
+// Reads live CMS content on every request, so published changes show immediately.
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'Tentang Kami',
@@ -33,7 +36,8 @@ const ways = [
  * Pengajar sits under Tentang Kami once it goes live (D-11, hidden at launch).
  * Motion: low. Image hover, one reveal for the training areas. Copy is DRAFT (AC-09).
  */
-export default function AboutPage() {
+export default async function AboutPage() {
+  const { categories } = await loadSiteData()
   return (
     <div className="pt-8 pb-16 lg:pb-24">
       <div className="container-page grid gap-10 lg:grid-cols-12 lg:items-end lg:gap-6">
@@ -84,7 +88,7 @@ export default function AboutPage() {
           </div>
           <Reveal className="mt-8">
             <ul className="grid gap-x-6 gap-y-2 md:grid-cols-2 lg:grid-cols-3">
-              {sampleCategories.map((category) => (
+              {categories.map((category) => (
                 <li className="border-t border-line-control py-4" key={category.slug}>
                   <Link
                     className="text-ui font-semibold text-navy-950 underline-offset-4 hover:text-blue-600 hover:underline"

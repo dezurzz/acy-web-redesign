@@ -5,28 +5,27 @@
  * session code. The applicant types their personal details in the chat, never in a URL.
  */
 import { formatDateRange } from '@/lib/format'
-import { sampleSessions, type SampleSession } from '@/lib/sample-data'
+import type { SiteSession } from '@/lib/site-data'
 
-export type RegistrationSession = SampleSession & {
+export type RegistrationSession = Omit<SiteSession, 'deadline'> & {
   dates: string
-  deadline: string
+  /** Formatted deadline, or null when staff did not set one. */
+  deadline: string | null
   hasStarted: boolean
 }
 
-const DAY = 24 * 60 * 60 * 1000
-
 export function getRegistrationSession(
   id: string | undefined,
+  sessions: SiteSession[],
   now = new Date(),
 ): RegistrationSession | null {
   if (!id) return null
-  const session = sampleSessions.find((s) => s.id === id)
+  const session = sessions.find((s) => s.id === id.trim().toUpperCase())
   if (!session) return null
   return {
     ...session,
     dates: formatDateRange(session.startDate, session.endDate),
-    // Sample rule: registration closes 7 days before the start. Payload stores the real deadline.
-    deadline: formatDateRange(new Date(new Date(session.startDate).getTime() - 7 * DAY)),
+    deadline: session.deadline ? formatDateRange(session.deadline) : null,
     hasStarted: new Date(session.startDate) < now,
   }
 }
@@ -64,8 +63,12 @@ export function whatsappUrl(number: string, message: string) {
 }
 
 /** Other open sessions of the same course, for the "not available" state. */
-export function alternativeSessions(session: RegistrationSession, now = new Date()) {
-  return sampleSessions
+export function alternativeSessions(
+  session: RegistrationSession,
+  sessions: SiteSession[],
+  now = new Date(),
+) {
+  return sessions
     .filter((s) => s.courseSlug === session.courseSlug && s.id !== session.id)
     .filter((s) => s.status === 'open' && new Date(s.startDate) >= now)
     .sort((a, b) => a.startDate.localeCompare(b.startDate))

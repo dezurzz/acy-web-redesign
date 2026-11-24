@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 import { MotionToggle } from '@/components/site/MotionToggle'
-import { siteSettings } from '@/lib/site-settings'
+import { loadSiteSettings } from '@/lib/cms'
 
 const columns = [
   {
@@ -36,7 +36,8 @@ const columns = [
  * Contacts come from Site settings and are marked "contoh" while they are placeholders (D-05).
  * Affiliation logos wait for the approved files and order (B-01).
  */
-export function SiteFooter() {
+export async function SiteFooter() {
+  const siteSettings = await loadSiteSettings()
   const year = new Date().getFullYear()
 
   return (

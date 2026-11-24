@@ -6,7 +6,8 @@ import { canEditContent, publishedOrContentStaff } from '../access/roles'
 import { formatOptions, sessionStatusOptions } from '../lib/options'
 
 const relationId = (value: unknown): number | string | undefined => {
-  if (value && typeof value === 'object' && 'id' in value) return (value as { id: number | string }).id
+  if (value && typeof value === 'object' && 'id' in value)
+    return (value as { id: number | string }).id
   if (typeof value === 'number' || typeof value === 'string') return value
   return undefined
 }
@@ -29,7 +30,10 @@ const validateSession: CollectionBeforeValidateHook = async ({ data, req, origin
       message: 'Batas pendaftaran harus sebelum tanggal mulai.',
     })
   }
-  if (merged.feePolicy === 'fixed' && (merged.fee === undefined || merged.fee === null || merged.fee <= 0)) {
+  if (
+    merged.feePolicy === 'fixed' &&
+    (merged.fee === undefined || merged.fee === null || merged.fee <= 0)
+  ) {
     errors.push({ path: 'fee', message: 'Isi biaya, atau pilih “Hubungi kami untuk biaya”.' })
   }
   if (merged.registrationStatus === 'postponed' && !merged.postponementMessage) {
@@ -62,13 +66,25 @@ const validateSession: CollectionBeforeValidateHook = async ({ data, req, origin
   return data
 }
 
+// Public session code (PRD §7): staff may type one; otherwise generate JDW-XXXX on create.
+const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789' // no 0/O or 1/I, easy to read aloud
+const assignCode: CollectionBeforeValidateHook = ({ data, operation }) => {
+  if (!data) return data
+  if (typeof data.code === 'string') data.code = data.code.trim().toUpperCase()
+  if (operation === 'create' && !data.code) {
+    const bytes = crypto.getRandomValues(new Uint8Array(4))
+    data.code = `JDW-${Array.from(bytes, (b) => CODE_CHARS[b % CODE_CHARS.length]).join('')}`
+  }
+  return data
+}
+
 // PRD §7 Session: one dated run of a course.
 export const Sessions: CollectionConfig = {
   slug: 'sessions',
   labels: { singular: 'Jadwal', plural: 'Jadwal' },
   admin: {
     useAsTitle: 'batchLabel',
-    defaultColumns: ['batchLabel', 'course', 'startDate', 'registrationStatus', '_status'],
+    defaultColumns: ['code', 'batchLabel', 'course', 'startDate', 'registrationStatus', '_status'],
     group: 'Pelatihan',
   },
   defaultSort: 'startDate',
@@ -80,7 +96,7 @@ export const Sessions: CollectionConfig = {
     delete: canEditContent,
   },
   hooks: {
-    beforeValidate: [validateSession],
+    beforeValidate: [assignCode, validateSession],
     beforeChange: [onlyPublishersCanPublish],
   },
   fields: [
@@ -91,6 +107,18 @@ export const Sessions: CollectionConfig = {
       relationTo: 'courses',
       required: true,
       index: true,
+    },
+    {
+      name: 'code',
+      label: 'Kode jadwal',
+      type: 'text',
+      unique: true,
+      index: true,
+      admin: {
+        position: 'sidebar',
+        description:
+          'Kode publik di pesan WhatsApp dan tautan pendaftaran, contoh JDW-0308. Kosongkan untuk dibuat otomatis.',
+      },
     },
     {
       name: 'batchLabel',
@@ -131,7 +159,13 @@ export const Sessions: CollectionConfig = {
     {
       type: 'row',
       fields: [
-        { name: 'format', label: 'Format', type: 'select', required: true, options: [...formatOptions] },
+        {
+          name: 'format',
+          label: 'Format',
+          type: 'select',
+          required: true,
+          options: [...formatOptions],
+        },
         {
           name: 'venue',
           label: 'Lokasi / platform',

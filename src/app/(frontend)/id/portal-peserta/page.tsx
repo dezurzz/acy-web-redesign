@@ -12,7 +12,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { TextLink } from '@/components/ui/text-link'
 import { whatsappUrl } from '@/lib/registration'
-import { siteSettings } from '@/lib/site-settings'
+import { loadSiteSettings } from '@/lib/cms'
 
 export const metadata: Metadata = {
   title: 'Portal Peserta',
@@ -40,7 +40,8 @@ const help = [
  * the site, and appear only once the destination is confirmed and tested (Site settings).
  * Motion: card hover, FAQ accordion, one optional reveal for the service cards.
  */
-export default function PortalPage() {
+export default async function PortalPage() {
+  const siteSettings = await loadSiteSettings()
   const whatsappHref = whatsappUrl(
     siteSettings.whatsappNumber,
     'Halo BKI Academy, saya peserta dan ingin menanyakan status pendaftaran saya. Kode jadwal: ',

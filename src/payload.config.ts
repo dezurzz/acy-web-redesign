@@ -10,6 +10,7 @@ import { Courses } from './collections/Courses'
 import { Media } from './collections/Media'
 import { Sessions } from './collections/Sessions'
 import { Users } from './collections/Users'
+import { SiteSettings } from './globals/SiteSettings'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -31,6 +32,7 @@ export default buildConfig({
     },
   },
   collections: [Courses, Sessions, Categories, Media, Users],
+  globals: [SiteSettings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

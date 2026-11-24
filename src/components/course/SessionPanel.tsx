@@ -113,11 +113,13 @@ function SelectedSession({ session }: { session: PanelSession }) {
             <dd className="text-ui text-navy-800">{FEE_ON_REQUEST}</dd>
           )}
         </div>
-        <div className="flex items-start gap-2">
-          <dt className="sr-only">Batas pendaftaran</dt>
-          <CalendarClock aria-hidden className="mt-0.5 size-4 shrink-0 text-slate-600" />
-          <dd className="numeric">Daftar paling lambat {session.deadline}</dd>
-        </div>
+        {session.deadline ? (
+          <div className="flex items-start gap-2">
+            <dt className="sr-only">Batas pendaftaran</dt>
+            <CalendarClock aria-hidden className="mt-0.5 size-4 shrink-0 text-slate-600" />
+            <dd className="numeric">Daftar paling lambat {session.deadline}</dd>
+          </div>
+        ) : null}
         <div className="flex items-start gap-2">
           <dt className="sr-only">Lokasi</dt>
           <MapPin aria-hidden className="mt-0.5 size-4 shrink-0 text-slate-600" />

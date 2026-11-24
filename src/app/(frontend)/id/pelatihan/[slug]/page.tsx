@@ -16,17 +16,17 @@ import {
 import { Breadcrumbs } from '@/components/ui/breadcrumbs'
 import { Button, ButtonArrow } from '@/components/ui/button'
 import { TextLink } from '@/components/ui/text-link'
-import { courseSlugs, getCourse } from '@/lib/course'
-import { searchCatalogue, parseFilters } from '@/lib/catalogue'
+import { toCatalogueItem } from '@/lib/catalogue'
+import { loadSiteData } from '@/lib/cms'
+import { getCourse } from '@/lib/course'
 
 type PageProps = { params: Promise<{ slug: string }> }
 
-export function generateStaticParams() {
-  return courseSlugs().map((slug) => ({ slug }))
-}
+// Reads live CMS content on every request, so session status and fees are always current (AC-02).
+export const dynamic = 'force-dynamic'
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const data = getCourse((await params).slug)
+  const data = getCourse((await params).slug, await loadSiteData())
   if (!data) return { title: 'Pelatihan tidak ditemukan' }
   return { title: data.course.title, description: data.course.outcome }
 }
@@ -39,14 +39,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
  * Certificate text stays short: certificate tracking lives in BKI's separate system (D-04).
  */
 export default async function CourseDetailPage({ params }: PageProps) {
-  const data = getCourse((await params).slug)
+  const site = await loadSiteData()
+  const data = getCourse((await params).slug, site)
   if (!data) notFound()
 
   const { category, course, detail, sessions } = data
   const nextSession = sessions[0]?.dates ?? null
-  const related = searchCatalogue(parseFilters({ tampil: '200' })).items.filter((c) =>
-    detail.related.includes(c.slug),
-  )
+  const related = site.courses
+    .filter((c) => detail.related.includes(c.slug))
+    .map((c) => toCatalogueItem(c, site))
 
   return (
     <>
@@ -97,43 +98,56 @@ export default async function CourseDetailPage({ params }: PageProps) {
 
         <div className="mt-12 grid gap-12 lg:grid-cols-12 lg:gap-6">
           <div className="lg:col-span-8 lg:pr-10">
-            <Block title="Untuk siapa">
-              <List items={detail.audience} />
-            </Block>
-            <Block title="Yang akan Anda kuasai">
-              <List items={detail.outcomes} />
-            </Block>
-            <Block title="Silabus">
-              <Accordion type="multiple">
-                {detail.syllabus.map((day) => (
-                  <AccordionItem key={day.title} value={day.title}>
-                    <AccordionTrigger>{day.title}</AccordionTrigger>
-                    <AccordionContent>
-                      <List items={day.items} />
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </Block>
+            {/* Sections without CMS content are left out rather than shown empty. */}
+            {detail.audience.length > 0 ? (
+              <Block title="Untuk siapa">
+                <List items={detail.audience} />
+              </Block>
+            ) : null}
+            {detail.outcomes.length > 0 ? (
+              <Block title="Yang akan Anda kuasai">
+                <List items={detail.outcomes} />
+              </Block>
+            ) : null}
+            {detail.syllabus.length > 0 ? (
+              <Block title="Silabus">
+                <Accordion type="multiple">
+                  {detail.syllabus.map((day) => (
+                    <AccordionItem key={day.title} value={day.title}>
+                      <AccordionTrigger>{day.title}</AccordionTrigger>
+                      <AccordionContent>
+                        <List items={day.items} />
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </Block>
+            ) : null}
             <Block title="Prasyarat">
               <p>{detail.prerequisites}</p>
             </Block>
-            <Block title="Metode pembelajaran">
-              <p>{detail.method}</p>
-            </Block>
-            <Block title="Sertifikat">
-              <p>{detail.certificate}</p>
-            </Block>
-            <Block title="Pertanyaan umum">
-              <Accordion type="multiple">
-                {detail.faqs.map((faq) => (
-                  <AccordionItem key={faq.question} value={faq.question}>
-                    <AccordionTrigger>{faq.question}</AccordionTrigger>
-                    <AccordionContent>{faq.answer}</AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </Block>
+            {detail.method ? (
+              <Block title="Metode pembelajaran">
+                <p>{detail.method}</p>
+              </Block>
+            ) : null}
+            {detail.certificate ? (
+              <Block title="Sertifikat">
+                <p>{detail.certificate}</p>
+              </Block>
+            ) : null}
+            {detail.faqs.length > 0 ? (
+              <Block title="Pertanyaan umum">
+                <Accordion type="multiple">
+                  {detail.faqs.map((faq) => (
+                    <AccordionItem key={faq.question} value={faq.question}>
+                      <AccordionTrigger>{faq.question}</AccordionTrigger>
+                      <AccordionContent>{faq.answer}</AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </Block>
+            ) : null}
           </div>
 
           <aside aria-label="Jadwal dan pendaftaran" className="lg:col-span-4">

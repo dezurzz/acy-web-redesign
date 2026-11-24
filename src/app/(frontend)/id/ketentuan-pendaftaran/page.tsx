@@ -2,7 +2,8 @@ import type { Metadata } from 'next'
 
 import { LegalPage, Pending, type LegalSection } from '@/components/site/LegalPage'
 import { TextLink } from '@/components/ui/text-link'
-import { siteSettings } from '@/lib/site-settings'
+import { loadSiteSettings } from '@/lib/cms'
+import type { SiteSettings } from '@/lib/site-settings'
 
 export const metadata: Metadata = {
   title: 'Ketentuan Pendaftaran',
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
 }
 
 // DRAFT built from decisions D-01, D-03, D-04 and D-06. Needs business-owner approval (AC-09).
-const sections: LegalSection[] = [
+const sections = (siteSettings: SiteSettings): LegalSection[] => [
   {
     id: 'permintaan',
     title: 'Pendaftaran adalah permintaan',
@@ -106,12 +107,13 @@ const sections: LegalSection[] = [
   },
 ]
 
-export default function RegistrationTermsPage() {
+export default async function RegistrationTermsPage() {
+  const siteSettings = await loadSiteSettings()
   return (
     <LegalPage
       draft="Teks ini disusun dari keputusan proyek dan belum disetujui pemilik bisnis. Bagian bertanda kuning menunggu keputusan."
       intro="Cara pendaftaran pelatihan BKI Academy berjalan, dari permintaan sampai konfirmasi kursi."
-      sections={sections}
+      sections={sections(siteSettings)}
       title="Ketentuan Pendaftaran"
       updated="24 November 2026"
     />

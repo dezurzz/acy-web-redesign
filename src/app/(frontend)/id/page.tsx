@@ -7,7 +7,11 @@ import { SessionRow } from '@/components/site/SessionRow'
 import { Button, ButtonArrow } from '@/components/ui/button'
 import { FeedbackPanel } from '@/components/ui/feedback-panel'
 import { TextLink } from '@/components/ui/text-link'
-import { sampleCategories, upcomingSessions } from '@/lib/sample-data'
+import { loadSiteData } from '@/lib/cms'
+import { upcomingSessions, type SiteCategory, type SiteSession } from '@/lib/site-data'
+
+// Reads live CMS content on every request, so published changes show immediately.
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: { absolute: 'BKI Academy | Pelatihan Maritim Profesional' },
@@ -21,16 +25,17 @@ export const metadata: Metadata = {
  * Pengajar and Insight sections are left out until those pages go live (decision D-11).
  * Motion (design.md §7.1): hero, CTAs and session rows never animate; one-time reveals only for
  * the Kategori, Mengapa BKI Academy and In-house groups.
- * Copy is DRAFT and needs content-owner approval before launch (AC-09). Sessions are sample data.
+ * Copy is DRAFT and needs content-owner approval before launch (AC-09). Sessions and categories come from the CMS.
  */
-export default function HomePage() {
-  const sessions = upcomingSessions(5)
+export default async function HomePage() {
+  const data = await loadSiteData()
+  const sessions = upcomingSessions(data.sessions, 5)
 
   return (
     <>
       <Hero />
       <UpcomingSessions sessions={sessions} />
-      <Categories />
+      <Categories categories={data.categories} />
       <Reasons />
       <Corporate />
     </>
@@ -95,7 +100,7 @@ function Hero() {
   )
 }
 
-function UpcomingSessions({ sessions }: { sessions: ReturnType<typeof upcomingSessions> }) {
+function UpcomingSessions({ sessions }: { sessions: SiteSession[] }) {
   return (
     <section aria-labelledby="beranda-jadwal" className="container-page pt-8 pb-16 lg:pb-24">
       <div className="flex flex-wrap items-end justify-between gap-4 border-b border-navy-800 pb-6">
@@ -147,7 +152,7 @@ function UpcomingSessions({ sessions }: { sessions: ReturnType<typeof upcomingSe
   )
 }
 
-function Categories() {
+function Categories({ categories }: { categories: SiteCategory[] }) {
   return (
     <section aria-labelledby="beranda-kategori" className="bg-paper py-16 lg:py-24">
       <div className="container-page">
@@ -159,7 +164,7 @@ function Categories() {
         />
         <Reveal className="mt-10">
           <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
-            {sampleCategories.map((category) => (
+            {categories.map((category) => (
               <li key={category.slug}>
                 <article className="group/cat flex h-full flex-col gap-3 rounded-card border border-line-subtle bg-white p-5 transition-colors duration-(--motion-fast) ease-(--ease-standard) focus-within:border-blue-600 hover:border-blue-600 md:p-6">
                   <h3 className="text-h3 text-navy-950">

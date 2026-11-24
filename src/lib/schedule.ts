@@ -5,7 +5,6 @@
  * cancelled and completed sessions never appear (completed ones belong in an archive).
  */
 import {
-  futureSessions,
   matchesSearch,
   monthKey,
   monthLabel,
@@ -13,13 +12,13 @@ import {
   slugify,
   type CatalogueFilters,
 } from '@/lib/catalogue'
-import { sampleCourses, type SampleSession } from '@/lib/sample-data'
+import { futureSessions, type SiteData, type SiteSession } from '@/lib/site-data'
 
-export type ScheduleGroup = { key: string; label: string; sessions: SampleSession[] }
+export type ScheduleGroup = { key: string; label: string; sessions: SiteSession[] }
 
-export function searchSchedule(filters: CatalogueFilters, now = new Date()) {
-  const matches = futureSessions(now).filter((session) => {
-    const course = sampleCourses.find((c) => c.slug === session.courseSlug)
+export function searchSchedule(filters: CatalogueFilters, data: SiteData, now = new Date()) {
+  const matches = futureSessions(data.sessions, now).filter((session) => {
+    const course = data.courses.find((c) => c.slug === session.courseSlug)
     if (!course) return false
     if (!matchesSearch(course, filters.q)) return false
     if (filters.topik.length && !filters.topik.includes(course.categorySlug)) return false

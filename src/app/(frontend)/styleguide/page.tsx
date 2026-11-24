@@ -21,6 +21,7 @@ import { StatusBadge, type SessionDisplayStatus } from '@/components/ui/status-b
 import { StepIndicator } from '@/components/ui/step-indicator'
 import { TextLink } from '@/components/ui/text-link'
 import { getCourse } from '@/lib/course'
+import { sampleSiteData } from '@/lib/sample-data'
 
 import { ErrorSummaryDemo, LoadMoreDemo } from './demos'
 
@@ -434,7 +435,9 @@ export default function StyleguidePage() {
           Pendaftaran. Kanan: tanpa jadwal.
         </p>
         <div className="grid items-start gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <SessionPanel sessions={getCourse('internal-auditor-ism-code')?.sessions ?? []} />
+          <SessionPanel
+            sessions={getCourse('internal-auditor-ism-code', sampleSiteData)?.sessions ?? []}
+          />
           <SessionPanel sessions={[]} />
         </div>
       </Section>

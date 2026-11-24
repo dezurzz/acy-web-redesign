@@ -46,8 +46,12 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'site-settings': SiteSetting;
+  };
+  globalsSelect: {
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -97,87 +101,57 @@ export interface Course {
    * Untuk peta redirect dari situs lama.
    */
   legacyOdooId?: string | null;
+  /**
+   * Satu kalimat manfaat utama. Tampil di kartu dan di bawah judul.
+   */
   summary: string;
-  outcomes?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  audience?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
+  /**
+   * Satu kelompok peserta per baris.
+   */
+  audience?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Satu hasil belajar per baris.
+   */
+  outcomes?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
   /**
    * Contoh: 3 hari
    */
   duration?: string | null;
   formats: ('in-person' | 'live-online' | 'self-paced')[];
-  syllabus?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  prerequisites?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  deliveryMethod?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
+  /**
+   * Biasanya satu bagian per hari. Tampil sebagai akordeon.
+   */
+  syllabus?:
+    | {
+        /**
+         * Contoh: Hari 1: Dasar ISM Code
+         */
+        title: string;
+        /**
+         * Satu topik per baris.
+         */
+        topics: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Kosongkan jika tidak ada prasyarat khusus.
+   */
+  prerequisites?: string | null;
+  deliveryMethod?: string | null;
+  /**
+   * Satu kalimat. Jangan menulis klaim pengakuan yang belum diverifikasi (D-04).
+   */
   certificateWording?: string | null;
   faqs?:
     | {
@@ -237,6 +211,10 @@ export interface Media {
 export interface Session {
   id: number;
   course: number | Course;
+  /**
+   * Kode publik di pesan WhatsApp dan tautan pendaftaran, contoh JDW-0308. Kosongkan untuk dibuat otomatis.
+   */
+  code?: string | null;
   /**
    * Contoh: ISPS Batch 70. Hanya metadata pendukung.
    */
@@ -397,11 +375,27 @@ export interface CoursesSelect<T extends boolean = true> {
   category?: T;
   legacyOdooId?: T;
   summary?: T;
-  outcomes?: T;
-  audience?: T;
+  audience?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  outcomes?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
   duration?: T;
   formats?: T;
-  syllabus?: T;
+  syllabus?:
+    | T
+    | {
+        title?: T;
+        topics?: T;
+        id?: T;
+      };
   prerequisites?: T;
   deliveryMethod?: T;
   certificateWording?: T;
@@ -425,6 +419,7 @@ export interface CoursesSelect<T extends boolean = true> {
  */
 export interface SessionsSelect<T extends boolean = true> {
   course?: T;
+  code?: T;
   batchLabel?: T;
   startDate?: T;
   startDate_tz?: T;
@@ -543,6 +538,55 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  /**
+   * Centang setelah setiap nomor, email, dan alamat diuji (D-05). Selama belum dicentang, situs menampilkan peringatan bahwa kontak masih contoh.
+   */
+  contactsConfirmed?: boolean | null;
+  /**
+   * Nomor untuk pendaftaran dan pertanyaan. Boleh ditulis 0812… atau +62 812…; disimpan sebagai 62812….
+   */
+  whatsappNumber: string;
+  /**
+   * Tulis seperti yang dibaca pengunjung, contoh (021) 1234-5678.
+   */
+  phone: string;
+  email: string;
+  /**
+   * Contoh: Senin–Jumat, 08.00–16.00 WIB
+   */
+  serviceHours: string;
+  /**
+   * Satu baris alamat per baris.
+   */
+  address: string;
+  portalUrl?: string | null;
+  certificateUrl?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  contactsConfirmed?: T;
+  whatsappNumber?: T;
+  phone?: T;
+  email?: T;
+  serviceHours?: T;
+  address?: T;
+  portalUrl?: T;
+  certificateUrl?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

@@ -18,7 +18,12 @@ import {
   whatsappUrl,
   type RegistrationSession,
 } from '@/lib/registration'
-import { siteSettings } from '@/lib/site-settings'
+import { loadSiteData, loadSiteSettings } from '@/lib/cms'
+import type { SiteSession } from '@/lib/site-data'
+import type { SiteSettings } from '@/lib/site-settings'
+
+// Reads live CMS data on every request: the status check (AC-04) must use the latest session state.
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'Ajukan Pendaftaran',
@@ -39,7 +44,8 @@ const STEPS = ['Pilih jadwal', 'Ringkasan', 'Kirim di WhatsApp', 'Konfirmasi adm
 export default async function RegistrationPage({ searchParams }: PageProps) {
   const params = await searchParams
   const id = Array.isArray(params.session) ? params.session[0] : params.session
-  const session = getRegistrationSession(id)
+  const [{ sessions }, siteSettings] = await Promise.all([loadSiteData(), loadSiteSettings()])
+  const session = getRegistrationSession(id, sessions)
 
   return (
     <div className="container-page pt-8 pb-16 lg:pb-24">
@@ -53,7 +59,11 @@ export default async function RegistrationPage({ searchParams }: PageProps) {
       <div className="mt-8 max-w-4xl">
         <StepIndicator current={1} steps={STEPS} />
         <h1 className="mt-10 text-h1 text-navy-950">Ajukan pendaftaran</h1>
-        {session ? <Handoff session={session} /> : <NoSession hadId={Boolean(id)} />}
+        {session ? (
+          <Handoff session={session} sessions={sessions} settings={siteSettings} />
+        ) : (
+          <NoSession hadId={Boolean(id)} />
+        )}
       </div>
     </div>
   )
@@ -83,16 +93,24 @@ function NoSession({ hadId }: { hadId: boolean }) {
   )
 }
 
-function Handoff({ session }: { session: RegistrationSession }) {
+function Handoff({
+  session,
+  sessions,
+  settings,
+}: {
+  session: RegistrationSession
+  sessions: SiteSession[]
+  settings: SiteSettings
+}) {
   const kind = handoffKind(session)
 
   return (
     <>
       <SessionSummary session={session} />
       {kind === 'none' ? (
-        <NotAvailable session={session} />
+        <NotAvailable session={session} sessions={sessions} />
       ) : (
-        <WhatsAppStep kind={kind} session={session} />
+        <WhatsAppStep kind={kind} session={session} settings={settings} />
       )}
     </>
   )
@@ -144,7 +162,7 @@ function SessionSummary({ session }: { session: RegistrationSession }) {
             FEE_ON_REQUEST
           )}
         </Item>
-        <Item label="Batas pendaftaran">{session.deadline}</Item>
+        {session.deadline ? <Item label="Batas pendaftaran">{session.deadline}</Item> : null}
         <Item label="Kode jadwal">
           <span className="numeric">{session.id}</span>
         </Item>
@@ -165,9 +183,11 @@ function Item({ children, label }: { children: React.ReactNode; label: string })
 function WhatsAppStep({
   kind,
   session,
+  settings: siteSettings,
 }: {
   kind: 'register' | 'waitlist'
   session: RegistrationSession
+  settings: SiteSettings
 }) {
   const message = whatsappMessage(session, kind)
   const href = whatsappUrl(siteSettings.whatsappNumber, message)
@@ -279,8 +299,14 @@ function WhatsAppStep({
   )
 }
 
-function NotAvailable({ session }: { session: RegistrationSession }) {
-  const alternatives = alternativeSessions(session)
+function NotAvailable({
+  session,
+  sessions,
+}: {
+  session: RegistrationSession
+  sessions: SiteSession[]
+}) {
+  const alternatives = alternativeSessions(session, sessions)
   const reason = session.hasStarted
     ? 'Jadwal ini sudah dimulai atau sudah lewat.'
     : session.status === 'not-open'

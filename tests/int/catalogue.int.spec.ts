@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest'
 
 import { activeFilterChips, parseFilters, searchCatalogue, toQuery } from '@/lib/catalogue'
+import { sampleSiteData as data } from '@/lib/sample-data'
 
 // Fixed "today" so the sample sessions stay in the future whenever the tests run.
 const NOW = new Date('2026-11-19T00:00:00+07:00')
 const search = (params: Record<string, string | string[]>) =>
-  searchCatalogue(parseFilters(params), NOW)
+  searchCatalogue(parseFilters(params), data, NOW)
 const slugs = (params: Record<string, string | string[]>) => search(params).items.map((c) => c.slug)
 
 // PRD §6 catalogue rules and AC-03.
@@ -58,7 +59,11 @@ describe('catalogue search and filters', () => {
   })
 
   it('builds chips that remove only their own value', () => {
-    const chips = activeFilterChips(parseFilters({ topik: ['safety', 'survey'], q: 'audit' }), NOW)
+    const chips = activeFilterChips(
+      parseFilters({ topik: ['safety', 'survey'], q: 'audit' }),
+      data,
+      NOW,
+    )
     expect(chips.map((c) => c.href)).toEqual([
       '?topik=safety&topik=survey',
       '?q=audit&topik=survey',

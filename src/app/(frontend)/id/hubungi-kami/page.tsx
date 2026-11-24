@@ -16,7 +16,7 @@ import { PageIntro } from '@/components/site/PageIntro'
 import { Button } from '@/components/ui/button'
 import { FeedbackPanel } from '@/components/ui/feedback-panel'
 import { whatsappUrl } from '@/lib/registration'
-import { siteSettings } from '@/lib/site-settings'
+import { loadSiteSettings } from '@/lib/cms'
 
 export const metadata: Metadata = {
   title: 'Hubungi Kami',
@@ -53,7 +53,8 @@ const routes = [
  * do not start as general messages. Corporate briefs use the In-house form (one form, not two).
  * Email and phone are shown as readable text as well as links: tel:/mailto: links do not work everywhere.
  */
-export default function ContactPage() {
+export default async function ContactPage() {
+  const siteSettings = await loadSiteSettings()
   const whatsappHref = whatsappUrl(
     siteSettings.whatsappNumber,
     'Halo BKI Academy, saya ingin bertanya.',

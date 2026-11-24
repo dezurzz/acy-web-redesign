@@ -6,15 +6,16 @@ import {
   whatsappMessage,
   whatsappUrl,
 } from '@/lib/registration'
+import { sampleSessions } from '@/lib/sample-data'
 
 const NOW = new Date('2026-11-19T00:00:00+07:00')
-const session = (id: string, now = NOW) => getRegistrationSession(id, now)!
+const session = (id: string, now = NOW) => getRegistrationSession(id, sampleSessions, now)!
 
 // PRD §6 Registration request, AC-04 and AC-13.
 describe('WhatsApp registration handoff', () => {
   it('returns null for a missing or unknown session code', () => {
-    expect(getRegistrationSession(undefined, NOW)).toBeNull()
-    expect(getRegistrationSession('JDW-9999', NOW)).toBeNull()
+    expect(getRegistrationSession(undefined, sampleSessions, NOW)).toBeNull()
+    expect(getRegistrationSession('JDW-9999', sampleSessions, NOW)).toBeNull()
   })
 
   it('offers registration only for open sessions (AC-04)', () => {

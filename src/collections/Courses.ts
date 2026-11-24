@@ -1,9 +1,19 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, Field } from 'payload'
 
 import { onlyPublishersCanPublish } from '../access/publishing'
 import { canEditContent, publishedOrContentStaff } from '../access/roles'
 import { slugField } from '../fields/slug'
 import { formatOptions } from '../lib/options'
+
+/** A plain list of short points (one row per point), rendered as a bulleted list. */
+const pointList = (name: string, label: string, description: string): Field => ({
+  name,
+  label,
+  type: 'array',
+  labels: { singular: 'Poin', plural: 'Poin' },
+  admin: { description },
+  fields: [{ name: 'text', label: 'Poin', type: 'text', required: true }],
+})
 
 // PRD §7 Course: a stable course, never a single dated batch.
 export const Courses: CollectionConfig = {
@@ -58,13 +68,27 @@ export const Courses: CollectionConfig = {
         {
           label: 'Ringkasan',
           fields: [
-            { name: 'summary', label: 'Ringkasan', type: 'textarea', required: true, maxLength: 320 },
-            { name: 'outcomes', label: 'Hasil pembelajaran', type: 'richText' },
-            { name: 'audience', label: 'Peserta yang dituju', type: 'richText' },
+            {
+              name: 'summary',
+              label: 'Ringkasan',
+              type: 'textarea',
+              required: true,
+              maxLength: 320,
+              admin: {
+                description: 'Satu kalimat manfaat utama. Tampil di kartu dan di bawah judul.',
+              },
+            },
+            pointList('audience', 'Untuk siapa', 'Satu kelompok peserta per baris.'),
+            pointList('outcomes', 'Yang akan Anda kuasai', 'Satu hasil belajar per baris.'),
             {
               type: 'row',
               fields: [
-                { name: 'duration', label: 'Durasi', type: 'text', admin: { description: 'Contoh: 3 hari' } },
+                {
+                  name: 'duration',
+                  label: 'Durasi',
+                  type: 'text',
+                  admin: { description: 'Contoh: 3 hari' },
+                },
                 {
                   name: 'formats',
                   label: 'Format',
@@ -80,10 +104,45 @@ export const Courses: CollectionConfig = {
         {
           label: 'Materi',
           fields: [
-            { name: 'syllabus', label: 'Silabus', type: 'richText' },
-            { name: 'prerequisites', label: 'Prasyarat', type: 'richText' },
-            { name: 'deliveryMethod', label: 'Metode pelaksanaan', type: 'richText' },
-            { name: 'certificateWording', label: 'Keterangan sertifikat', type: 'textarea' },
+            {
+              name: 'syllabus',
+              label: 'Silabus',
+              type: 'array',
+              labels: { singular: 'Bagian silabus', plural: 'Silabus' },
+              admin: { description: 'Biasanya satu bagian per hari. Tampil sebagai akordeon.' },
+              fields: [
+                {
+                  name: 'title',
+                  label: 'Judul bagian',
+                  type: 'text',
+                  required: true,
+                  admin: { description: 'Contoh: Hari 1: Dasar ISM Code' },
+                },
+                {
+                  name: 'topics',
+                  label: 'Topik',
+                  type: 'textarea',
+                  required: true,
+                  admin: { description: 'Satu topik per baris.' },
+                },
+              ],
+            },
+            {
+              name: 'prerequisites',
+              label: 'Prasyarat',
+              type: 'textarea',
+              admin: { description: 'Kosongkan jika tidak ada prasyarat khusus.' },
+            },
+            { name: 'deliveryMethod', label: 'Metode pembelajaran', type: 'textarea' },
+            {
+              name: 'certificateWording',
+              label: 'Keterangan sertifikat',
+              type: 'textarea',
+              admin: {
+                description:
+                  'Satu kalimat. Jangan menulis klaim pengakuan yang belum diverifikasi (D-04).',
+              },
+            },
           ],
         },
         {

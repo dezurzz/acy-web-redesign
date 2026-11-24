@@ -11,7 +11,11 @@ import { Button } from '@/components/ui/button'
 import { FeedbackPanel } from '@/components/ui/feedback-panel'
 import { TextLink } from '@/components/ui/text-link'
 import { activeFilterChips, filterOptions, parseFilters, toQuery } from '@/lib/catalogue'
+import { loadSiteData } from '@/lib/cms'
 import { searchSchedule } from '@/lib/schedule'
+
+// Reads live CMS content on every request, so published changes show immediately.
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'Jadwal',
@@ -25,13 +29,14 @@ type PageProps = { searchParams: Promise<Record<string, string | string[] | unde
  * Future published sessions only, soonest first in WIB, grouped by month. Stacked rows on
  * small screens, never a calendar grid that hides long titles.
  * Motion (design.md §7.1): minimal. Rows never move; dates, fees and status never animate.
- * Data comes from src/lib/sample-data.ts until Build Sprint 1.
+ * Content comes from the CMS (lib/cms.ts); the filter rules are in lib/schedule.ts.
  */
 export default async function SchedulePage({ searchParams }: PageProps) {
   const filters = parseFilters(await searchParams)
-  const options = filterOptions()
-  const { groups, shown, total } = searchSchedule(filters)
-  const chips = activeFilterChips(filters)
+  const data = await loadSiteData()
+  const options = filterOptions(data)
+  const { groups, shown, total } = searchSchedule(filters, data)
+  const chips = activeFilterChips(filters, data)
   const filterKey = toQuery({ ...filters, tampil: 0 })
   let index = 0
 

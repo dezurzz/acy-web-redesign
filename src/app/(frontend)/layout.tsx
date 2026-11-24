@@ -14,6 +14,11 @@ const inter = Inter({
   variable: '--font-inter',
 })
 
+// Every page shows contacts from the CMS (footer, Site settings), so the public site renders per
+// request and never needs the database at build time. Revisit with cached pages + on-demand
+// refresh once hosting is chosen (T-01).
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: {
     default: 'BKI Academy',
