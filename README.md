@@ -23,26 +23,167 @@ Upgrade Payload packages together, and check Payload's Next.js peer range before
 
 ## Local setup
 
-Requirements: Node.js 24, Docker Desktop, and corepack (`corepack enable pnpm`).
+The website runs on your computer with two parts:
+
+1. **The database (PostgreSQL)** runs inside **Docker**. Docker runs the same PostgreSQL 17 on every computer, so you never install PostgreSQL yourself.
+2. **The website and CMS (Next.js + Payload)** run with `pnpm dev`.
+
+The public pages can open without the database, because they still use sample data. The CMS admin (`/admin`), the integration tests and anything that reads or saves content need the database running.
+
+### What you need (once per computer)
+
+| Tool | Check it | Install |
+|---|---|---|
+| Node.js 24 | `node --version` shows `v24.x` | [nodejs.org](https://nodejs.org) (LTS 24), or `nvm use` in this folder (`.nvmrc`) |
+| pnpm 10 | `pnpm --version` shows `10.x` | `corepack enable pnpm` (comes with Node.js) |
+| Docker Desktop | `docker --version` prints a version | [docker.com/products/docker-desktop](https://www.docker.com/products/docker-desktop/) |
+
+### First-time setup
+
+Run these from the project folder, one after another.
+
+1. Create your local settings file:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Open `.env` and replace `change-me` with a random secret. Generate one with:
+
+   ```bash
+   openssl rand -hex 32
+   ```
+
+   `.env` holds secrets and is never committed (it is in `.gitignore`).
+
+3. Install the packages:
+
+   ```bash
+   pnpm install
+   ```
+
+4. Start Docker Desktop (see "Running the database" below), then start the database:
+
+   ```bash
+   pnpm db:up
+   ```
+
+5. Start the website:
+
+   ```bash
+   pnpm dev
+   ```
+
+6. Open http://localhost:3000/admin and create the first account. **The first account automatically becomes an administrator.**
+
+### Every day
+
+| Step | Command |
+|---|---|
+| 1. Open **Docker Desktop** and wait until it says it is running | (from Applications) |
+| 2. Start the database | `pnpm db:up` |
+| 3. Start the website | `pnpm dev` |
+| 4. Finish: stop the website | `Ctrl + C` in the terminal running `pnpm dev` |
+| 5. Finish: stop the database (optional) | `pnpm db:down` |
+
+Your data is kept when you stop the database. It lives in a Docker volume called `redesign-web_pgdata` and is still there the next time you run `pnpm db:up`.
+
+### Addresses
+
+| What | Address |
+|---|---|
+| Website | http://localhost:3000 (redirects to `/id`) |
+| CMS admin | http://localhost:3000/admin |
+| Styleguide (tokens and components) | http://localhost:3000/styleguide |
+| Wireframes (Phase 1) | http://localhost:3000/wireframes |
+| Database (for database tools) | `localhost:5432`, database `bki_academy`, user `bki`, password `bki` (local only) |
+
+### Running the database (Docker)
+
+**1. Start Docker Desktop.** Open **Docker Desktop** from Applications (or run `open -a Docker` in the terminal). The whale icon appears in the menu bar. Wait until Docker Desktop shows "Engine running". This can take up to a minute after the computer starts.
+
+Check that Docker is ready:
 
 ```bash
-cp .env.example .env          # then set PAYLOAD_SECRET (openssl rand -hex 32)
-pnpm install
-pnpm db:up                    # starts PostgreSQL in Docker on port 5432
-pnpm dev                      # http://localhost:3000
+docker info
 ```
 
-- Website: http://localhost:3000 (redirects to `/id`)
-- Styleguide (tokens and components): http://localhost:3000/styleguide
-- CMS: http://localhost:3000/admin. The first account you create becomes an administrator.
+If it prints a long list of details, Docker is running. If it says `Cannot connect to the Docker daemon`, Docker Desktop is not running yet: open it and wait.
 
-In development Payload pushes schema changes to the local database automatically. To start over: `pnpm db:down && docker volume rm redesign-web_pgdata && pnpm db:up`.
+**2. Start the database.**
+
+```bash
+pnpm db:up
+```
+
+This runs `docker compose up -d postgres`. It starts the `postgres` service from `docker-compose.yml` in the background (`-d`). The first time, Docker downloads the `postgres:17-alpine` image (about 100 MB), so it takes longer.
+
+**3. Check that it is running.**
+
+```bash
+docker compose ps
+```
+
+You should see the `postgres` service with status `Up`.
+
+**Useful database commands**
+
+| Task | Command |
+|---|---|
+| Start the database | `pnpm db:up` |
+| Stop the database (keeps the data) | `pnpm db:down` |
+| See whether it is running | `docker compose ps` |
+| Read the database log | `docker compose logs postgres` |
+| Open a SQL prompt inside the database | `docker compose exec postgres psql -U bki -d bki_academy` (type `\q` to leave) |
+| **Delete all local data and start fresh** | `pnpm db:down`, then `docker volume rm redesign-web_pgdata`, then `pnpm db:up` |
+
+Deleting the volume removes every course, session and user you created locally, including your admin account. Create the first account again afterwards.
+
+The volume name is the project folder name plus `_pgdata` (`redesign-web_pgdata` here). If you cloned the project into a folder with another name, find it with `docker volume ls`.
+
+**How the schema gets created:** in development, Payload creates and updates the tables automatically when `pnpm dev` starts ("push mode"). You do not run migrations locally. Staging and production use reviewed migrations instead (see Conventions).
+
+### Troubleshooting
+
+| You see | Cause | Fix |
+|---|---|---|
+| `Cannot connect to the Docker daemon` | Docker Desktop is not running | Open Docker Desktop, wait for "Engine running", try again |
+| `cannot connect to Postgres: connect ECONNREFUSED 127.0.0.1:5432` (in `pnpm dev` or tests, or `/admin` shows an error) | The database is not running | `pnpm db:up` |
+| `port is already allocated` or `address already in use` on 5432 | Another PostgreSQL already uses port 5432 (for example one installed with Homebrew) | Find it with `brew services list`, stop it with `brew services stop <name>` (for example `postgresql@16`), then `pnpm db:up` again |
+| `password authentication failed for user "bki"` | `.env` does not match `docker-compose.yml` | Copy `DATABASE_URL` from `.env.example` back into `.env` |
+| `type "enum_…" already exists` | The local schema is in a mixed state after renaming fields | Delete all local data and start fresh (see the table above) |
+| The admin looks broken after pulling new code | Collections changed | Stop `pnpm dev`, run `pnpm generate:types` and `pnpm generate:importmap`, start again |
+
+### Running the checks locally
+
+These are the same checks CI runs on every push:
+
+```bash
+pnpm lint && pnpm typecheck
+```
+
+```bash
+pnpm test:int
+```
+
+`pnpm test:int` needs the database running (`pnpm db:up`). Some of its tests only check rules (catalogue, schedule, registration and form rules) and do not touch the database.
+
+```bash
+pnpm build
+```
+
+```bash
+pnpm test:e2e
+```
+
+`pnpm test:e2e` opens a real browser. The first time on a new computer, install Playwright's browser once with `pnpm exec playwright install chromium`.
 
 ## Scripts
 
 | Script | What it does |
 |---|---|
 | `pnpm dev` | Dev server |
+| `pnpm db:up` / `pnpm db:down` | Start / stop the local PostgreSQL in Docker |
 | `pnpm build` / `pnpm start` | Production build and server |
 | `pnpm lint` / `pnpm typecheck` | ESLint and TypeScript |
 | `pnpm test:int` | Vitest integration tests (needs the database) |
@@ -57,14 +198,21 @@ In development Payload pushes schema changes to the local database automatically
 src/
   app/(frontend)/     public site (Indonesian routes under /id), globals.css holds design tokens
   app/(payload)/      Payload admin and API (generated; avoid editing)
+  app/(wireframes)/   Phase 1 low-fidelity wireframes at /wireframes
   access/             staff roles and access rules
   collections/        Payload collections (Courses, Sessions, Categories, Media, Users)
-  components/ui/      shadcn/ui components customised to design.md
-  components/site/    header, footer, and other site components
+  components/ui/      shadcn/ui components customised to design.md (buttons, fields, badges…)
+  components/site/    header, footer, cards, page layouts and other site components
+  components/catalogue/  search, filters and load more for Pelatihan and Jadwal
+  components/course/  session panel and mobile CTA bar for the course page
+  components/inhouse/ corporate enquiry form
   fields/             shared field definitions
-  lib/                utilities and shared option lists
-tests/int/            Vitest integration tests
+  lib/                rules and helpers: catalogue, schedule, registration, enquiry, formatting
+  lib/sample-data.ts  SAMPLE courses and sessions used until pages read from the CMS
+  lib/site-settings.ts  PLACEHOLDER contacts until decision D-05; becomes a CMS setting
+tests/int/            Vitest tests (rules, and Payload with the database)
 tests/e2e/            Playwright tests
+review/               screenshots for reviews (not in git)
 ```
 
 ## Conventions
