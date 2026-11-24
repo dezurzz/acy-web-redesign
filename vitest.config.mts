@@ -8,5 +8,9 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./vitest.setup.ts'],
     include: ['tests/int/**/*.int.spec.ts'],
+    // Run test files one at a time. Several files start Payload against the same database; in
+    // parallel on an empty CI database they all try to create the schema at once and crash
+    // ("type ... already exists").
+    fileParallelism: false,
   },
 })
