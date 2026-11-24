@@ -325,3 +325,17 @@
   font-weight: var(--text-eyebrow--font-weight);
   text-transform: uppercase;
 }
+
+/* ---------- Editorial reveal (animations.md §5.9), armed by <Reveal> ---------- */
+@layer components {
+  .reveal[data-reveal='armed'] {
+    opacity: 0;
+    transform: translateY(var(--move-reveal));
+  }
+
+  .reveal[data-reveal='shown'] {
+    transition:
+      opacity var(--motion-reveal) var(--ease-enter),
+      transform var(--motion-reveal) var(--ease-enter);
+  }
+}

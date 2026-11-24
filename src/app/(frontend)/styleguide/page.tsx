@@ -55,7 +55,7 @@ const sessionBase: Omit<SessionRowProps, 'status'> = {
   endDate: '2026-10-23T09:00:00+07:00',
   fee: 9500000,
   format: 'Tatap muka',
-  registerHref: '/id/pendaftaran?sesi=contoh',
+  registerHref: '/id/pendaftaran?session=contoh',
   startDate: '2026-10-21T09:00:00+07:00',
   taxWording: 'Belum termasuk PPN 11%',
   time: '09.00–16.00 WIB',

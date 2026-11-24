@@ -65,13 +65,13 @@ export function StatusBadge({
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-card px-2.5 py-1 text-meta font-medium whitespace-nowrap',
+        'inline-flex items-start gap-1.5 rounded-card px-2.5 py-1 text-meta font-medium',
         status === 'completed' && 'px-0',
         tone,
         className,
       )}
     >
-      <Icon aria-hidden className="size-4 shrink-0" />
+      <Icon aria-hidden className="mt-0.5 size-4 shrink-0" />
       {label}
     </span>
   )

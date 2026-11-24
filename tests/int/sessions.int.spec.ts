@@ -33,7 +33,12 @@ describe('Sessions', () => {
     const draft = await payload.create({
       collection: 'courses',
       draft: true,
-      data: { title: 'TEST Draft Course', summary: 'Draft', category: categoryId, formats: ['in-person'] },
+      data: {
+        title: 'TEST Draft Course',
+        summary: 'Draft',
+        category: categoryId,
+        formats: ['in-person'],
+      },
     })
     draftCourseId = draft.id
     const published = await payload.create({

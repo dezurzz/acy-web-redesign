@@ -10,6 +10,8 @@ type LoadMoreProps = {
   onLoadMore: () => void
   shownCount: number
   totalCount: number
+  /** What is being listed, e.g. "pelatihan" or "jadwal". */
+  noun?: string
 }
 
 // design.md §8 Load more: button below results, announces how many items were added.
@@ -18,6 +20,7 @@ export function LoadMore({
   addedCount,
   hasMore,
   loading = false,
+  noun = 'pelatihan',
   onLoadMore,
   shownCount,
   totalCount,
@@ -25,17 +28,17 @@ export function LoadMore({
   return (
     <div className="flex flex-col items-center gap-3 pt-8">
       <p className="numeric text-meta text-slate-600">
-        Menampilkan {shownCount} dari {totalCount} pelatihan
+        Menampilkan {shownCount} dari {totalCount} {noun}
       </p>
       {hasMore ? (
         <Button loading={loading} loadingText="Memuat…" onClick={onLoadMore} variant="secondary">
           Tampilkan lebih banyak
         </Button>
       ) : (
-        <p className="text-meta text-slate-600">Semua pelatihan sudah ditampilkan.</p>
+        <p className="text-meta text-slate-600">Semua {noun} sudah ditampilkan.</p>
       )}
       <p aria-live="polite" className="sr-only">
-        {addedCount ? `${addedCount} pelatihan ditambahkan.` : ''}
+        {addedCount ? `${addedCount} ${noun} ditambahkan.` : ''}
       </p>
     </div>
   )
