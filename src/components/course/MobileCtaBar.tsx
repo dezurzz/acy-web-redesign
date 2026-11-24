@@ -4,6 +4,7 @@ import * as React from 'react'
 
 import { SESSION_PANEL_ID } from '@/components/course/SessionPanel'
 import { Button } from '@/components/ui/button'
+import { isMotionReduced } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /*
@@ -33,10 +34,7 @@ export function MobileCtaBar({ nextSession }: { nextSession: string | null }) {
   const goToSessions = () => {
     const heading = document.getElementById(SESSION_PANEL_ID)
     if (!heading) return
-    const reduced =
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
-      document.documentElement.dataset.motion === 'reduced'
-    heading.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' })
+    heading.scrollIntoView({ behavior: isMotionReduced() ? 'auto' : 'smooth', block: 'start' })
     heading.focus({ preventScroll: true })
   }
 

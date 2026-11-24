@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 
+import { isMotionReduced } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /*
@@ -18,10 +19,7 @@ export function Reveal({ children, className }: { children: React.ReactNode; cla
     const el = ref.current
     if (!el || !('IntersectionObserver' in window)) return
 
-    const reduced =
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
-      document.documentElement.dataset.motion === 'reduced'
-    if (reduced || el.getBoundingClientRect().top < window.innerHeight) return
+    if (isMotionReduced() || el.getBoundingClientRect().top < window.innerHeight) return
 
     const show = () => {
       el.dataset.reveal = 'shown'

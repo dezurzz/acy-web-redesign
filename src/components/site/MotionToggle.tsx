@@ -2,15 +2,17 @@
 
 import * as React from 'react'
 
-import { MOTION_STORAGE_KEY } from '@/lib/motion'
+import { MOTION_STORAGE_KEY, readStoredReduction } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /*
  * "Kurangi animasi" control (animations.md §6).
  * Effective reduction = OS prefers-reduced-motion OR the visitor's own choice.
  * The OS setting always wins; the toggle then explains why it cannot be turned off.
- * The visitor's choice lives on <html data-motion="reduced"> (set before paint by the inline
- * script in the root layout) and in localStorage when storage works.
+ * The visitor's choice lives in localStorage (when storage works) and on <html data-motion="reduced">.
+ * This component is on every page (footer) and applies a saved choice when the page loads.
+ * Nothing on the site animates by itself before then: hover, menus and accordions need a user
+ * action, and Reveal checks the saved choice itself (lib/motion.ts isMotionReduced).
  */
 
 const OS_QUERY = '(prefers-reduced-motion: reduce)'
@@ -36,6 +38,14 @@ export function MotionToggle({ className }: { className?: string }) {
   const osReduced = React.useSyncExternalStore(subscribeOs, getOsReduced, getServerValue)
   const userReduced = React.useSyncExternalStore(subscribeUser, getUserReduced, getServerValue)
   const reduced = osReduced || userReduced
+
+  // Apply a saved choice once on load. Only touches the DOM; the store above picks it up via the event.
+  React.useEffect(() => {
+    if (readStoredReduction() && document.documentElement.dataset.motion !== 'reduced') {
+      document.documentElement.dataset.motion = 'reduced'
+      window.dispatchEvent(new Event(CHANGE_EVENT))
+    }
+  }, [])
 
   function toggle() {
     const next = !userReduced

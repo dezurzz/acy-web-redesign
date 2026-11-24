@@ -1,6 +1,11 @@
 import type { Metadata } from 'next'
 
+import { SessionPanel } from '@/components/course/SessionPanel'
+import { ArticleCard } from '@/components/site/ArticleCard'
 import { CourseCard } from '@/components/site/CourseCard'
+import { ErrorPage } from '@/components/site/ErrorPage'
+import { InstructorCard } from '@/components/site/InstructorCard'
+import { PhotoFrame } from '@/components/site/PhotoFrame'
 import { SessionRow, type SessionRowProps } from '@/components/site/SessionRow'
 import {
   Accordion,
@@ -15,6 +20,7 @@ import { FeedbackPanel } from '@/components/ui/feedback-panel'
 import { StatusBadge, type SessionDisplayStatus } from '@/components/ui/status-badge'
 import { StepIndicator } from '@/components/ui/step-indicator'
 import { TextLink } from '@/components/ui/text-link'
+import { getCourse } from '@/lib/course'
 
 import { ErrorSummaryDemo, LoadMoreDemo } from './demos'
 
@@ -420,6 +426,91 @@ export default function StyleguidePage() {
 
       <Section id="sg-load-more" title="Tampilkan lebih banyak">
         <LoadMoreDemo />
+      </Section>
+
+      <Section id="sg-session-panel" title="Panel jadwal (detail pelatihan)">
+        <p className="mb-6 max-w-[65ch] text-meta text-slate-600">
+          Pilih jadwal untuk melihat aksi yang berubah: hanya jadwal Dibuka yang mendapat Ajukan
+          Pendaftaran. Kanan: tanpa jadwal.
+        </p>
+        <div className="grid items-start gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <SessionPanel sessions={getCourse('internal-auditor-ism-code')?.sessions ?? []} />
+          <SessionPanel sessions={[]} />
+        </div>
+      </Section>
+
+      <Section id="sg-photo" title="Foto">
+        <p className="mb-6 max-w-[65ch] text-meta text-slate-600">
+          Rasio tetap agar tata letak tidak bergeser. Tanpa foto berizin, tampil penanda sementara
+          yang jujur (B-05).
+        </p>
+        <div className="grid gap-6 md:grid-cols-3">
+          <PhotoFrame alt="Contoh rasio 4:3" className="aspect-4/3" placeholderLabel="4:3, hero" />
+          <PhotoFrame
+            alt="Contoh rasio 16:9"
+            className="aspect-video"
+            placeholderLabel="16:9, editorial"
+          />
+          <PhotoFrame
+            alt="Contoh rasio 4:5"
+            className="aspect-4/5"
+            placeholderLabel="4:5, potret"
+          />
+        </div>
+      </Section>
+
+      <Section id="sg-people" title="Kartu pengajar dan artikel">
+        <p className="mb-6 max-w-[65ch] text-meta text-slate-600">
+          Untuk halaman Pengajar dan Insight (fast-follow, D-11). Nama dan isi di bawah ini contoh.
+        </p>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <InstructorCard
+            courses={[
+              {
+                href: '/id/pelatihan/internal-auditor-ism-code',
+                title: 'Internal Auditor ISM Code',
+              },
+            ]}
+            expertise="Audit sistem manajemen keselamatan kapal dan pelatihan auditor internal."
+            name="Contoh Nama Pengajar"
+            role="Surveyor senior"
+          />
+          <InstructorCard
+            courses={[]}
+            expertise="Keahlian menunggu persetujuan pemilik konten."
+            name="Pengajar Kedua"
+          />
+          <ArticleCard
+            date="2026-10-12"
+            excerpt="Ringkasan singkat satu sampai dua kalimat."
+            href="/id/insight/contoh"
+            title="Lima hal yang berubah dalam audit ISM"
+            type="artikel"
+          />
+          <ArticleCard
+            date="2026-08-20"
+            href="/id/insight/contoh-dokumentasi"
+            relatedCourse={{
+              href: '/id/pelatihan/ship-security-officer',
+              title: 'Ship Security Officer (SSO)',
+            }}
+            title="Pelatihan SSO untuk awak kapal tanker"
+            type="dokumentasi"
+          />
+        </div>
+      </Section>
+
+      <Section id="sg-error-page" title="Halaman galat">
+        <p className="max-w-[65ch] text-meta text-slate-600">
+          404, 500, dan pemeliharaan memakai susunan yang sama. Pratinjau di bawah: 404 dan
+          pemeliharaan. Coba juga alamat yang tidak ada, misalnya /id/tidak-ada.
+        </p>
+        <div className="mt-6 overflow-hidden rounded-card border border-line-subtle">
+          <ErrorPage className="py-10 lg:py-12" headingLevel={3} kind="404" />
+        </div>
+        <div className="mt-6 overflow-hidden rounded-card border border-line-subtle">
+          <ErrorPage className="py-10 lg:py-12" headingLevel={3} kind="maintenance" />
+        </div>
       </Section>
     </div>
   )
