@@ -9,6 +9,7 @@ import { Categories } from './collections/Categories'
 import { Courses } from './collections/Courses'
 import { Media } from './collections/Media'
 import { Sessions } from './collections/Sessions'
+import { CoursePhotos } from './collections/CoursePhotos'
 import { Users } from './collections/Users'
 import { SiteSettings } from './globals/SiteSettings'
 
@@ -31,7 +32,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Courses, Sessions, Categories, Media, Users],
+  collections: [Courses, Sessions, CoursePhotos, Categories, Media, Users],
   globals: [SiteSettings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

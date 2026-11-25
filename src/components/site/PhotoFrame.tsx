@@ -9,6 +9,8 @@ type PhotoFrameProps = {
   className?: string
   /** Shown in the placeholder until an approved photo exists. */
   placeholderLabel?: string
+  /** CSS object-position, e.g. "50% 30%" from the CMS focal point, so cropping keeps faces in frame. */
+  position?: string
   /** true for the main above-the-fold image: loads eagerly (design.md §9). */
   priority?: boolean
   sizes?: string
@@ -28,6 +30,7 @@ export function PhotoFrame({
   alt,
   className,
   placeholderLabel = 'Foto pelatihan BKI Academy menyusul',
+  position,
   priority = false,
   sizes = '(min-width: 1024px) 40vw, 100vw',
   src,
@@ -44,6 +47,7 @@ export function PhotoFrame({
               priority={priority}
               sizes={sizes}
               src={src}
+              style={position ? { objectPosition: position } : undefined}
             />
           </div>
         </div>

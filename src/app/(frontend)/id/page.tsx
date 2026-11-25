@@ -9,10 +9,16 @@ import { SessionRow } from '@/components/site/SessionRow'
 import { Button, ButtonArrow } from '@/components/ui/button'
 import { FeedbackPanel } from '@/components/ui/feedback-panel'
 import { TextLink } from '@/components/ui/text-link'
-import { loadSiteData } from '@/lib/cms'
+import { loadFeaturedCoursePhotos, loadSiteData } from '@/lib/cms'
 import { formatDateRange } from '@/lib/format'
 import { categoryPhotos, stockPhotos } from '@/lib/stock-photos'
-import { upcomingSessions, type SiteCategory, type SiteSession } from '@/lib/site-data'
+import {
+  upcomingSessions,
+  type SiteCategory,
+  type SiteSession,
+  type SiteCoursePhotos,
+} from '@/lib/site-data'
+import { cn } from '@/lib/utils'
 
 // Reads live CMS content on every request, so published changes show immediately.
 export const dynamic = 'force-dynamic'
@@ -25,14 +31,15 @@ export const metadata: Metadata = {
 
 /*
  * Beranda (PRD §6 Homepage, wireframe /wireframes/beranda).
- * Order: hero → upcoming sessions → categories → reasons → corporate training → footer.
+ * Order: hero → upcoming sessions → photo band → categories → reasons → in class (training photos)
+ * → corporate training → footer.
  * Pengajar and Insight sections are left out until those pages go live (decision D-11).
  * Motion (design.md §7.1): hero, CTAs and session rows never animate; one-time reveals only for
  * the Kategori, Mengapa BKI Academy and In-house groups.
  * Copy is DRAFT and needs content-owner approval before launch (AC-09). Sessions and categories come from the CMS.
  */
 export default async function HomePage() {
-  const data = await loadSiteData()
+  const [data, coursePhotos] = await Promise.all([loadSiteData(), loadFeaturedCoursePhotos()])
   const sessions = upcomingSessions(data.sessions, 5)
 
   return (
@@ -42,6 +49,7 @@ export default async function HomePage() {
       <PhotoBand />
       <Categories categories={data.categories} />
       <Reasons />
+      <InClass items={coursePhotos} />
       <Corporate />
     </>
   )
@@ -343,6 +351,79 @@ function Reasons() {
             </ol>
           </Reveal>
         </div>
+      </div>
+    </section>
+  )
+}
+
+/*
+ * "Dalam Kelas": cover photos from earlier runs of three courses (CMS "Foto pelatihan", Tampilkan di
+ * Beranda). A portfolio, not an archive: course names only, no batches or dates; the full
+ * documentation lives on Instagram. Real BKI photos only, with photo permission (B-05): with nothing
+ * published the section is left out rather than filled with placeholders.
+ * One big photo and two beside it on wide screens.
+ */
+function InClass({ items }: { items: SiteCoursePhotos[] }) {
+  if (!items.length) return null
+  const single = items.length === 1
+
+  return (
+    <section aria-labelledby="beranda-kelas" className="bg-paper py-24 md:py-32 lg:py-40">
+      <div className="container-page">
+        <SectionHeading
+          eyebrow="Dalam kelas"
+          id="beranda-kelas"
+          intro="Foto dari kelas dan laboratorium pelatihan BKI Academy sebelumnya."
+          title="Suasana pelatihan"
+        />
+        <Reveal className="mt-14 md:mt-20">
+          <ul className="grid gap-x-6 gap-y-12 lg:grid-cols-12">
+            {items.map((item, index) => {
+              const lead = index === 0
+              const stretch = lead && !single
+              const photo = item.photos[0]!
+              return (
+                <li
+                  className={
+                    single
+                      ? 'lg:col-span-8'
+                      : lead
+                        ? // Fills the height of the two items beside it: the photo takes the slack.
+                          'lg:col-span-7 lg:row-span-2 lg:flex lg:flex-col'
+                        : 'lg:col-span-5'
+                  }
+                  key={item.id}
+                >
+                  <Link
+                    className={cn('group block', stretch && 'lg:flex lg:flex-1 lg:flex-col')}
+                    href={`/id/pelatihan/${item.courseSlug}`}
+                  >
+                    <PhotoFrame
+                      alt={photo.alt}
+                      className={cn(
+                        'aspect-3/2',
+                        stretch && 'lg:aspect-auto lg:min-h-80 lg:flex-1',
+                      )}
+                      position={photo.position}
+                      sizes={
+                        lead ? '(min-width: 1024px) 56vw, 100vw' : '(min-width: 1024px) 40vw, 100vw'
+                      }
+                      src={photo.src}
+                    />
+                    <div className="mt-5 border-t border-navy-950 pt-4">
+                      <h3 className="text-ui font-semibold text-navy-950 underline-offset-4 group-hover:underline">
+                        {item.courseTitle}
+                      </h3>
+                      {photo.caption ? (
+                        <p className="mt-1 text-meta text-slate-600">{photo.caption}</p>
+                      ) : null}
+                    </div>
+                  </Link>
+                </li>
+              )
+            })}
+          </ul>
+        </Reveal>
       </div>
     </section>
   )

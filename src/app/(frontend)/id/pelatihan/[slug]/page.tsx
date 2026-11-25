@@ -7,6 +7,7 @@ import { MobileCtaBar } from '@/components/course/MobileCtaBar'
 import { SESSION_PANEL_ID, SessionPanel } from '@/components/course/SessionPanel'
 import { Paren } from '@/components/site/Atmosphere'
 import { CourseCard } from '@/components/site/CourseCard'
+import { PhotoFrame } from '@/components/site/PhotoFrame'
 import { PageHero } from '@/components/site/PageHero'
 import {
   Accordion,
@@ -17,8 +18,9 @@ import {
 import { Button, ButtonArrow } from '@/components/ui/button'
 import { TextLink } from '@/components/ui/text-link'
 import { toCatalogueItem } from '@/lib/catalogue'
-import { loadSiteData } from '@/lib/cms'
+import { loadCoursePhotos, loadSiteData } from '@/lib/cms'
 import { getCourse } from '@/lib/course'
+import { cn } from '@/lib/utils'
 
 type PageProps = { params: Promise<{ slug: string }> }
 
@@ -39,8 +41,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
  * Certificate text stays short: certificate tracking lives in BKI's separate system (D-04).
  */
 export default async function CourseDetailPage({ params }: PageProps) {
-  const site = await loadSiteData()
-  const data = getCourse((await params).slug, site)
+  const { slug } = await params
+  const [site, coursePhotos] = await Promise.all([loadSiteData(), loadCoursePhotos(slug)])
+  const data = getCourse(slug, site)
   if (!data) notFound()
 
   const { category, course, detail, sessions } = data
@@ -142,6 +145,44 @@ export default async function CourseDetailPage({ params }: PageProps) {
                 <p>{detail.method}</p>
               </Block>
             ) : null}
+            {/* Chosen photos from earlier runs of this course (CMS "Foto pelatihan"), only when
+                published with permission (B-05). Not an archive: the full documentation is on Instagram. */}
+            {coursePhotos ? (
+              <Block title="Suasana kelas" wide>
+                <ul className="grid grid-cols-2 gap-3 md:gap-4">
+                  {coursePhotos.photos.map((photo, index) => (
+                    <li
+                      // The cover spans both columns, and so does a last photo left alone in its row.
+                      className={
+                        index === 0 || (index === coursePhotos.photos.length - 1 && index % 2 === 1)
+                          ? 'col-span-2'
+                          : undefined
+                      }
+                      key={photo.src}
+                    >
+                      <figure>
+                        <PhotoFrame
+                          alt={photo.alt}
+                          className="aspect-3/2"
+                          position={photo.position}
+                          sizes={
+                            index === 0
+                              ? '(min-width: 1024px) 60vw, 100vw'
+                              : '(min-width: 1024px) 30vw, 50vw'
+                          }
+                          src={photo.src}
+                        />
+                        {photo.caption ? (
+                          <figcaption className="mt-2 text-meta text-slate-600">
+                            {photo.caption}
+                          </figcaption>
+                        ) : null}
+                      </figure>
+                    </li>
+                  ))}
+                </ul>
+              </Block>
+            ) : null}
             {detail.certificate ? (
               <Block title="Sertifikat">
                 <p>{detail.certificate}</p>
@@ -206,11 +247,20 @@ export default async function CourseDetailPage({ params }: PageProps) {
   )
 }
 
-function Block({ children, title }: { children: React.ReactNode; title: string }) {
+function Block({
+  children,
+  title,
+  wide = false,
+}: {
+  children: React.ReactNode
+  title: string
+  /** Use the full column width (photos) instead of the 65-character reading measure. */
+  wide?: boolean
+}) {
   return (
     <section className="border-t border-line-subtle py-8 first:border-t-0 first:pt-0">
       <h2 className="text-h3 text-navy-950">{title}</h2>
-      <div className="mt-4 max-w-[65ch] text-body text-navy-800">{children}</div>
+      <div className={cn('mt-4 text-body text-navy-800', !wide && 'max-w-[65ch]')}>{children}</div>
     </section>
   )
 }

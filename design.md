@@ -1,6 +1,6 @@
 # BKI Academy — Design System
 
-Version: 1.3 · 24 November 2026 · Proposed design specification
+Version: 1.4 · 25 November 2026 · Proposed design specification
 
 Companion: `PRD.md`. **This document is the authoritative source for styling, colour, typography, layout, and component presentation.** `PRD.md` defines product behaviour, data, and operations; where the two overlap on presentation, this document wins. Values below are proposed design tokens, not a claim that they are official BKI brand standards. Confirm official assets before launch.
 
@@ -221,6 +221,8 @@ Prefer authentic BKI classroom, instructor, port, vessel, and practical-training
 
 Use consistent crops: landscape 3:2 or 16:9 for editorial images; 4:5 for selected portraits; wide desktop hero with a separate mobile crop when necessary. Preserve faces and contextual PPE; do not apply a strong blue wash over every image. Use warm, natural skin tones against the blue interface.
 
+**Training photos (v1.4).** The website shows a few chosen photos per course, like a portfolio; the full documentation of each batch stays on Instagram. Photos live in the CMS collection *Foto pelatihan*: one entry per course, 1–6 photos from earlier runs of that course, with no batch numbers, dates or places. An entry can only be published after staff tick *Izin publikasi foto sudah ada* and note who gave permission (decision B-05, UU PDP 27/2022). The homepage *Dalam Kelas* section shows the cover photo of three entries marked *Tampilkan di Beranda*, in their *Urutan di Beranda* (1 = the large photo), and is left out entirely while none are published: no placeholders. Each course page shows its own entry as a *Suasana kelas* block after *Metode pembelajaran*: the cover across the content column, the rest in two columns, captions under the photos, no scroll reveal (course details are a low-motion page); the block is left out for courses without photos. Uploads are stored at most 2400 px as WebP; staff set a focal point so crops keep faces in frame. Use raw camera photos, not designed social posts, and avoid frames where a client's name card or logo is readable.
+
 Alt text describes the relevant action/context, not decorative colour treatment. Decorative images use empty alt text. Specify width/height or aspect ratio to prevent layout shift, supply responsive sizes, and lazy-load below-the-fold imagery. Do not lazy-load the primary above-the-fold image.
 
 Use official SVG/PNG logos without recreating them as text or stretching them. Confirm affiliation order and minimum sizes with the brand owner. A footer or compact institutional strip can carry secondary logos; mobile must not turn them into an illegible row.
@@ -394,6 +396,7 @@ Read `PRD.md` for product behaviour, data, migration, integration, and launch cr
 ## 14. Change log
 
 - 1.3 · 24 November 2026 — Later the same day: larger section spacing (§6), nautical-chart pattern for CTA bands and temporary large photography (§4D).
+- 1.4 · 25 November 2026 — Training photos per course (§9), portfolio-style with the full documentation on Instagram: CMS collection *Foto pelatihan* with a permission gate (B-05), homepage *Dalam Kelas* section, *Suasana kelas* block on course pages, uploads resized to WebP.
 - 1.3.1 · 25 November 2026 — Crosshair mark (circle with +) removed from hero hairlines at the project lead's request; the lines stay plain.
 - 1.3 · 24 November 2026 — New visual direction chosen by the project lead: Swiss editorial type on an atmospheric sky (§2, §4D), following BKI Academy's own course posters. Light display weights (§5), atmosphere gradient with grain and a two-part build that keeps text off the light end, parenthetical labels, hairline crosshair, header floating over the opening and turning solid on scroll. Page openings no longer need photographs. Dense information stays on solid surfaces.
 - 1.2 · 17 November 2026 — Made `animations.md` the source of truth for motion; §7 now points to it and §7.1 maps its rules onto the BKI templates. Motion tokens moved out of §11 (they live in animations.md §4 and `globals.css`). Brand approval tracked as decision B-06.

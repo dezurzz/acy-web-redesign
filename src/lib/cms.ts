@@ -11,8 +11,14 @@ import { cache } from 'react'
 
 import { getDisplayStatus } from '@/components/ui/status-badge'
 import { formatOptions, type SessionStatus } from '@/lib/options'
-import type { Category, Course, Session } from '@/payload-types'
-import type { SiteCategory, SiteCourse, SiteData, SiteSession } from '@/lib/site-data'
+import type { Category, Course, CoursePhoto, Media, Session } from '@/payload-types'
+import type {
+  SiteCategory,
+  SiteCourse,
+  SiteData,
+  SiteSession,
+  SiteCoursePhotos,
+} from '@/lib/site-data'
 import { toSiteSettings, type SiteSettings } from '@/lib/site-settings'
 
 const PUBLISHED = { _status: { equals: 'published' } } as const
@@ -131,6 +137,72 @@ export const loadSiteData = cache(async (): Promise<SiteData> => {
   })
 
   return { categories: categoryDocs.docs.map(toCategory), courses, sessions }
+})
+
+function toCoursePhotos(doc: CoursePhoto, course: Course): SiteCoursePhotos {
+  const photos = (doc.photos ?? []).flatMap((row) => {
+    const media = row.image as Media | number
+    if (typeof media !== 'object' || !media?.url) return []
+    return [
+      {
+        src: media.url,
+        alt: media.alt,
+        caption: row.caption ?? undefined,
+        // The focal point staff set in the CMS keeps faces in frame when the photo is cropped.
+        position: `${media.focalX ?? 50}% ${media.focalY ?? 50}%`,
+      },
+    ]
+  })
+  return {
+    id: doc.id,
+    courseTitle: course.title,
+    courseSlug: course.slug ?? String(course.id),
+    photos,
+  }
+}
+
+/**
+ * Courses whose training photos are marked "Tampilkan di Beranda", in their "Urutan di Beranda"
+ * (1 = the large photo); entries without a number follow, most recently updated first.
+ * Only published entries with photo permission (B-05) and a published course.
+ */
+export const loadFeaturedCoursePhotos = cache(async (limit = 3): Promise<SiteCoursePhotos[]> => {
+  const payload = await getPayload({ config })
+  const { docs } = await payload.find({
+    collection: 'course-photos',
+    where: {
+      and: [PUBLISHED, { featured: { equals: true } }, { photoPermission: { equals: true } }],
+    },
+    sort: ['homeOrder', '-updatedAt'],
+    limit: limit * 2,
+    depth: 1,
+  })
+  return docs
+    .flatMap((doc) => {
+      const course = doc.course
+      if (typeof course !== 'object' || course?._status !== 'published') return []
+      const entry = toCoursePhotos(doc, course)
+      return entry.photos.length ? [entry] : []
+    })
+    .slice(0, limit)
+})
+
+/** One course's training photos for its detail page, or null when none are published with permission (B-05). */
+export const loadCoursePhotos = cache(async (slug: string): Promise<SiteCoursePhotos | null> => {
+  const payload = await getPayload({ config })
+  const { docs } = await payload.find({
+    collection: 'course-photos',
+    where: {
+      and: [PUBLISHED, { photoPermission: { equals: true } }, { 'course.slug': { equals: slug } }],
+    },
+    limit: 1,
+    depth: 1,
+  })
+  const doc = docs[0]
+  const course = doc?.course
+  if (!doc || typeof course !== 'object' || course?._status !== 'published') return null
+  const entry = toCoursePhotos(doc, course)
+  return entry.photos.length ? entry : null
 })
 
 /** Contacts and portal links from the CMS global "Pengaturan situs" (placeholders until saved). */

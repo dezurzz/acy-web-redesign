@@ -22,6 +22,7 @@ export interface Config {
   collections: {
     courses: Course;
     sessions: Session;
+    'course-photos': CoursePhoto;
     categories: Category;
     media: Media;
     users: User;
@@ -34,6 +35,7 @@ export interface Config {
   collectionsSelect: {
     courses: CoursesSelect<false> | CoursesSelect<true>;
     sessions: SessionsSelect<false> | SessionsSelect<true>;
+    'course-photos': CoursePhotosSelect<false> | CoursePhotosSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
@@ -250,6 +252,50 @@ export interface Session {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Beberapa foto terbaik per pelatihan, dari kelas sebelumnya. Dokumentasi lengkap cukup di Instagram.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "course-photos".
+ */
+export interface CoursePhoto {
+  id: number;
+  /**
+   * Satu entri per pelatihan.
+   */
+  course: number | Course;
+  title?: string | null;
+  /**
+   * Pilih foto terbaik saja (maksimal 6), foto asli dari kamera, bukan desain unggahan media sosial. Foto pertama jadi sampul. Hindari foto dengan nama atau logo klien yang terbaca.
+   */
+  photos: {
+    image: number | Media;
+    /**
+     * Opsional. Contoh: Praktik pengukuran di laboratorium.
+     */
+    caption?: string | null;
+    id?: string | null;
+  }[];
+  /**
+   * Beranda menampilkan sampul dari tiga pelatihan yang dicentang.
+   */
+  featured?: boolean | null;
+  /**
+   * 1 = foto besar, 2 dan 3 di sampingnya. Kosong = setelah yang bernomor.
+   */
+  homeOrder?: number | null;
+  /**
+   * Wajib sebelum terbit: peserta yang terlihat jelas sudah setuju fotonya dipublikasikan (B-05).
+   */
+  photoPermission?: boolean | null;
+  /**
+   * Siapa yang memberi izin, kapan, dan bagaimana. Tidak tampil di situs.
+   */
+  permissionNote?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
@@ -308,6 +354,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'sessions';
         value: number | Session;
+      } | null)
+    | ({
+        relationTo: 'course-photos';
+        value: number | CoursePhoto;
       } | null)
     | ({
         relationTo: 'categories';
@@ -438,6 +488,28 @@ export interface SessionsSelect<T extends boolean = true> {
   capacity?: T;
   postponementMessage?: T;
   replacementSession?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "course-photos_select".
+ */
+export interface CoursePhotosSelect<T extends boolean = true> {
+  course?: T;
+  title?: T;
+  photos?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
+  featured?: T;
+  homeOrder?: T;
+  photoPermission?: T;
+  permissionNote?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;

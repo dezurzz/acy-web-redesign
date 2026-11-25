@@ -62,6 +62,14 @@ export type SiteSession = {
   deadline?: string
 }
 
+/** A course's chosen training photos (CMS "Foto pelatihan"); the first is the cover. */
+export type SiteCoursePhotos = {
+  id: number
+  courseTitle: string
+  courseSlug: string
+  photos: { src: string; alt: string; caption?: string; position: string }[]
+}
+
 export type SiteData = {
   categories: SiteCategory[]
   courses: SiteCourse[]
