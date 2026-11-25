@@ -536,7 +536,8 @@
       border-color var(--motion-standard) var(--ease-standard);
   }
 
-  body:has(#konten-utama > .page-enter > [data-hero]:first-child) .site-header:not([data-scrolled]) {
+  body:has(#konten-utama > .page-enter > [data-hero]:first-child)
+    .site-header:not([data-scrolled]) {
     --hdr-bg: transparent;
     --hdr-fg: var(--color-white);
     --hdr-muted: rgb(255 255 255 / 0.88);

@@ -56,10 +56,7 @@ export function PageHero({
               </div>
             ) : null}
             {actions ? (
-              <div
-                className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4"
-                {...introStep(4)}
-              >
+              <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4" {...introStep(4)}>
                 {actions}
               </div>
             ) : null}

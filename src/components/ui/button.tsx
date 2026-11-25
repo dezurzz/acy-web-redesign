@@ -92,7 +92,10 @@ function ButtonArrow() {
     <span aria-hidden className="relative inline-flex size-5 shrink-0 overflow-hidden">
       <ArrowRight className={cn(arrow, 'group-hover/button:translate-x-[130%]')} />
       <ArrowRight
-        className={cn(arrow, 'absolute inset-0 -translate-x-[130%] group-hover/button:translate-x-0')}
+        className={cn(
+          arrow,
+          'absolute inset-0 -translate-x-[130%] group-hover/button:translate-x-0',
+        )}
       />
     </span>
   )

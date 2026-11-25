@@ -39,7 +39,10 @@ export function SmoothScroll() {
       if (document.body.hasAttribute('data-scroll-locked')) lenisRef.current?.stop()
       else lenisRef.current?.start()
     })
-    lockObserver.observe(document.body, { attributeFilter: ['data-scroll-locked'], attributes: true })
+    lockObserver.observe(document.body, {
+      attributeFilter: ['data-scroll-locked'],
+      attributes: true,
+    })
 
     return () => {
       unsubscribe()
