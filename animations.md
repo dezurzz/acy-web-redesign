@@ -1,6 +1,6 @@
 # BKI Academy — Animation & Micro-interaction Specification
 
-Version: 1.3 · 24 November 2026 · Status: implementation specification
+Version: 1.4 · 25 November 2026 · Status: implementation specification
 
 Companions: `PRD.md` and `design.md`.
 
@@ -143,7 +143,7 @@ The question is a button with correct expanded/control relationships. Collapsed 
 
 ### 5.8 Page navigation and sticky elements
 
-Use ordinary navigation. No route-wide exit animation or loading curtain. Since v1.2 the new page fades in over 450 ms (v1.3) (opacity and an 8 px rise, `src/components/motion/PageEnter.tsx`, keyed by path so every new path fades, filter-only changes do not) after in-site navigation only; the first page of a visit gets the hero intro instead. Nothing waits for the fade, and with reduced motion it does not run. A new page always opens at the top, without gliding there.
+Use ordinary navigation. No route-wide exit animation, and no curtain between pages (the only curtain is the first-visit one in §5.12). Since v1.2 the new page fades in over 450 ms (v1.3) (opacity and an 8 px rise, `src/components/motion/PageEnter.tsx`, keyed by path so every new path fades, filter-only changes do not) after in-site navigation only; the first page of a visit gets the hero intro instead. Nothing waits for the fade, and with reduced motion it does not run. A new page always opens at the top, without gliding there.
 
 Sticky header/action areas retain constant dimensions. A subtle border/background transition can signal the sticky state; do not continuously resize the header or hide navigation based on small scroll changes. Sticky actions must not cover form errors or keyboard focus.
 
@@ -154,6 +154,10 @@ Optional only for nonessential editorial groups below the fold (v1.3): each item
 Progressive enhancement is mandatory: content is visible in server HTML and remains visible if JavaScript fails. If an observer is used, only arm an offscreen group after the observer has been successfully installed; never hide content already visible or focused. If support is missing, show the final state. Do not repeat the effect while scrolling up and down.
 
 Interactive or focused content must never remain transparent. During rapid scrolling, show the final state rather than queueing many delayed animations.
+
+### 5.9.1 Scroll-linked steps (v1.4)
+
+One exception to "reveal once": the numbered list in *Mengapa BKI Academy* on the homepage builds one item at a time, tied to the scroll position, and reverses when the visitor scrolls back up (project lead's request, 25 Nov 2026). Each `<li class="scroll-step">` is its own view timeline (`view-timeline: --step`); its parts use staggered ranges of that timeline: the top hairline draws in from the left (`cover 0%–25%`), the number goes from faint grey to BKI blue (`cover 15%–32%`), then the title and text rise 24 px from transparent (`cover 20%–40%`, `--ease-reveal`). Every item is complete by about the middle of the screen, so nobody reads half-faded text. Pure CSS scroll-driven animation, no JavaScript; without `animation-timeline` support or with reduced motion the list is shown as is, with static hairlines. No pinning or scroll-jacking. Layout (v1.4, project lead's choice): no photo; on wide screens the heading (`SectionHeading`, 5 columns) is `position: sticky` below the header (+48 px) while the list (6 columns, from column 7) scrolls past. Each reason has a display-size light number, an H3 title and intro-size text, so the list (~1020 px) is far taller than the heading (~175 px) and the heading stays in place for about 845 px of scrolling. On small screens everything stacks and nothing is sticky. A sticky photo was tried first and dropped: at 599 px against a 675 px column it would have stayed put for only about 76 px. Files: `Reasons` in `src/app/(frontend)/id/page.tsx`, globals.css "Scroll-linked steps".
 
 ### 5.10 Gradients and media
 
@@ -166,6 +170,12 @@ Prefer static photographs for launch. If decorative video is added later, it mus
 ### 5.11 Hero intro (first load, v1.2)
 
 On the first page of a visit, the hero builds in once: the header fades in, the gradient settles from a 1.06 zoom (2.2 s, background layer only), then the hero steps rise 40 px from transparent one after another (1.3 s each on `--ease-reveal`, 130 ms apart, starting at 80 ms; v1.3): label row, heading, hairline (draws in from the left), intro and actions, side facts. All of it is CSS on server HTML (`data-intro` steps, `introStep()` in `Atmosphere.tsx`), so the content is there without JavaScript and the page can be used during the intro. After 2.4 s `IntroState` sets `<html data-intro-done>`, so pages reached through in-site links do not replay it (M-10); a full reload plays it again. With reduced motion it does not run.
+
+### 5.12 First-visit curtain (v1.4)
+
+At the project lead's request (25 Nov 2026), the first page of a browser session opens behind a short curtain: a deep navy panel (`--color-navy-950`) with the parenthetical "Divisi pelatihan PT Biro Klasifikasi Indonesia" and "BKI Academy" in display type rising in (600 ms, `--ease-reveal`), a hairline drawing across (700 ms from 200 ms, `--ease-expo`), then the panel lifting away upward (550 ms from 800 ms, `--ease-unveil`). It is gone after about 1.35 s. The hero intro (§5.11) is pushed back by `--intro-offset: 1000ms`, so it starts while the panel lifts, and `IntroState` waits that much longer before setting `data-intro-done`.
+
+Rules: it never waits for loading (the page is already in the server HTML beneath it, and the timing is fixed CSS, so it also runs and ends without JavaScript); it plays once per browser session (`IntroCurtain` sets a sessionStorage flag and marks later loads `<html data-curtain-seen>` before the first paint); it never plays with the OS reduced-motion setting or a saved "Kurangi animasi" (the same early script applies that saved choice to `<html data-motion>` before React loads, so the hero intro no longer flashes for those visitors either). It is decorative and `aria-hidden`; screen-reader users get the page immediately. Files: `src/components/motion/IntroCurtain.tsx`, globals.css "First-visit curtain".
 
 ## 6. Reduced motion and user preference
 
@@ -309,6 +319,8 @@ Test representative desktop/mobile viewports, keyboard-only navigation, reduced-
 The final experience should feel gently responsive, with motion supporting the information rather than demanding attention.
 
 ## 11. Change log
+
+- 1.4 · 25 November 2026 — Scroll-linked steps for the Mengapa BKI Academy list (§5.9.1). First-visit curtain (§5.12) at the project lead's request: once per session, about 1.35 s, never tied to loading, off with reduced motion; the hero intro follows it. A saved "Kurangi animasi" now applies before the first paint. §5.8 updated.
 
 - 1.3.1 · 25 November 2026 — Fixes: the first page no longer blinks white when the hero intro ends (it is exempt from the page fade), and the page fade (§5.8) now plays on every new path, including course list to course page, by keying the wrapper on the path.
 

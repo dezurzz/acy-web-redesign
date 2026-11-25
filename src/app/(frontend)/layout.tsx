@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import React from 'react'
 
+import { IntroCurtain } from '@/components/motion/IntroCurtain'
 import { IntroState } from '@/components/motion/IntroState'
 import { SmoothScroll } from '@/components/motion/SmoothScroll'
 import { SiteFooter } from '@/components/site/SiteFooter'
@@ -35,8 +36,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html className={inter.variable} lang="id">
+    // suppressHydrationWarning: IntroCurtain's early script adds data-* flags to <html> before React loads.
+    <html className={inter.variable} lang="id" suppressHydrationWarning>
       <body className="flex min-h-dvh flex-col">
+        {/* First, so its script runs before the first paint. */}
+        <IntroCurtain />
         <a
           className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:px-4 focus:py-3"
           href="#konten-utama"

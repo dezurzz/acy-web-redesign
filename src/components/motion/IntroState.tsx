@@ -10,6 +10,12 @@ import * as React from 'react'
  */
 const INTRO_LENGTH_MS = 2400
 
+/** The first-visit curtain delays the intro by --intro-offset (globals.css); wait for that too. */
+function introOffsetMs() {
+  const value = getComputedStyle(document.documentElement).getPropertyValue('--intro-offset')
+  return Number.parseFloat(value) || 0
+}
+
 export function IntroState() {
   React.useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -19,7 +25,7 @@ export function IntroState() {
         page.setAttribute('data-entered', '')
       }
       document.documentElement.setAttribute('data-intro-done', '')
-    }, INTRO_LENGTH_MS)
+    }, INTRO_LENGTH_MS + introOffsetMs())
     return () => window.clearTimeout(timer)
   }, [])
 

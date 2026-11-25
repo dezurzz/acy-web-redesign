@@ -17,11 +17,6 @@ export const stockPhotos = {
     alt: 'Kapal kontainer berlayar di laut biru, dilihat dari udara',
     source: 'https://unsplash.com/photos/aerial-view-of-boat-on-water-1cqIcrWFQBI',
   },
-  why: {
-    src: unsplash('photo-1670121180530-cfcba4438038'),
-    alt: 'Kapal kargo bersandar di bawah derek pelabuhan',
-    source: 'https://unsplash.com/photos/a-large-cargo-ship-at-a-dock-MHXJ9p64Jw8',
-  },
   cta: {
     src: unsplash('photo-1579698543074-a18d65bff58f'),
     alt: 'Haluan kapal dengan jangkar, dilihat dari depan',

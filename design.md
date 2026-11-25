@@ -163,7 +163,7 @@ Information comes first: a visitor who never notices the motion must get the sam
 | Template | Intensity (animations.md §3) | Motion | Never |
 |---|---|---|---|
 | Header and footer (all pages) | Functional | Dropdown and mobile menu: fade + 8 px over 220 ms, close 140 ms (§5.3–5.4). Header keeps a constant size and never auto-hides (§5.8). Footer holds the “Kurangi animasi” control (§6) | Blurring the page behind menus |
-| Beranda | Moderate, selective | Button arrow 3 px; editorial image 1.02 on hover (§5.1–5.2); one-time reveals for the Kategori, Mengapa BKI Academy and In-house groups only (§5.9) | Animating the hero heading, intro, CTAs or the first session rows |
+| Beranda | Moderate, selective | Button arrow 3 px; editorial image 1.02 on hover (§5.1–5.2); one-time reveals for the Kategori and In-house groups (§5.9); the Mengapa BKI Academy list builds item by item with the scroll (animations.md §5.9.1) | Animating the hero heading, intro, CTAs or the first session rows |
 | Pelatihan | Low | Card border/title emphasis 160 ms; filter selection immediate; “Memuat pelatihan…” while loading; optional 160 ms fade-in of new results; filter drawer 220 / 140 ms (§5.4–5.5) | Scroll reveals; items flying to new positions |
 | Jadwal | Minimal | Selection feedback and loading/status changes only | Moving rows; any motion on dates, fees or status labels |
 | Detail pelatihan | Low | Session option border/background 160 ms; FAQ 220 ms with chevron (§5.6); “Pilih Jadwal” scrolls to the session panel (instant under reduced motion); mobile CTA bar keeps a constant size and hides while the footer or an error summary is visible (§5.8) | Scroll reveals on course content |

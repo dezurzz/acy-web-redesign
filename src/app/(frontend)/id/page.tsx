@@ -315,42 +315,42 @@ const reasons = [
   },
 ]
 
+/*
+ * Sticky heading (v1.4, project lead's choice): on wide screens the heading stays in place on the
+ * left while the three reasons scroll past on the right and build one by one with the scroll
+ * (animations.md §5.9.1). Each reason gets generous room so the list is clearly taller than the
+ * heading; otherwise the heading would barely stick. Stacked, nothing sticky, on small screens.
+ */
 function Reasons() {
   return (
     <section aria-labelledby="beranda-alasan" className="container-page py-24 md:py-32 lg:py-40">
-      <div className="grid gap-10 lg:grid-cols-12 lg:items-center lg:gap-6">
-        {/* TEMPORARY stock photo (lib/stock-photos.ts) until BKI photos arrive (B-05). */}
-        <PhotoFrame
-          alt={stockPhotos.why.alt}
-          className="aspect-4/3 lg:col-span-5 lg:aspect-4/5"
-          sizes="(min-width: 1024px) 40vw, 100vw"
-          src={stockPhotos.why.src}
-        />
-        <div className="lg:col-span-6 lg:col-start-7">
+      <div className="grid gap-12 lg:grid-cols-12 lg:gap-6">
+        <div className="lg:sticky lg:top-[calc(var(--header-height)+3rem)] lg:col-span-5 lg:self-start">
           <SectionHeading
             eyebrow="Mengapa BKI Academy"
             id="beranda-alasan"
             title="Belajar dari badan klasifikasi"
           />
-          <Reveal className="mt-12 lg:mt-16">
-            <ol>
-              {reasons.map((reason, index) => (
-                <li
-                  className="grid grid-cols-[4rem_minmax(0,1fr)] gap-x-4 border-t border-navy-950 py-8"
-                  key={reason.title}
-                >
-                  <span aria-hidden className="numeric text-h2 text-blue-600">
-                    0{index + 1}
-                  </span>
-                  <div>
-                    <h3 className="text-ui font-semibold text-navy-950">{reason.title}</h3>
-                    <p className="mt-2 text-body text-navy-800">{reason.text}</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </Reveal>
         </div>
+        {/* Scroll-linked, one item at a time (animations.md §5.9.1): each step's line draws,
+            its number lights up and its text rises as that step moves up the screen. */}
+        <ol className="lg:col-span-6 lg:col-start-7">
+          {reasons.map((reason, index) => (
+            <li className="scroll-step relative pt-8 pb-14 md:pb-20" key={reason.title}>
+              <span aria-hidden className="scroll-step-line" />
+              <span
+                aria-hidden
+                className="scroll-step-number numeric block text-display text-blue-600"
+              >
+                0{index + 1}
+              </span>
+              <div className="scroll-step-text mt-6 md:mt-8">
+                <h3 className="text-h3 text-navy-950">{reason.title}</h3>
+                <p className="mt-3 max-w-[48ch] text-intro text-slate-600">{reason.text}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
   )
