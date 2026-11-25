@@ -551,6 +551,36 @@
   }
 }
 
+/* ---------- Split-speed parallax, "Suasana pelatihan" (animations.md §5.10.1, v1.4) ---------- */
+/* Wide screens only: while the section crosses the screen, the right-hand photos (.kelas-drift)
+ * travel 80 px further up than the large photo, so the right column slides past it. Uses the
+ * `translate` property, not `transform`, so it never fights the Reveal wipe on the <li>.
+ * Bottoms line up when the section is in the middle of the screen. */
+@layer components {
+  @keyframes kelas-drift {
+    from {
+      translate: 0 40px;
+    }
+    to {
+      translate: 0 -40px;
+    }
+  }
+
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) and (width >= 64rem) {
+      html:not([data-motion='reduced']) .kelas-grid {
+        view-timeline: --kelas block;
+      }
+
+      html:not([data-motion='reduced']) .kelas-drift {
+        animation: kelas-drift linear both;
+        animation-timeline: --kelas;
+        animation-range: cover 0% cover 100%;
+      }
+    }
+  }
+}
+
 /* ---------- First-visit curtain (animations.md §5.12, v1.4) ---------- */
 /* Hidden unless motion is allowed and this is the first page of the browser session (IntroCurtain
  * marks later loads with data-curtain-seen before the first paint). Fixed timing, never tied to

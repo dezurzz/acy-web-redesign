@@ -167,6 +167,10 @@ Scroll-linked photos (v1.2): photographs drift slightly slower than the page (pa
 
 Prefer static photographs for launch. If decorative video is added later, it must have an accessible pause control, a still-image fallback, and no audio autoplay. Pause it when offscreen or the document is hidden. With reduced motion or site motion off, display the poster and do not start decorative playback. Training videos explicitly played by the user are a separate content experience.
 
+### 5.10.1 Split-speed parallax, "Suasana pelatihan" (v1.4)
+
+On wide screens (≥ 64rem) the homepage training-photos section (*Dalam Kelas*) gets depth from two scroll speeds: the large photo moves with the page, while the two photos on the right (`.kelas-drift`) travel 80 px further over the section's whole pass (`translate: 0 40px` → `0 -40px`, linear, `animation-timeline` = the grid's `view-timeline: --kelas`, range `cover 0%–100%`), so the right column slides up past the large photo. Bottoms line up when the section is mid-screen. Pure CSS scroll-driven animation; it uses the `translate` property, not `transform`, so it never fights the Reveal wipe on the `<li>`, and it adds to the existing in-frame photo drift (§5.10) without changing it. Kept small on purpose: larger offsets would move captions and links away from where people expect to click. Off on small screens (one column, nothing to offset), with reduced motion, and without scroll-timeline support. Files: `InClass` in `src/app/(frontend)/id/page.tsx`, globals.css "Split-speed parallax".
+
 ### 5.11 Hero intro (first load, v1.2)
 
 On the first page of a visit, the hero builds in once: the header fades in, the gradient settles from a 1.06 zoom (2.2 s, background layer only), then the hero steps rise 40 px from transparent one after another (1.3 s each on `--ease-reveal`, 130 ms apart, starting at 80 ms; v1.3): label row, heading, hairline (draws in from the left), intro and actions, side facts. All of it is CSS on server HTML (`data-intro` steps, `introStep()` in `Atmosphere.tsx`), so the content is there without JavaScript and the page can be used during the intro. After 2.4 s `IntroState` sets `<html data-intro-done>`, so pages reached through in-site links do not replay it (M-10); a full reload plays it again. With reduced motion it does not run.
@@ -320,7 +324,7 @@ The final experience should feel gently responsive, with motion supporting the i
 
 ## 11. Change log
 
-- 1.4 · 25 November 2026 — Scroll-linked steps for the Mengapa BKI Academy list (§5.9.1). First-visit curtain (§5.12) at the project lead's request: once per session, about 1.35 s, never tied to loading, off with reduced motion; the hero intro follows it. A saved "Kurangi animasi" now applies before the first paint. §5.8 updated.
+- 1.4 · 25 November 2026 — Split-speed parallax for Suasana pelatihan (§5.10.1). Scroll-linked steps for the Mengapa BKI Academy list (§5.9.1). First-visit curtain (§5.12) at the project lead's request: once per session, about 1.35 s, never tied to loading, off with reduced motion; the hero intro follows it. A saved "Kurangi animasi" now applies before the first paint. §5.8 updated.
 
 - 1.3.1 · 25 November 2026 — Fixes: the first page no longer blinks white when the hero intro ends (it is exempt from the page fade), and the page fade (§5.8) now plays on every new path, including course list to course page, by keying the wrapper on the path.
 

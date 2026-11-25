@@ -377,7 +377,9 @@ function InClass({ items }: { items: SiteCoursePhotos[] }) {
           title="Suasana pelatihan"
         />
         <Reveal className="mt-14 md:mt-20">
-          <ul className="grid gap-x-6 gap-y-12 lg:grid-cols-12">
+          {/* kelas-grid / kelas-drift: split-speed parallax on wide screens (animations.md §5.10.1):
+              the two photos on the right move a little faster than the large one. */}
+          <ul className="kelas-grid grid gap-x-6 gap-y-12 lg:grid-cols-12">
             {items.map((item, index) => {
               const lead = index === 0
               const stretch = lead && !single
@@ -395,7 +397,11 @@ function InClass({ items }: { items: SiteCoursePhotos[] }) {
                   key={item.id}
                 >
                   <Link
-                    className={cn('group block', stretch && 'lg:flex lg:flex-1 lg:flex-col')}
+                    className={cn(
+                      'group block',
+                      stretch && 'lg:flex lg:flex-1 lg:flex-col',
+                      !lead && 'kelas-drift',
+                    )}
                     href={`/id/pelatihan/${item.courseSlug}`}
                   >
                     <PhotoFrame
