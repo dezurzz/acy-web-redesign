@@ -1,6 +1,6 @@
 # BKI Academy — Animation & Micro-interaction Specification
 
-Version: 1.1 · 17 November 2026 · Status: implementation specification
+Version: 1.3 · 24 November 2026 · Status: implementation specification
 
 Companions: `PRD.md` and `design.md`.
 
@@ -25,7 +25,7 @@ Motion must never delay registration, hide essential information, or imply a req
 
 `PRD.md` governs functionality and data state. `design.md` governs colour, typography, grids, shapes, and static component styling. This file is the detailed source of truth for animation behaviour and motion tokens. Where a general motion range in design.md differs from a component-specific value here, use this file. Product correctness and accessibility take priority over decorative effects.
 
-This document does not change the technology stack or require a new animation dependency. Implement ordinary interactions with CSS first. Any new library must satisfy the PRD’s stable-version and compatibility policy.
+Implement ordinary interactions with CSS first. Since v1.2 the site uses one motion dependency, Lenis (smooth wheel scrolling, §7). Any new library must satisfy the PRD’s stable-version and compatibility policy.
 
 ## 3. Motion intensity by page
 
@@ -44,7 +44,7 @@ This document does not change the technology stack or require a new animation de
 | Portal Peserta | Low | Card hover/focus, FAQ accordions, optional one-time reveal of the service cards; links to other systems never animate away before navigating |
 | Staff administration | Functional only | Use consistent admin feedback; no marketing entrance sequences |
 
-Hero heading, main explanation, navigation, prices, dates, and primary CTA must be visible on initial render. Do not animate an entire page in from opacity zero.
+Hero heading, main explanation, navigation, prices, dates, and primary CTA are in the server HTML. The only entrance allowed on them is the first-load hero intro (§5.11), which is pure CSS, finishes within 1.6 s and never blocks input. Pages reached through the site's own links fade in over 320 ms (§5.8). Do not animate an entire page in from opacity zero in any other way.
 
 ## 4. Motion tokens
 
@@ -65,16 +65,30 @@ Use a small shared set. Values are defaults; any exception must be documented wi
 | `--move-icon` | `3px` | Decorative directional arrow |
 | `--move-panel` | `8px` | Menu/panel entry |
 | `--move-reveal` | `12px` | Maximum editorial reveal distance |
-| `--scale-image` | `1.02` | Maximum routine image enlargement |
+| `--scale-image` | `1.04` | Image hover enlargement (v1.2; portraits stay at 1.02) |
+| `--motion-image-hover` | `700ms` | Image hover zoom (v1.2) |
+| `--motion-arrow` | `420ms` | Button arrow swap, nav underline draw (v1.2) |
+| `--motion-intro` | `1300ms` | Hero intro step (v1.3) |
+| `--motion-intro-step` | `130ms` | Delay between hero intro steps (v1.3) |
+| `--motion-reveal-lg` | `1400ms` | Editorial scroll reveal (v1.3) |
+| `--motion-page` | `450ms` | Page fade after in-site navigation (v1.3) |
+| `--ease-expo` | `cubic-bezier(.19, 1, .22, 1)` | Long, soft deceleration for intro, reveals, arrows, image hover (v1.2) |
+| `--move-intro` | `40px` | Hero intro rise (v1.3) |
+| `--move-reveal-lg` | `56px` | Editorial reveal rise (v1.3) |
+| `--motion-unveil` | `1500ms` | Photo wipe inside a reveal (v1.3) |
+| `--ease-reveal` | `cubic-bezier(.33, 1, .68, 1)` | Reveals and hero intro: ease-out cubic, movement spread over the duration (v1.3) |
+| `--ease-unveil` | `cubic-bezier(.76, 0, .24, 1)` | Photo wipe: in-out (v1.3) |
 
-No bounce, elastic easing, overshoot, or repeated pulsing. Most interaction feedback should complete within 160–280 ms. Decorative entrances may take 360 ms, with at most 120 ms of cumulative stagger. Do not stagger every item in a long catalogue.
+No bounce, elastic easing, overshoot, or repeated pulsing. Colour and state feedback completes within 160–280 ms. Since v1.2, decorative movement uses longer curves: arrow swap and image zoom 420–700 ms expo-out; reveals and the hero intro 1.3–1.5 s on ease-out cubic (v1.3, because expo-out finished most of the movement in the first 150 ms and read as a snap). Items in a reveal follow each other 160 ms apart; hero intro steps 130 ms apart. Do not stagger every item in a long catalogue.
 
 ## 5. Component interaction specifications
 
 ### 5.1 Buttons and text links
 
 - Hover: transition background/border/text colours over 160 ms. Follow the exact colour roles in design.md.
-- Optional arrow: translate 3 px along the direction of the link. Move the icon only, not the label or hit area.
+- Optional arrow on buttons (v1.2): on hover the arrow slides out to the right and a second arrow slides in from the left inside a clipped icon-sized box, 420 ms expo-out. Text-link arrows move 3 px. Move the icon only, not the label or hit area.
+- Text links (v1.2): the underline stays; on hover it drops 2 px further from the text over 220 ms.
+- Desktop navigation (v1.2): a 2 px underline draws in from the left on hover (420 ms expo-out); the current page keeps it drawn.
 - Press: use a darker fill over 100 ms. Do not shrink the entire button or move surrounding content.
 - Keyboard focus: show a clearly contrasting focus ring immediately. Never delay it for an entrance effect.
 - Loading: preserve width and label clarity; replace the action text with an explicit state such as “Mengirim…”. Prevent duplicate activation while a request is pending.
@@ -83,7 +97,7 @@ No bounce, elastic easing, overshoot, or repeated pulsing. Most interaction feed
 
 ### 5.2 Course cards and editorial images
 
-Course card hover/focus-within changes the border or title emphasis in 160 ms. Keep the card aligned to the grid; no card lift, tilt, or floating shadow. If the card contains an image, it may scale from 1 to 1.02 over 280 ms inside an overflow-clipped frame. Text, prices, and dates stay still.
+Course card hover/focus-within changes the border or title emphasis in 160 ms. Keep the card aligned to the grid; no card lift, tilt, or floating shadow. If the card contains an image, it may scale from 1 to 1.04 over 700 ms (expo-out) inside an overflow-clipped frame (v1.2; instructor portraits stay at 1.02 over 280 ms so faces are not cropped). Text, prices, and dates stay still.
 
 Do not animate a schedule row’s position. Do not enlarge an image if doing so crops important faces or instructional details. On touch devices use the default static image. A title link remains a real link; decorative animation never becomes a substitute for an accessible interactive element.
 
@@ -129,13 +143,13 @@ The question is a button with correct expanded/control relationships. Collapsed 
 
 ### 5.8 Page navigation and sticky elements
 
-Use ordinary navigation at launch. No route-wide exit animation, loading curtain, or forced crossfade before a course page becomes readable. Optional editorial entrances do not control route readiness.
+Use ordinary navigation. No route-wide exit animation or loading curtain. Since v1.2 the new page fades in over 450 ms (v1.3) (opacity and an 8 px rise, `src/components/motion/PageEnter.tsx`, keyed by path so every new path fades, filter-only changes do not) after in-site navigation only; the first page of a visit gets the hero intro instead. Nothing waits for the fade, and with reduced motion it does not run. A new page always opens at the top, without gliding there.
 
 Sticky header/action areas retain constant dimensions. A subtle border/background transition can signal the sticky state; do not continuously resize the header or hide navigation based on small scroll changes. Sticky actions must not cover form errors or keyboard focus.
 
 ### 5.9 Editorial scroll reveals
 
-Optional only for nonessential editorial groups below the fold: opacity 0 → 1, translateY 12 px → 0, 360 ms, ease-enter. Reveal once per page visit. Limit to a few selected groups; never apply a blanket reveal wrapper to all content.
+Optional only for nonessential editorial groups below the fold (v1.3): each item (the `<li>`s of a list directly inside, otherwise the group's direct children) is watched on its own and, once it is 12% inside the screen, rises 56 px from transparent over 1.4 s on `--ease-reveal` (ease-out cubic, so the movement is spread out and can be seen). Items that arrive together, such as a row of cards, follow each other 160 ms apart. A photo inside an item wipes open from the bottom over 1.5 s (`--ease-unveil`, in-out) while settling from a 1.18 zoom. The end clip must be an explicit `inset(0 0 0 0)`: clip-path cannot animate to `none`. Reveal once per page visit. Limit to a few selected groups; never apply a blanket reveal wrapper to all content.
 
 Progressive enhancement is mandatory: content is visible in server HTML and remains visible if JavaScript fails. If an observer is used, only arm an offscreen group after the observer has been successfully installed; never hide content already visible or focused. If support is missing, show the final state. Do not repeat the effect while scrolling up and down.
 
@@ -145,7 +159,13 @@ Interactive or focused content must never remain transparent. During rapid scrol
 
 The electric-blue gradients in design.md remain static. Do not animate gradient position, add pointer-following lights, or use an always-moving background behind text.
 
+Scroll-linked photos (v1.2): photographs drift slightly slower than the page (parallax, ±6% of the image height), using CSS scroll-driven animations (`animation-timeline: view()`), no JavaScript; browsers without support show the still photo. (v1.3: the scroll-linked unveil was replaced by the time-based photo wipe in §5.9, because tying it to scroll made it finish instantly on a fast scroll.) Off with reduced motion. Never on text.
+
 Prefer static photographs for launch. If decorative video is added later, it must have an accessible pause control, a still-image fallback, and no audio autoplay. Pause it when offscreen or the document is hidden. With reduced motion or site motion off, display the poster and do not start decorative playback. Training videos explicitly played by the user are a separate content experience.
+
+### 5.11 Hero intro (first load, v1.2)
+
+On the first page of a visit, the hero builds in once: the header fades in, the gradient settles from a 1.06 zoom (2.2 s, background layer only), then the hero steps rise 40 px from transparent one after another (1.3 s each on `--ease-reveal`, 130 ms apart, starting at 80 ms; v1.3): label row, heading, hairline (draws in from the left), intro and actions, side facts. All of it is CSS on server HTML (`data-intro` steps, `introStep()` in `Atmosphere.tsx`), so the content is there without JavaScript and the page can be used during the intro. After 2.4 s `IntroState` sets `<html data-intro-done>`, so pages reached through in-site links do not replay it (M-10); a full reload plays it again. With reduced motion it does not run.
 
 ## 6. Reduced motion and user preference
 
@@ -169,7 +189,14 @@ For normal mode, loading should still be restrained. Prefer static skeletons or 
 
 Use CSS for hover, focus, colour transitions, image transforms, and primitive-supported panels. Use small client components only for stateful controls, preferences, or optional viewport observation. Keep public content server-rendered. Do not turn the entire Next.js page into a client component solely to animate a section.
 
-A JavaScript animation library is optional, not a launch dependency. Introduce one only for an approved coordinated interaction that CSS cannot maintain cleanly. Keep it within the smallest necessary component boundary and verify framework compatibility at installation time. No scroll-smoothing engine is required.
+A JavaScript animation library is optional. Introduce one only for an approved coordinated interaction that CSS cannot maintain cleanly. Keep it within the smallest necessary component boundary and verify framework compatibility at installation time.
+
+**Smooth scrolling (v1.2): Lenis 1.3.27**, mounted once in the public layout (`src/components/motion/SmoothScroll.tsx`, styles from `lenis/dist/lenis.css`). Wheel and trackpad scrolling follow the input with `lerp: 0.12` (each frame closes 12% of the remaining distance; v1.3, replacing a fixed 1.1 s duration that made the page trail behind the wheel and feel heavy); native scrolling stays underneath, so the scrollbar, keyboard scrolling, find-in-page and focus scrolling keep working. Rules:
+- Off whenever motion is reduced (OS setting or “Kurangi animasi”), switching live when either changes.
+- Touch devices keep native scrolling.
+- Stops while a modal locks the page (Radix sets `data-scroll-locked` on `<body>`); scroll areas marked `data-lenis-prevent` scroll natively.
+- Anchor links are left to the browser, so the skip link still moves focus.
+- No GSAP: CSS (keyframes and scroll-driven animations) covers the intro, reveals and parallax.
 
 Suggested organisation:
 
@@ -255,10 +282,10 @@ This snippet illustrates only button/image behaviour; it is not a complete prefe
 
 | ID | Pass condition |
 |---|---|
-| M-01 | Hero text, main CTA, dates, and prices are readable without waiting for an entrance |
+| M-01 | Hero text, main CTA, dates, and prices are in the server HTML; the first-load intro finishes within 2.4 s and never blocks input |
 | M-02 | Keyboard users can operate every animated control and see focus throughout |
 | M-03 | Touch users have every action available without hover |
-| M-04 | OS reduced motion and site reduction both suppress decorative movement |
+| M-04 | OS reduced motion and site reduction both suppress decorative movement, including smooth scrolling, the hero intro, page fade, and parallax |
 | M-05 | Site preference survives reload where storage is available; denial degrades safely |
 | M-06 | Menus restore focus; closed panels contain no focusable hidden content |
 | M-07 | Rapid toggling and filter changes resolve to the latest requested state |
@@ -282,6 +309,12 @@ Test representative desktop/mobile viewports, keyboard-only navigation, reduced-
 The final experience should feel gently responsive, with motion supporting the information rather than demanding attention.
 
 ## 11. Change log
+
+- 1.3.1 · 25 November 2026 — Fixes: the first page no longer blinks white when the hero intro ends (it is exempt from the page fade), and the page fade (§5.8) now plays on every new path, including course list to course page, by keying the wrapper on the path.
+
+- 1.3 · 24 November 2026 — The user found the motion too fast to notice and the scrolling heavy. Lenis switched from a 1.1 s duration to `lerp: 0.12`; reveals now watch each item, rise 56 px over 1.4 s on ease-out cubic, 160 ms apart, with a photo wipe; hero intro slowed (1.3 s steps, 130 ms apart). Scroll-linked unveil removed in favour of the time-based wipe.
+
+- 1.2 · 24 November 2026 — Richer motion at the user's request: Lenis smooth scrolling (§7), first-load hero intro (§5.11), page fade after in-site navigation (§5.8), larger staggered reveals (§5.9), scroll-linked photo parallax and unveil (§5.10), button arrow swap, nav underline draw and text-link underline shift (§5.1), longer image hover zoom (§5.2). New tokens in §4; M-01 and M-04 updated.
 
 - 1.1 · 17 November 2026 — Added In-house training, MICE, Portal Peserta, and registration via WhatsApp (decisions D-06, D-07, D-09) to the intensity table in §3.
 - 1.0 · 17 November 2026 — Initial specification.

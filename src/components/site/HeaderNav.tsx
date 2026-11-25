@@ -17,7 +17,7 @@ export function HeaderNav() {
           <li key={link.href}>
             <Link
               aria-current={isActive(pathname, link.href) ? 'page' : undefined}
-              className="inline-flex min-h-11 items-center px-3 text-ui whitespace-nowrap text-(--hdr-muted) decoration-2 underline-offset-8 transition-colors duration-(--motion-fast) ease-(--ease-standard) hover:text-(--hdr-fg) aria-[current=page]:font-semibold aria-[current=page]:text-(--hdr-active) aria-[current=page]:underline"
+              className="relative inline-flex min-h-11 items-center px-3 text-ui whitespace-nowrap text-(--hdr-muted) transition-colors duration-(--motion-fast) ease-(--ease-standard) after:absolute after:inset-x-3 after:bottom-1.5 after:h-0.5 after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-(--motion-arrow) after:ease-(--ease-expo) hover:text-(--hdr-fg) hover:after:scale-x-100 aria-[current=page]:font-semibold aria-[current=page]:text-(--hdr-active) aria-[current=page]:after:scale-x-100"
               href={link.href}
             >
               {link.label}

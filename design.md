@@ -24,7 +24,7 @@ Reference roles: EPFL for institutional clarity; Swissnex for contemporary commu
 
 Avoid glassmorphism, neon glows around cards, decorative dashboard widgets, excessive pill shapes, gratuitous parallax, giant batch numbers, justified body text, and gradients behind dense information. Do not place essential text inside images.
 
-**Visual direction (v1.3):** Swiss editorial typography on an atmospheric sky. Page openings use the atmosphere gradient (§4D) with film grain, large light-weight type, parenthetical labels such as `( Maritime Labour Convention )`, hairline grid lines with a crosshair mark, and key facts pinned to a corner, as in BKI Academy's own course posters. Dense information (schedules, prices, forms, filters) stays on solid white or paper.
+**Visual direction (v1.3):** Swiss editorial typography on an atmospheric sky. Page openings use the atmosphere gradient (§4D) with film grain, large light-weight type, parenthetical labels such as `( Maritime Labour Convention )`, plain hairline grid lines (no crosshair mark), and key facts pinned to a corner, as in BKI Academy's own course posters. Dense information (schedules, prices, forms, filters) stays on solid white or paper.
 
 ## 3. Colour tokens
 
@@ -394,6 +394,7 @@ Read `PRD.md` for product behaviour, data, migration, integration, and launch cr
 ## 14. Change log
 
 - 1.3 · 24 November 2026 — Later the same day: larger section spacing (§6), nautical-chart pattern for CTA bands and temporary large photography (§4D).
+- 1.3.1 · 25 November 2026 — Crosshair mark (circle with +) removed from hero hairlines at the project lead's request; the lines stay plain.
 - 1.3 · 24 November 2026 — New visual direction chosen by the project lead: Swiss editorial type on an atmospheric sky (§2, §4D), following BKI Academy's own course posters. Light display weights (§5), atmosphere gradient with grain and a two-part build that keeps text off the light end, parenthetical labels, hairline crosshair, header floating over the opening and turning solid on scroll. Page openings no longer need photographs. Dense information stays on solid surfaces.
 - 1.2 · 17 November 2026 — Made `animations.md` the source of truth for motion; §7 now points to it and §7.1 maps its rules onto the BKI templates. Motion tokens moved out of §11 (they live in animations.md §4 and `globals.css`). Brand approval tracked as decision B-06.
 - 1.1 · 16 November 2026 — Declared this document the authoritative presentation source. Added all eight session statuses and a status label mapping; skip link, step indicator, session panel, mobile CTA bar, choice controls, load more, and error page components; required focus treatment per surface, including a two-colour halo on gradient/photo surfaces; full typography, status surface, `--gradient-photo`, and overlay shadow tokens; Tailwind/shadcn mapping (§12). Removed the filename note.

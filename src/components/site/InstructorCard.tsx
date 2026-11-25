@@ -42,7 +42,7 @@ export function InstructorCard({
         {photo ? (
           <Image
             alt={photo.alt}
-            className="object-cover transition-transform duration-(--motion-image) ease-(--ease-standard) pointer-fine:group-hover/photo:scale-(--scale-image)"
+            className="object-cover transition-transform duration-(--motion-image) ease-(--ease-standard) pointer-fine:group-hover/photo:scale-[1.02]"
             fill
             sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 100vw"
             src={photo.src}

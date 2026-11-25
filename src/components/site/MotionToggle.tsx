@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 
-import { MOTION_STORAGE_KEY, readStoredReduction } from '@/lib/motion'
+import { MOTION_CHANGE_EVENT, MOTION_STORAGE_KEY, readStoredReduction } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 /*
@@ -16,7 +16,7 @@ import { cn } from '@/lib/utils'
  */
 
 const OS_QUERY = '(prefers-reduced-motion: reduce)'
-const CHANGE_EVENT = 'bki-motion-change'
+const CHANGE_EVENT = MOTION_CHANGE_EVENT
 
 function subscribeOs(onChange: () => void) {
   const query = window.matchMedia(OS_QUERY)

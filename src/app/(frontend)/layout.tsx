@@ -2,8 +2,11 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import React from 'react'
 
+import { IntroState } from '@/components/motion/IntroState'
+import { SmoothScroll } from '@/components/motion/SmoothScroll'
 import { SiteFooter } from '@/components/site/SiteFooter'
 import { SiteHeader } from '@/components/site/SiteHeader'
+import 'lenis/dist/lenis.css'
 import './globals.css'
 
 // Inter, self-hosted by next/font at build time (design.md §5).
@@ -46,6 +49,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
         </main>
         <SiteFooter />
+        <SmoothScroll />
+        <IntroState />
       </body>
     </html>
   )

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { Atmosphere, Hairline, Paren } from '@/components/site/Atmosphere'
+import { Atmosphere, Hairline, introStep, Paren } from '@/components/site/Atmosphere'
 import { PhotoFrame } from '@/components/site/PhotoFrame'
 import { Reveal } from '@/components/site/Reveal'
 import { SessionRow } from '@/components/site/SessionRow'
@@ -73,28 +73,35 @@ function SectionHeading({
 
 /*
  * Hero in the style of BKI Academy's own course posters (design.md §4D, v1.3): a large light
- * headline on the atmosphere gradient, a hairline crosshair, and the next session pinned to the
+ * headline on the atmosphere gradient, a hairline, and the next session pinned to the
  * right like "Public Training - Jakarta / 21-23 Oktober 2026". Nothing here animates.
  */
 function Hero({ next }: { next: SiteSession | undefined }) {
   return (
     <Atmosphere fadeHeight="lg" fadeTo="white" label="Pembuka">
       <div className="container-page pt-16 pb-20 md:pt-24 lg:pb-28">
-        <div className="flex flex-wrap items-baseline justify-between gap-4 text-ui text-white/85">
+        <div
+          className="flex flex-wrap items-baseline justify-between gap-4 text-ui text-white/85"
+          {...introStep(0, 'fade')}
+        >
           <Paren>BKI Academy</Paren>
           <span className="hidden md:inline">
             <Paren>Divisi pelatihan PT Biro Klasifikasi Indonesia</Paren>
           </span>
         </div>
 
-        <h1 className="mt-12 max-w-[17ch] text-display text-white md:mt-20" id="beranda-judul">
+        <h1
+          className="mt-12 max-w-[17ch] text-display text-white md:mt-20"
+          id="beranda-judul"
+          {...introStep(1)}
+        >
           Kompetensi maritim untuk langkah profesional berikutnya.
         </h1>
 
-        <Hairline className="mt-16 md:mt-24" mark />
+        <Hairline className="mt-16 md:mt-24" intro={3} />
 
         <div className="grid gap-12 pt-12 lg:grid-cols-12 lg:gap-6">
-          <div className="lg:col-span-7">
+          <div className="lg:col-span-7" {...introStep(4)}>
             <p className="max-w-[52ch] text-intro text-white/90">
               Pelatihan keselamatan, keamanan, survei, dan pengelolaan kapal untuk profesional
               maritim dan tim perusahaan.
@@ -113,7 +120,10 @@ function Hero({ next }: { next: SiteSession | undefined }) {
           </div>
 
           {next ? (
-            <div className="flex flex-col gap-2 border-t border-white/25 pt-6 lg:col-span-4 lg:col-start-9 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-6">
+            <div
+              className="flex flex-col gap-2 border-t border-white/25 pt-6 lg:col-span-4 lg:col-start-9 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-6"
+              {...introStep(5)}
+            >
               <p className="text-meta text-white/80">
                 <Paren>Jadwal terdekat</Paren>
               </p>
@@ -207,14 +217,17 @@ function PhotoBand() {
       data-surface="photo"
     >
       <div className="relative aspect-4/5 w-full md:aspect-video lg:aspect-21/9">
-        <Image
-          alt={stockPhotos.band.alt}
-          // Show the upper part of the photo so the ship sits low, clear of the headline.
-          className="object-cover object-[50%_8%]"
-          fill
-          sizes="100vw"
-          src={stockPhotos.band.src}
-        />
+        {/* Drifts slower than the page while the band crosses the screen (parallax). */}
+        <div className="parallax absolute inset-x-0 -inset-y-[7%]">
+          <Image
+            alt={stockPhotos.band.alt}
+            // Show the upper part of the photo so the ship sits low, clear of the headline.
+            className="object-cover object-[50%_8%]"
+            fill
+            sizes="100vw"
+            src={stockPhotos.band.src}
+          />
+        </div>
         <div aria-hidden className="absolute inset-0 bg-(image:--gradient-photo)" />
         <div aria-hidden className="grain pointer-events-none absolute inset-0" />
         <div className="container-page relative pt-16 md:pt-24 lg:pt-28">
@@ -345,13 +358,17 @@ function Corporate() {
       className="relative isolate overflow-hidden bg-[#0c1a45] text-white"
       data-surface="brand"
     >
-      <Image
-        alt=""
-        className="-z-10 object-cover object-[50%_70%] lg:left-auto! lg:w-[72%]! lg:object-[50%_40%]"
-        fill
-        sizes="(min-width: 1024px) 72vw, 100vw"
-        src={photo.src}
-      />
+      <div aria-hidden className="absolute inset-0 -z-10 lg:left-auto lg:w-[72%]">
+        <div className="parallax absolute inset-x-0 -inset-y-[7%]">
+          <Image
+            alt=""
+            className="object-cover object-[50%_70%] lg:object-[50%_40%]"
+            fill
+            sizes="(min-width: 1024px) 72vw, 100vw"
+            src={photo.src}
+          />
+        </div>
+      </div>
       <div
         aria-hidden
         className="absolute inset-0 -z-10 bg-(image:--gradient-atmos-veil-down) lg:bg-(image:--gradient-atmos-veil)"

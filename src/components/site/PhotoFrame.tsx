@@ -17,7 +17,10 @@ type PhotoFrameProps = {
 
 /*
  * Photo with a fixed aspect ratio (set via className, e.g. aspect-4/3) so nothing shifts while it loads.
- * Hover: image scales to 1.02 over 280 ms inside a clipped frame, fine pointers only (animations.md §5.2).
+ * Hover: image scales to 1.04 over 700 ms inside a clipped frame (v1.2), fine pointers only (animations.md §5.2).
+ * Scroll (animations.md §5.9–5.10, v1.3): inside a <Reveal> the photo opens from the bottom and
+ * settles from a zoom when its card appears; it then drifts slightly slower than the page (parallax,
+ * CSS scroll timeline). Three layers so the transforms never fight: unveil > parallax > hover scale.
  * Without `src` it renders an honest placeholder: photos need permission first (decision B-05),
  * and stock or generated people must never stand in for real BKI training (design.md §9).
  */
@@ -32,14 +35,18 @@ export function PhotoFrame({
   return (
     <div className={cn('group/photo relative overflow-hidden rounded-image bg-paper', className)}>
       {src ? (
-        <Image
-          alt={alt}
-          className="object-cover transition-transform duration-(--motion-image) ease-(--ease-standard) pointer-fine:group-hover/photo:scale-(--scale-image)"
-          fill
-          priority={priority}
-          sizes={sizes}
-          src={src}
-        />
+        <div className="unveil absolute inset-0">
+          <div className="parallax absolute inset-x-0 -inset-y-[7%]">
+            <Image
+              alt={alt}
+              className="object-cover transition-transform duration-(--motion-image-hover) ease-(--ease-expo) pointer-fine:group-hover/photo:scale-(--scale-image)"
+              fill
+              priority={priority}
+              sizes={sizes}
+              src={src}
+            />
+          </div>
+        </div>
       ) : (
         <div
           className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-(image:--gradient-soft) p-6 text-center"

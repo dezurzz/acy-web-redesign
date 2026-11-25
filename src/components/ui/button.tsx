@@ -80,13 +80,21 @@ function Button({
   )
 }
 
-/** Optional arrow that moves 3 px on hover (animations.md §5.1). Only the icon moves. */
+/**
+ * Optional arrow (animations.md §5.1, v1.2). On hover the arrow slides out to the right and a
+ * second one slides in from the left, inside a clipped box the size of the icon. Only the icon
+ * moves; the label and hit area stay put.
+ */
 function ButtonArrow() {
+  const arrow =
+    'transition-transform duration-(--motion-arrow) ease-(--ease-expo) group-disabled/button:translate-x-0'
   return (
-    <ArrowRight
-      aria-hidden
-      className="transition-transform duration-(--motion-fast) ease-(--ease-standard) group-hover/button:translate-x-(--move-icon) group-disabled/button:translate-x-0"
-    />
+    <span aria-hidden className="relative inline-flex size-5 shrink-0 overflow-hidden">
+      <ArrowRight className={cn(arrow, 'group-hover/button:translate-x-[130%]')} />
+      <ArrowRight
+        className={cn(arrow, 'absolute inset-0 -translate-x-[130%] group-hover/button:translate-x-0')}
+      />
+    </span>
   )
 }
 
