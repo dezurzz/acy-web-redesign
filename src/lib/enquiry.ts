@@ -37,6 +37,18 @@ export type EnquiryErrors = Partial<Record<EnquiryField, string>>
 
 export const LIMITS = { short: 120, long: 1000 } as const
 
+/**
+ * Version of the Kebijakan Privasi the visitor agreed to, stored with each request (PRD §7).
+ * Change it whenever the policy text changes. Still a draft until BKI's data owner approves it.
+ */
+export const PRIVACY_POLICY_VERSION = 'draf-2026-11-25'
+
+/** Hidden field that people never see or fill; bots that fill every field do (honeypot). */
+export const HONEYPOT_FIELD = 'situs_web'
+
+/** A browser-made request key (crypto.randomUUID): one per filled-in form, reused on retries. */
+export const IDEMPOTENCY_KEY = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
 export function readEnquiry(data: FormData): EnquiryValues {

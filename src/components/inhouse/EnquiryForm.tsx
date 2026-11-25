@@ -1,6 +1,5 @@
 'use client'
 
-import { FlaskConical } from 'lucide-react'
 import * as React from 'react'
 
 import { submitEnquiry, type EnquiryResult } from '@/app/(frontend)/id/in-house/actions'
@@ -13,6 +12,7 @@ import {
   deliveryOptions,
   enquiryFields,
   fieldId,
+  HONEYPOT_FIELD,
   LIMITS,
   participantOptions,
   readEnquiry,
@@ -21,7 +21,7 @@ import {
 } from '@/lib/enquiry'
 
 type Props = {
-  /** "gagal" makes the simulated submit fail, so the failure state can be reviewed. */
+  /** "gagal" makes the submit fail (development only), so the failure state can be reviewed. */
   simulate?: string
   whatsappHref: string
 }
@@ -31,8 +31,9 @@ type Props = {
  * - Rules are checked in the browser first, then again on the server.
  * - Invalid submit: error summary appears immediately and takes focus; every value stays.
  * - While sending: the button says "Mengirim…" and cannot be pressed twice.
- * - Success is shown only after the server answers; failure keeps the form filled with a retry.
- * PROTOTYPE: the server only simulates the save and says so on screen (PRD §8.6).
+ * - Success is shown only after the server has saved the request (PRD §8.3), with its reference.
+ * - Failure keeps the form filled with a retry. One request key per filled-in form, reused on
+ *   retries, so a double click or a retry after a lost answer never creates a second request.
  */
 export function EnquiryForm({ simulate, whatsappHref }: Props) {
   const [errors, setErrors] = React.useState<EnquiryErrors>({})
@@ -40,9 +41,11 @@ export function EnquiryForm({ simulate, whatsappHref }: Props) {
   const [result, setResult] = React.useState<EnquiryResult | null>(null)
   const [pending, startTransition] = React.useTransition()
   const successRef = React.useRef<HTMLDivElement>(null)
+  // Made on the first submit (not during render, so server and browser HTML match).
+  const requestKey = React.useRef<string | null>(null)
 
   React.useEffect(() => {
-    if (result?.status === 'simulated') successRef.current?.focus()
+    if (result?.status === 'saved') successRef.current?.focus()
   }, [result])
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -56,6 +59,8 @@ export function EnquiryForm({ simulate, whatsappHref }: Props) {
       setSummaryKey((k) => k + 1) // re-mount so focus moves to the summary on every invalid submit
       return
     }
+    requestKey.current ??= crypto.randomUUID()
+    data.set('kunci', requestKey.current)
     startTransition(async () => {
       try {
         const response = await submitEnquiry(data)
@@ -70,28 +75,28 @@ export function EnquiryForm({ simulate, whatsappHref }: Props) {
     })
   }
 
-  if (result?.status === 'simulated') {
+  if (result?.status === 'saved') {
     return (
       <div className="flex flex-col gap-4" ref={successRef} tabIndex={-1}>
         <FeedbackPanel
           action={
-            <Button onClick={() => setResult(null)} variant="secondary">
-              Isi formulir lagi
+            <Button
+              onClick={() => {
+                requestKey.current = null // a new form fill is a new request
+                setResult(null)
+              }}
+              variant="secondary"
+            >
+              Kirim permintaan lain
             </Button>
           }
-          title="Simulasi berhasil (prototipe)"
+          title="Kebutuhan pelatihan Anda sudah kami terima"
           tone="success"
         >
-          <p>
-            Di situs yang sudah tayang, pesan ini berbunyi: “Kebutuhan pelatihan Anda sudah kami
-            terima. Simpan nomor referensi ini. Tim kami akan menghubungi Anda.”
-          </p>
+          <p>Simpan nomor referensi ini. Tim kami akan menghubungi Anda.</p>
           <p className="mt-3">
-            Nomor referensi contoh: <strong className="numeric">{result.reference}</strong> · Topik:{' '}
+            Nomor referensi: <strong className="numeric">{result.reference}</strong> · Topik:{' '}
             {result.topic}
-          </p>
-          <p className="mt-3 text-meta text-slate-600">
-            Tidak ada data yang disimpan atau dikirim.
           </p>
         </FeedbackPanel>
       </div>
@@ -111,12 +116,14 @@ export function EnquiryForm({ simulate, whatsappHref }: Props) {
 
   return (
     <form className="flex flex-col gap-6" noValidate onSubmit={handleSubmit}>
-      <p className="flex items-start gap-2 rounded-card border border-dashed border-line-control bg-white p-3 text-meta text-navy-800">
-        <FlaskConical aria-hidden className="mt-0.5 size-4 shrink-0 text-slate-600" />
-        Prototipe: formulir ini memeriksa isian, tetapi belum menyimpan atau mengirim data.
-      </p>
-
       {errorList.length > 0 ? <ErrorSummary errors={errorList} key={summaryKey} /> : null}
+
+      {result?.status === 'limited' ? (
+        <FeedbackPanel title="Terlalu banyak permintaan dari perangkat ini" tone="error">
+          Data Anda tetap tersedia di formulir. Coba kirim lagi dalam beberapa menit, atau hubungi
+          kami lewat WhatsApp.
+        </FeedbackPanel>
+      ) : null}
 
       {result?.status === 'failed' ? (
         <FeedbackPanel
@@ -296,6 +303,18 @@ export function EnquiryForm({ simulate, whatsappHref }: Props) {
       </TextLink>
 
       {simulate ? <input name="simulasi" type="hidden" value={simulate} /> : null}
+
+      {/* Honeypot: off-screen and skipped by keyboard and screen readers; people never fill it. */}
+      <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden">
+        <label htmlFor={HONEYPOT_FIELD}>Jangan isi kolom ini</label>
+        <input
+          autoComplete="off"
+          id={HONEYPOT_FIELD}
+          name={HONEYPOT_FIELD}
+          tabIndex={-1}
+          type="text"
+        />
+      </div>
 
       <div className="flex flex-col gap-4 border-t border-line-subtle pt-6 md:flex-row md:items-center md:gap-6">
         <Button

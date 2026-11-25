@@ -33,7 +33,9 @@ const sections = (siteSettings: SiteSettings): LegalSection[] => [
           <li>
             <strong>Formulir kebutuhan pelatihan perusahaan:</strong> nama kontak, email kantor,
             perusahaan, nomor telepon, topik, perkiraan jumlah peserta, waktu dan format yang
-            diinginkan, serta kebutuhan lain yang Anda tulis.
+            diinginkan, serta kebutuhan lain yang Anda tulis, beserta waktu Anda menyetujui
+            kebijakan ini. Untuk mencegah spam, kami juga menyimpan kode acak yang dibuat dari
+            alamat internet (IP) Anda, bukan alamat IP itu sendiri.
           </li>
           <li>
             <strong>Pendaftaran pelatihan:</strong> situs ini tidak menyimpan data pendaftaran. Anda

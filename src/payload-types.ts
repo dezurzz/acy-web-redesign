@@ -24,6 +24,7 @@ export interface Config {
     sessions: Session;
     'course-photos': CoursePhoto;
     categories: Category;
+    enquiries: Enquiry;
     media: Media;
     users: User;
     'payload-kv': PayloadKv;
@@ -37,6 +38,7 @@ export interface Config {
     sessions: SessionsSelect<false> | SessionsSelect<true>;
     'course-photos': CoursePhotosSelect<false> | CoursePhotosSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    enquiries: EnquiriesSelect<false> | EnquiriesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -296,6 +298,45 @@ export interface CoursePhoto {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Permintaan pelatihan in-house dari formulir situs. Ubah status saat ditindaklanjuti; data dari pelanggan tidak dapat diubah.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "enquiries".
+ */
+export interface Enquiry {
+  id: number;
+  /**
+   * Nomor yang dilihat pelanggan, contoh INH-7K3P2Q.
+   */
+  reference: string;
+  type: 'corporate';
+  status: 'baru' | 'dihubungi' | 'penawaran' | 'selesai' | 'batal';
+  assignedTo?: (number | null) | User;
+  /**
+   * Hanya untuk staf. Tidak dikirim ke pelanggan.
+   */
+  internalNotes?: string | null;
+  /**
+   * Diisi oleh pengirim notifikasi setelah penyedia email tersedia (PRD §8.3).
+   */
+  notificationStatus: 'menunggu' | 'terkirim' | 'gagal';
+  contactName: string;
+  company: string;
+  email: string;
+  phone: string;
+  topic: string;
+  participants: '1-10' | '11-25' | '26-50' | '50+';
+  deliveryFormat: 'lokasi-perusahaan' | 'fasilitas-bki' | 'live-online';
+  timing: string;
+  needs?: string | null;
+  consentAt: string;
+  policyVersion: string;
+  idempotencyKey: string;
+  sourceHash?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
@@ -362,6 +403,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'categories';
         value: number | Category;
+      } | null)
+    | ({
+        relationTo: 'enquiries';
+        value: number | Enquiry;
       } | null)
     | ({
         relationTo: 'media';
@@ -527,6 +572,33 @@ export interface CategoriesSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "enquiries_select".
+ */
+export interface EnquiriesSelect<T extends boolean = true> {
+  reference?: T;
+  type?: T;
+  status?: T;
+  assignedTo?: T;
+  internalNotes?: T;
+  notificationStatus?: T;
+  contactName?: T;
+  company?: T;
+  email?: T;
+  phone?: T;
+  topic?: T;
+  participants?: T;
+  deliveryFormat?: T;
+  timing?: T;
+  needs?: T;
+  consentAt?: T;
+  policyVersion?: T;
+  idempotencyKey?: T;
+  sourceHash?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
