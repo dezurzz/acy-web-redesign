@@ -55,6 +55,14 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
+      # Builds the schema from the committed migrations, exactly as staging and production will
+      # (PRD §8.4), so every later step runs against a migrated database, not a pushed one.
+      - name: Database migrations
+        run: pnpm migrate
+
+      - name: Migrations match the schema
+        run: pnpm migrate:check
+
       - name: Integration tests
         run: pnpm test:int
 

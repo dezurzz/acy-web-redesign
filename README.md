@@ -151,6 +151,15 @@ The volume name is the project folder name plus `_pgdata` (`redesign-web_pgdata`
 
 **How the schema gets created:** in development, Payload creates and updates the tables automatically when `pnpm dev` starts ("push mode"). You do not run migrations locally. Staging and production use reviewed migrations instead (see Conventions).
 
+**Migrations (staging, production and CI):** the files in `src/migrations/` build the whole schema from an empty database. The first one, `…_initial`, creates every table the site has today. When you change a collection or a field:
+
+1. Make the change and try it with `pnpm dev` as usual (push mode updates your local database).
+2. Create a migration: `pnpm migrate:create <short-name>`, for example `pnpm migrate:create add-course-level`.
+3. Read the new `.ts` file. Check it does what you meant, especially anything that drops or renames a column (that deletes data). Multi-line default texts come out with extra spaces at the start of each new line; remove them.
+4. Commit the `.ts` file, the `.json` snapshot next to it and `index.ts` together with the collection change.
+
+`pnpm migrate:check` (also run by CI) fails when a collection changed with no migration for it. `pnpm migrate:status` lists which migrations a database has run.
+
 ### Troubleshooting
 
 | You see | Cause | Fix |
@@ -199,7 +208,10 @@ pnpm test:e2e
 | `pnpm test:e2e` | Playwright tests (starts `pnpm dev` if nothing is running) |
 | `pnpm generate:types` | Regenerate `src/payload-types.ts` after changing collections |
 | `pnpm generate:importmap` | Regenerate the admin import map after adding admin components |
-| `pnpm payload migrate:create` | Create a migration for staging/production |
+| `pnpm migrate:create <name>` | Create a migration after changing collections (see Migrations) |
+| `pnpm migrate` | Run the migrations a database has not run yet (staging/production release step) |
+| `pnpm migrate:status` | List which migrations a database has run |
+| `pnpm migrate:check` | Fail if a collection changed without a migration (CI runs this) |
 
 ## Structure
 
@@ -209,7 +221,8 @@ src/
   app/(payload)/      Payload admin and API (generated; avoid editing)
   app/(wireframes)/   Phase 1 low-fidelity wireframes at /wireframes
   access/             staff roles and access rules
-  collections/        Payload collections (Courses, Sessions, Categories, Media, Users)
+  collections/        Payload collections (Courses, Sessions, Course photos, Categories, Enquiries, Media, Users)
+  migrations/         database migrations for staging/production (see Migrations)
   globals/            Payload globals (Site settings: contacts and portal links)
   components/ui/      shadcn/ui components customised to design.md (buttons, fields, badges…)
   components/site/    header, footer, cards, page layouts and other site components
@@ -238,7 +251,7 @@ review/               screenshots for reviews (not in git)
 - **Site settings:** contacts (WhatsApp, phone, email, hours, address) and the Portal Peserta links are edited in the admin under **Pengaturan → Pengaturan situs**. Only admins and publishers can change them. The WhatsApp number may be typed as `0812…` and is saved as `62812…`; portal links must start with `https://`. Until **Kontak sudah dikonfirmasi** is ticked, the site shows a "kontak masih contoh" warning.
 - **Session codes:** every session has a public code such as `JDW-0308`, used in links and the WhatsApp message. Leave it empty in the admin to get one automatically.
 - **Sessions:** `registrationStatus` drives registration (only `open` accepts requests). Do not name a field `status`; it collides with Payload's `_status` draft enum in PostgreSQL.
-- **Schema changes on staging/production:** create a migration with `pnpm payload migrate:create`, review it, take a backup, then run `pnpm payload migrate` as a release step (PRD §8.4). Never rely on push mode outside development.
+- **Schema changes on staging/production:** create a migration with `pnpm migrate:create`, review it, take a backup, then run `pnpm migrate` as a release step (PRD §8.4). Never rely on push mode outside development.
 
 ## Branches
 
