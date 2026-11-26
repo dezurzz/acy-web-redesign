@@ -7,6 +7,7 @@ import { IntroState } from '@/components/motion/IntroState'
 import { SmoothScroll } from '@/components/motion/SmoothScroll'
 import { SiteFooter } from '@/components/site/SiteFooter'
 import { SiteHeader } from '@/components/site/SiteHeader'
+import { SITE_INDEXABLE, SITE_URL } from '@/lib/site'
 import 'lenis/dist/lenis.css'
 import './globals.css'
 
@@ -30,8 +31,9 @@ export const metadata: Metadata = {
     template: '%s | BKI Academy',
   },
   description: 'Pelatihan maritim profesional dari BKI Academy.',
-  // Not indexable until launch (PRD §7: drafts are not publicly indexable).
-  robots: { index: false, follow: false },
+  metadataBase: new URL(SITE_URL),
+  // Not indexable until launch (PRD §7): SITE_INDEXABLE=true flips this and robots.txt together.
+  robots: { index: SITE_INDEXABLE, follow: SITE_INDEXABLE },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

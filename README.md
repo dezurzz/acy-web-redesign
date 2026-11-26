@@ -259,3 +259,15 @@ Changes always move `ui` → `staging` → `main` through pull requests, and CI 
 | Production | Created in Phase 5 |
 
 Hosting, database, email, and domain accounts must belong to a BKI organisational account with a second BKI administrator (TIMELINE.md, Working alone).
+
+### Launch switches
+
+Set these in the production host's environment on launch day (L-01). Leave them unset everywhere else, staging included.
+
+| Variable | Effect |
+|---|---|
+| `NEXT_PUBLIC_SITE_URL` | Public address used in the sitemap and canonical links. |
+| `SITE_INDEXABLE=true` | `robots.txt` and the robots meta tag let search engines index the site. Unset: crawlers are asked to stay away. |
+| `REDIRECTS_PERMANENT=true` | Old Odoo URLs redirect permanently (308) instead of temporarily (307). Stand-in targets for Pengajar and Insight stay temporary. |
+
+Old Odoo URLs: the redirect map is `src/lib/redirects.ts`, built from the URL Inventory tab. Before launch, run `pnpm redirects:check` (database running): it lists redirects whose course or topic does not exist yet and the inventory rows still marked "Review".

@@ -3,6 +3,8 @@ import type { NextConfig } from 'next'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
+import { launchRedirects } from './src/lib/redirects'
+
 const __filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(__filename)
 
@@ -26,8 +28,8 @@ const nextConfig: NextConfig = {
     return webpackConfig
   },
   async redirects() {
-    // The site is Indonesian-first (PRD §1). Temporary until the launch redirect map is final.
-    return [{ source: '/', destination: '/id', permanent: false }]
+    // Old Odoo URLs → new pages (src/lib/redirects.ts, from the URL Inventory tab).
+    return launchRedirects()
   },
   turbopack: {
     root: path.resolve(dirname),
