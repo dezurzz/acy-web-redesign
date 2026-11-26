@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import type React from 'react'
 
+import { TrackView } from '@/components/analytics/Analytics'
 import { PageHero } from '@/components/site/PageHero'
 import { Button, ButtonArrow } from '@/components/ui/button'
 import { FeedbackPanel } from '@/components/ui/feedback-panel'
@@ -110,6 +111,12 @@ function Handoff({
 
   return (
     <>
+      {/* registration_start = handoff page viewed for a session that can be requested (PRD §9). */}
+      {kind === 'none' ? null : (
+        <TrackView
+          event={{ name: 'registration_start', session: session.id, course: session.courseSlug }}
+        />
+      )}
       <SessionSummary session={session} />
       {kind === 'none' ? (
         <NotAvailable session={session} sessions={sessions} />
@@ -243,8 +250,8 @@ function WhatsAppStep({
       <div className="mt-8 flex flex-col gap-3 md:flex-row md:items-center md:gap-5">
         <Button asChild className="w-full md:w-auto">
           <a
-            data-analytics="whatsapp_handoff"
-            data-session={session.id}
+            data-analytics="whatsapp_registration_click"
+            data-analytics-session={session.id}
             href={href}
             rel="noopener"
             target="_blank"
@@ -268,6 +275,9 @@ function WhatsAppStep({
           <li className="flex items-center gap-2">
             <Mail aria-hidden className="size-5 text-slate-600" />
             <TextLink
+              data-analytics="contact_click"
+              data-analytics-channel="email"
+              data-analytics-location="pendaftaran"
               href={`mailto:${siteSettings.email}?subject=${encodeURIComponent(`Pendaftaran ${session.id}`)}`}
             >
               {siteSettings.email}
@@ -275,7 +285,14 @@ function WhatsAppStep({
           </li>
           <li className="flex items-center gap-2">
             <Phone aria-hidden className="size-5 text-slate-600" />
-            <TextLink href={`tel:${siteSettings.phoneHref}`}>{siteSettings.phone}</TextLink>
+            <TextLink
+              data-analytics="contact_click"
+              data-analytics-channel="phone"
+              data-analytics-location="pendaftaran"
+              href={`tel:${siteSettings.phoneHref}`}
+            >
+              {siteSettings.phone}
+            </TextLink>
           </li>
         </ul>
         <p className="mt-2 text-meta text-slate-600">

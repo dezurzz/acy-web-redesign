@@ -117,7 +117,14 @@ export default async function ContactPage() {
             </p>
             <div className="mt-6">
               <Button asChild>
-                <a href={whatsappHref} rel="noopener" target="_blank">
+                <a
+                  data-analytics="contact_click"
+                  data-analytics-channel="whatsapp"
+                  data-analytics-location="hubungi-kami"
+                  href={whatsappHref}
+                  rel="noopener"
+                  target="_blank"
+                >
                   <MessageCircle aria-hidden />
                   Chat lewat WhatsApp
                   <span className="sr-only"> (membuka WhatsApp di jendela baru)</span>
@@ -138,6 +145,9 @@ export default async function ContactPage() {
             <Contact icon={Phone} label="Telepon">
               <a
                 className="numeric underline underline-offset-4 hover:text-blue-600"
+                data-analytics="contact_click"
+                data-analytics-channel="phone"
+                data-analytics-location="hubungi-kami"
                 href={`tel:${siteSettings.phoneHref}`}
               >
                 {siteSettings.phone}
@@ -146,6 +156,9 @@ export default async function ContactPage() {
             <Contact icon={Mail} label="Email">
               <a
                 className="break-all underline underline-offset-4 hover:text-blue-600"
+                data-analytics="contact_click"
+                data-analytics-channel="email"
+                data-analytics-location="hubungi-kami"
                 href={`mailto:${siteSettings.email}`}
               >
                 {siteSettings.email}

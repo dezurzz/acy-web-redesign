@@ -78,7 +78,14 @@ export default async function MicePage() {
           </div>
           <div className="flex flex-col items-start gap-3">
             <Button asChild>
-              <a href={whatsappHref} rel="noopener" target="_blank">
+              <a
+                data-analytics="contact_click"
+                data-analytics-channel="whatsapp"
+                data-analytics-location="mice"
+                href={whatsappHref}
+                rel="noopener"
+                target="_blank"
+              >
                 <MessageCircle aria-hidden />
                 Chat lewat WhatsApp
                 <span className="sr-only"> (membuka WhatsApp di jendela baru)</span>

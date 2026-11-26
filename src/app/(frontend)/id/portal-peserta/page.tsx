@@ -53,6 +53,7 @@ export default async function PortalPage() {
       title: 'Akun dan materi pelatihan',
       text: 'Masuk ke portal untuk membuka materi dan jadwal kelas Anda.',
       action: 'Buka portal materi',
+      destination: 'materi',
       href: siteSettings.portalUrl,
     },
     {
@@ -60,6 +61,7 @@ export default async function PortalPage() {
       title: 'Sertifikat',
       text: 'Lihat dan unduh sertifikat pelatihan di sistem sertifikat BKI.',
       action: 'Buka sistem sertifikat',
+      destination: 'sertifikat',
       href: siteSettings.certificateUrl,
     },
     {
@@ -67,6 +69,7 @@ export default async function PortalPage() {
       title: 'Status pendaftaran',
       text: 'Tanyakan status pendaftaran, pembayaran, atau perubahan jadwal kepada admin.',
       action: 'Chat admin lewat WhatsApp',
+      destination: 'whatsapp-admin',
       href: whatsappHref,
     },
   ]
@@ -82,7 +85,7 @@ export default async function PortalPage() {
       <div className="container-page pt-8 pb-24 lg:pt-12 lg:pb-40">
         <Reveal>
           <ul className="grid gap-6 md:grid-cols-3 lg:gap-6">
-            {services.map(({ action, href, icon: Icon, text, title }) => (
+            {services.map(({ action, destination, href, icon: Icon, text, title }) => (
               <li
                 className="flex flex-col gap-3 rounded-card border border-line-subtle p-5 transition-colors duration-(--motion-fast) focus-within:border-blue-600 hover:border-blue-600 md:p-6"
                 key={title}
@@ -98,7 +101,13 @@ export default async function PortalPage() {
                         className="w-full text-center whitespace-normal"
                         variant="secondary"
                       >
-                        <a href={href} rel="noopener" target="_blank">
+                        <a
+                          data-analytics="portal_link_click"
+                          data-analytics-destination={destination}
+                          href={href}
+                          rel="noopener"
+                          target="_blank"
+                        >
                           {action}
                           <ExternalLink aria-hidden />
                           <span className="sr-only"> (membuka situs lain di jendela baru)</span>

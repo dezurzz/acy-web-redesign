@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import React from 'react'
 
 import { IntroCurtain } from '@/components/motion/IntroCurtain'
+import { AnalyticsClicks } from '@/components/analytics/Analytics'
 import { IntroState } from '@/components/motion/IntroState'
 import { SmoothScroll } from '@/components/motion/SmoothScroll'
 import { SiteFooter } from '@/components/site/SiteFooter'
@@ -57,6 +58,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SiteFooter />
         <SmoothScroll />
         <IntroState />
+        <AnalyticsClicks />
       </body>
     </html>
   )

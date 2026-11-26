@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { CatalogueLoadMore } from '@/components/catalogue/CatalogueLoadMore'
+import { TrackView } from '@/components/analytics/Analytics'
 import { CatalogueProvider, ResultsRegion } from '@/components/catalogue/CatalogueProvider'
 import { FilterDrawer } from '@/components/catalogue/FilterDrawer'
 import { FilterForm } from '@/components/catalogue/FilterForm'
@@ -20,6 +21,7 @@ import {
   toQuery,
 } from '@/lib/catalogue'
 import { loadSiteData } from '@/lib/cms'
+import { catalogueEvents } from '@/lib/analytics'
 
 // Reads live CMS content on every request, so published changes show immediately.
 export const dynamic = 'force-dynamic'
@@ -115,6 +117,9 @@ export default async function CataloguePage({ searchParams }: PageProps) {
             </div>
 
             <ResultsRegion>
+              {catalogueEvents('pelatihan', filters, total).map((event) => (
+                <TrackView event={event} key={event.name} />
+              ))}
               <h2 className="sr-only">Daftar pelatihan</h2>
               {items.length > 0 ? (
                 <>

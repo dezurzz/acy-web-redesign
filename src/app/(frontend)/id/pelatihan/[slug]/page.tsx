@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type React from 'react'
 
+import { TrackView } from '@/components/analytics/Analytics'
 import { MobileCtaBar } from '@/components/course/MobileCtaBar'
 import { SESSION_PANEL_ID, SessionPanel } from '@/components/course/SessionPanel'
 import { Paren } from '@/components/site/Atmosphere'
@@ -56,6 +57,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
     <>
       {/* Poster-style hero, like BKI Academy's course posters: name large, full name in
           parentheses, next date and place pinned on the right (design.md §4D, v1.3). */}
+      <TrackView event={{ name: 'course_view', course: course.slug }} />
       <PageHero
         actions={
           <Button asChild className="hidden lg:inline-flex" variant="secondary">
@@ -205,7 +207,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
           <aside aria-label="Jadwal dan pendaftaran" className="lg:col-span-4">
             {/* Sticky below the header (+24 px); scrolls inside itself if it is taller than the screen. */}
             <div className="lg:sticky lg:top-[calc(var(--header-height)+1.5rem)] lg:max-h-[calc(100dvh-var(--header-height)-3rem)] lg:overflow-y-auto">
-              <SessionPanel sessions={sessions} />
+              <SessionPanel course={course.slug} sessions={sessions} />
             </div>
           </aside>
         </div>

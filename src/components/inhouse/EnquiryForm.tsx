@@ -4,6 +4,7 @@ import * as React from 'react'
 
 import { submitEnquiry, type EnquiryResult } from '@/app/(frontend)/id/in-house/actions'
 import { Button } from '@/components/ui/button'
+import { track } from '@/lib/analytics'
 import { ErrorSummary } from '@/components/ui/error-summary'
 import { FeedbackPanel } from '@/components/ui/feedback-panel'
 import { Choice, ChoiceGroup, Field, Input, Textarea } from '@/components/ui/field'
@@ -43,6 +44,7 @@ export function EnquiryForm({ simulate, whatsappHref }: Props) {
   const successRef = React.useRef<HTMLDivElement>(null)
   // Made on the first submit (not during render, so server and browser HTML match).
   const requestKey = React.useRef<string | null>(null)
+  const trackedKey = React.useRef<string | null>(null)
 
   React.useEffect(() => {
     if (result?.status === 'saved') successRef.current?.focus()
@@ -69,6 +71,11 @@ export function EnquiryForm({ simulate, whatsappHref }: Props) {
           setSummaryKey((k) => k + 1)
         }
         setResult(response)
+        // Counted only after the server saved it (PRD §9), once per request even if retried.
+        if (response.status === 'saved' && trackedKey.current !== requestKey.current) {
+          trackedKey.current = requestKey.current
+          track({ name: 'corporate_enquiry_success' })
+        }
       } catch {
         setResult({ status: 'failed' })
       }
@@ -325,7 +332,14 @@ export function EnquiryForm({ simulate, whatsappHref }: Props) {
         >
           Kirim Kebutuhan Pelatihan
         </Button>
-        <TextLink href={whatsappHref} rel="noopener" target="_blank">
+        <TextLink
+          data-analytics="contact_click"
+          data-analytics-channel="whatsapp"
+          data-analytics-location="in-house"
+          href={whatsappHref}
+          rel="noopener"
+          target="_blank"
+        >
           Atau chat lewat WhatsApp
           <span className="sr-only"> (membuka WhatsApp di jendela baru)</span>
         </TextLink>

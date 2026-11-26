@@ -36,6 +36,12 @@ test.describe('Corporate enquiry form', () => {
 
     await expect(page.getByText('Kebutuhan pelatihan Anda sudah kami terima')).toBeVisible()
     const reference = await page.locator('strong.numeric').textContent()
+    // Analytics: counted once, after the save, with no form contents (PRD §9).
+    const successes = await page.evaluate(() =>
+      (window.bkiAnalytics ?? []).filter((e) => e.name === 'corporate_enquiry_success'),
+    )
+    expect(successes).toHaveLength(1)
+    expect(successes[0]?.props).toEqual({})
     expect(reference).toMatch(/^INH-[A-HJ-NP-Z2-9]{6}$/)
 
     const payload = await getPayload({ config })

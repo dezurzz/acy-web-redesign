@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { CatalogueLoadMore } from '@/components/catalogue/CatalogueLoadMore'
+import { TrackView } from '@/components/analytics/Analytics'
 import { CatalogueProvider, ResultsRegion } from '@/components/catalogue/CatalogueProvider'
 import { ScheduleFilterBar } from '@/components/catalogue/ScheduleFilterBar'
 import { SessionRow } from '@/components/site/SessionRow'
@@ -14,6 +15,7 @@ import { TextLink } from '@/components/ui/text-link'
 import { activeFilterChips, filterOptions, parseFilters, toQuery } from '@/lib/catalogue'
 import { loadSiteData } from '@/lib/cms'
 import { searchSchedule } from '@/lib/schedule'
+import { catalogueEvents } from '@/lib/analytics'
 
 // Reads live CMS content on every request, so published changes show immediately.
 export const dynamic = 'force-dynamic'
@@ -93,6 +95,9 @@ export default async function SchedulePage({ searchParams }: PageProps) {
         </div>
 
         <ResultsRegion>
+          {catalogueEvents('jadwal', filters, total).map((event) => (
+            <TrackView event={event} key={event.name} />
+          ))}
           {groups.length > 0 ? (
             <>
               {groups.map((group) => (

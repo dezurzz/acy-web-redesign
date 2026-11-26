@@ -10,6 +10,7 @@ import { TextLink } from '@/components/ui/text-link'
 import type { PanelSession } from '@/lib/course'
 import { FEE_ON_REQUEST, formatRupiah } from '@/lib/format'
 import { cn } from '@/lib/utils'
+import { track } from '@/lib/analytics'
 
 export const SESSION_PANEL_ID = 'jadwal-sesi'
 
@@ -19,7 +20,14 @@ export const SESSION_PANEL_ID = 'jadwal-sesi'
  * Sessions are a radio group; the selected option changes border/background over 160 ms.
  * Only an open session gets "Ajukan Pendaftaran" (AC-04). Full with waitlist gets "Masuk Daftar Tunggu".
  */
-export function SessionPanel({ sessions }: { sessions: PanelSession[] }) {
+export function SessionPanel({
+  course,
+  sessions,
+}: {
+  /** Course slug, for the session_select analytics event. */
+  course: string
+  sessions: PanelSession[]
+}) {
   const firstOpen = sessions.find((s) => s.status === 'open') ?? sessions[0]
   const [selectedId, setSelectedId] = React.useState(firstOpen?.id)
   const selected = sessions.find((s) => s.id === selectedId)
@@ -66,7 +74,10 @@ export function SessionPanel({ sessions }: { sessions: PanelSession[] }) {
                     checked={isSelected}
                     className="mt-0.5 size-6 shrink-0 accent-blue-600 focus-visible:outline-none"
                     name="sesi"
-                    onChange={() => setSelectedId(session.id)}
+                    onChange={() => {
+                      setSelectedId(session.id)
+                      track({ name: 'session_select', course, session: session.id })
+                    }}
                     type="radio"
                     value={session.id}
                   />

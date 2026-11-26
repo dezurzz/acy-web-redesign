@@ -269,5 +269,8 @@ Set these in the production host's environment on launch day (L-01). Leave them 
 | `NEXT_PUBLIC_SITE_URL` | Public address used in the sitemap and canonical links. |
 | `SITE_INDEXABLE=true` | `robots.txt` and the robots meta tag let search engines index the site. Unset: crawlers are asked to stay away. |
 | `REDIRECTS_PERMANENT=true` | Old Odoo URLs redirect permanently (308) instead of temporarily (307). Stand-in targets for Pengajar and Insight stay temporary. |
+| `NEXT_PUBLIC_ANALYTICS_ENV` | Set to `production` on the live site and `staging` on staging, so QA traffic stays out of the real numbers (PRD §9). Defaults to `development`. |
+
+Analytics: the ten PRD §9 events are recorded by `src/lib/analytics.ts` onto `window.bkiAnalytics` and a `bki:analytics` browser event, with non-personal fields only. No provider is connected yet; when one is chosen, add one small adapter that reads that queue. In development each event is also printed to the browser console as `[analytics]`.
 
 Old Odoo URLs: the redirect map is `src/lib/redirects.ts`, built from the URL Inventory tab. Before launch, run `pnpm redirects:check` (database running): it lists redirects whose course or topic does not exist yet and the inventory rows still marked "Review".
